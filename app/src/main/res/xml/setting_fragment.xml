@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/photo_preference">
+
+        <PreferenceScreen
+            android:key="set_photo"
+            android:title="@string/photo_setting_title"
+            android:summary="@string/photo_setting_summary">
+
+            <intent android:action="android.intent.action.PhotoActivity"/>
+        </PreferenceScreen>
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/authentication_preference">
+
+    <SwitchPreference
+        android:key="authen_switch"
+        android:title="@string/authentication_title"
+        android:defaultValue="true"
+        android:summary="@string/authentication_summary"/>
+
+        <!--<ListPreference-->
+            <!--android:key="list_preference"-->
+            <!--android:title="@string/title_unit_pref"-->
+            <!--android:summary="@string/summary_unit_pref"-->
+            <!--android:entries="@array/entries_list_preference"-->
+            <!--android:entryValues="@array/entryvalues_list_preference"-->
+            <!--android:dialogTitle="@string/dialog_title_unit_pref" />-->
+
+        <!--<EditTextPreference-->
+            <!--android:key="edittext_preference"-->
+            <!--android:title="@string/title_comments"-->
+            <!--android:summary="@string/summary_comments"-->
+            <!--android:dialogTitle="@string/dialog_title_comments" />-->
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/demo_preference">
+
+        <PreferenceScreen
+            android:key="demo_checkbox"
+            android:title="@string/demo_setting_title"
+            android:summary="@string/demo_setting_summary">
+
+            <intent android:action="android.intent.action.DemoActivity"/>
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/misc_pref">
+
+    <PreferenceScreen
+            android:title="@string/webpage_title"
+            android:summary="@string/webpage_address">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="http://iyfandroidapp.weebly.com/" />
+        </PreferenceScreen>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
