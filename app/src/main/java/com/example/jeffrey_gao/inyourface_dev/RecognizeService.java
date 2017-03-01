@@ -26,6 +26,8 @@ import java.io.IOException;
  * Created by jeffreygao on 2/25/17.
  */
 
+//git test
+
 public class RecognizeService extends Service {
     public static final String FACE_IMAGE = "face_image";
     public static final String GALLERY_ID = "users";
