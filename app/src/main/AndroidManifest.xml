@@ -46,7 +46,11 @@
         <service
             android:name=".RegisterService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
+        <service
+            android:name=".AnalyzeService"
+            android:enabled="true"
+            android:exported="true"/>
 
         <receiver android:name="admin"
             android:label="@string/DeviceAdmin"

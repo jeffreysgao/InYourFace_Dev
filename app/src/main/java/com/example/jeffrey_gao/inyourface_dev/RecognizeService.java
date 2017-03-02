@@ -114,7 +114,8 @@ public class RecognizeService extends Service {
             Bitmap image = BitmapFactory.decodeStream(fis);
             String selector = "FULL";
             String threshold = "0.75";
-            String minHeadScale = "0.25";
+            // TODO: figure out the best size for the head scale
+            String minHeadScale = Globals.MIN_HEAD_SCALE;
             String maxNumResults = "25";
             myKairos.recognize(image,
                     GALLERY_ID,

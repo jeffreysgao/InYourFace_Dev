@@ -1,5 +1,7 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 import android.Manifest;
@@ -8,12 +10,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.design.widget.TabLayout;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 
 
 public class MainActivity extends AppCompatActivity
@@ -61,6 +66,11 @@ public class MainActivity extends AppCompatActivity
         startActivityForResult(intent, 3);
 
 
+        /*
+         * Testing Kairos Services - Jeff
+         */
+
+//        testAnalyze();
     }
 
     private void checkPermissions() {
@@ -71,5 +81,28 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /*
+     * Methods used for testing the Services for communication with Kairos - Jeff
+     */
+    private void testAnalyze() {
+        createProfPic();
+        Intent intent = new Intent(this, AnalyzeService.class);
+        intent.putExtra(AnalyzeService.FACE_IMAGE, "test_photo.png");
+        startService(intent);
+    }
+
+    private void createProfPic() {
+        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.liz);
+        try {
+            FileOutputStream f = openFileOutput("test_photo.png", MODE_PRIVATE);
+            image.compress(Bitmap.CompressFormat.PNG, 100, f);
+            f.flush();
+            f.close();
+            Log.d("jeff", "test_pic created");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
 
