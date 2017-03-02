@@ -115,13 +115,12 @@ public class RegisterService extends Service {
             String galleryId = RecognizeService.GALLERY_ID;
             String selector = "FULL";
             String multipleFaces = "false";
-            String minHeadScale = "0.25";
             myKairos.enroll(image,
                     subjectId,
                     galleryId,
                     selector,
                     multipleFaces,
-                    minHeadScale,
+                    Globals.MIN_HEAD_SCALE,
                     kairosListener);
             fis.close();
         } catch (IOException e) {

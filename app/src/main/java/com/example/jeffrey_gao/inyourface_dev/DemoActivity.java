@@ -15,45 +15,42 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 public class DemoActivity extends Activity implements Button.OnClickListener{
+    /*
+     * For testing/demoing analysis of photos - Jeff
+     */
+    public int photoType;
+    public static final int RECOGNIZE_PHOTO = 0;
+    public static final int ANALYZE_PHOTO = 1;
+    public final String photoPath = "demo_photo.png";
+    /*
+     * End of test code - Jeff
+     */
 
-    /**
+
+    /*
      * Called when the activity is first created.
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
 
-        Button verifyButton = (Button) findViewById(R.id.verify_button);
+        Button verifyButton = (Button)findViewById(R.id.verify_button);
         verifyButton.setOnClickListener(this);
-
-
-
-        /* how to delete all galleries */
-//        Intent registerIntent = new Intent(this, RegisterService.class);
-//        registerIntent.putExtra(RegisterService.ACTION, "clear");
-//        startService(registerIntent);
-
-        /* how to register a user */
-//        Intent registerIntent = new Intent(this, RegisterService.class);
-//        registerIntent.putExtra(RegisterService.ACTION, "register");
-//        registerIntent.putExtra(RegisterService.USER_NAME, "liz");
-//        // settings user photo is saved as profile_photo.png
-//        // need to figure out what the temp URI is for the verify photo
-//        registerIntent.putExtra(RegisterService.USER_FACE_IMAGE, "profile_photo.png");
-//        startService(registerIntent);
-
+        Button analyzeButton = (Button)findViewById(R.id.analyze_button);
+        analyzeButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.verify_button) {
-            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(cameraIntent, 1);
+            photoType = RECOGNIZE_PHOTO;
+        } else if (view.getId() == R.id.analyze_button) {
+            photoType = ANALYZE_PHOTO;
         }
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(cameraIntent, 1);
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -61,26 +58,31 @@ public class DemoActivity extends Activity implements Button.OnClickListener{
             if (requestCode == 1) {
                 Bitmap photo = (Bitmap) data.getExtras().get("data");
 
-                createProfPic(photo);
+                savePic(photo);
 
-                /* how to verify a user */
-                Intent recognizeIntent = new Intent(this, RecognizeService.class);
-                // change profile_photo.png to the path of the temp photo taken
-                recognizeIntent.putExtra(RecognizeService.FACE_IMAGE, "verify_photo.png");
-                startService(recognizeIntent);
+                // Launch service to process photo taken
+                Log.d("jeff", "launching service: " + photoType);
+                Intent demoIntent;
+                if (photoType == RECOGNIZE_PHOTO)
+                    demoIntent = new Intent(this, RecognizeService.class);
+                else
+                    demoIntent = new Intent(this, AnalyzeService.class);
+
+                demoIntent.putExtra(RecognizeService.FACE_IMAGE, photoPath);
+                startService(demoIntent);
 
                 finish();
             }
         }
     }
 
-    private void createProfPic(Bitmap image) {
+    private void savePic(Bitmap image) {
         try {
-            FileOutputStream f = openFileOutput("verify_photo.png", MODE_PRIVATE);
+            FileOutputStream f = openFileOutput(photoPath, MODE_PRIVATE);
             image.compress(Bitmap.CompressFormat.PNG, 100, f);
             f.flush();
             f.close();
-            Log.d("jeff", "prof_pic created");
+            Log.d("jeff", "pic saved");
 
         } catch (IOException e) {
             e.printStackTrace();

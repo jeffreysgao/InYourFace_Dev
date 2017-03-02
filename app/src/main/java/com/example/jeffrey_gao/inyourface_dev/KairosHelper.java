@@ -27,6 +27,7 @@ import java.io.UnsupportedEncodingException;
  */
 
 public class KairosHelper {
+
     public static void media(Context context, String image, final KairosListener callback)
             throws JSONException, UnsupportedEncodingException {
         AsyncHttpClient client = new AsyncHttpClient();
@@ -61,6 +62,33 @@ public class KairosHelper {
         client.addHeader("app_key", Globals.APP_KEY);
         Log.d("jeff", "posting");
         client.post(context, "http://api.kairos.com/v2/media", requestParams, responseHandler);
+    }
+
+    public static void analytics(Context context, String id, final KairosListener callback)
+            throws JSONException, UnsupportedEncodingException {
+        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            public void onStart() {
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                callback.onSuccess(responseString);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                callback.onFail(responseString);
+            }
+
+            public void onRetry(int retryNo) {
+            }
+        };
+
+        client.addHeader("app_id", Globals.APP_ID);
+        client.addHeader("app_key", Globals.APP_KEY);
+        Log.d("jeff", "getting");
+        client.get(context, "http://api.kairos.com/v2/analytics/" + id, responseHandler);
     }
 
     protected static String base64FromBitmap(Bitmap image) {

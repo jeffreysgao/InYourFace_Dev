@@ -22,7 +22,6 @@ import java.io.IOException;
 //For select from gallery
 
 public class PhotoActivity extends AppCompatActivity {
-
     public static final String USER_DETAILS = "MyPrefs";
     private SharedPreferences myPrefs;
     private SharedPreferences.Editor myEditor;
@@ -36,7 +35,6 @@ public class PhotoActivity extends AppCompatActivity {
     // ------------ GLOBAL VARIABLES ----------------
     private Uri myImageCaptureUri;      // global image URI
     private ImageView mImageView;       // global image view
-    private boolean takenFromCamera;
     private Uri imgUriAfterCropped;     // if user updated the URI, then save it as
     // the new destination so that loadImage() will
     // pull out the correct image (after cropped)
@@ -97,21 +95,15 @@ public class PhotoActivity extends AppCompatActivity {
         {
             e.printStackTrace();
         }
-        takenFromCamera = true;
     }
 
-    /*============================ Select from Gallery ============================*/
     public void clickChangeButton(View view)
     {
         cameraIntent(view);
     }
 
-    /*============================ END Select from Gallery ============================*/
-
-
-
     /*
-     * When activities get returnedd
+     * Upon camera activity finish
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -124,9 +116,8 @@ public class PhotoActivity extends AppCompatActivity {
             mImageView.setImageURI(myImageCaptureUri);
             savePicture();
 
-
-
-            //delete galleries
+            //delete galleries before registering new user
+            //Note: can remove this later when we allow for multiple users/photos per user
             Intent clearIntent = new Intent(this, RegisterService.class);
             clearIntent.putExtra(RegisterService.ACTION, "clear");
             startService(clearIntent);
@@ -135,8 +126,8 @@ public class PhotoActivity extends AppCompatActivity {
             Intent registerIntent = new Intent(this, RegisterService.class);
             registerIntent.putExtra(RegisterService.ACTION, "register");
             registerIntent.putExtra(RegisterService.USER_NAME, "user");
+
             // settings user photo is saved as profile_photo.png
-            // need to figure out what the temp URI is for the verify photo
             registerIntent.putExtra(RegisterService.USER_FACE_IMAGE, getString(R.string.photo_name));
             startService(registerIntent);
         }

@@ -33,10 +33,6 @@ public class AnalyzeService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-//        myKairos = new Kairos();
-//        String appId = getResources().getString(R.string.kairos_app_id);
-//        String appKey = getResources().getString(R.string.kairos_app_key);
-//        myKairos.setAuthentication(this, appId, appKey);
 
         kairosListener = new KairosListener() {
             @Override
@@ -105,16 +101,14 @@ public class AnalyzeService extends Service {
 
     private void media(String faceImage) {
         try {
-//            FileInputStream fis = openFileInput(faceImage);
-//            Bitmap image = BitmapFactory.decodeStream(fis);
             KairosHelper.media(getApplication().getApplicationContext(), faceImage, kairosListener);
-//            fis.close();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public IBinder onBind(Intent intent) {
