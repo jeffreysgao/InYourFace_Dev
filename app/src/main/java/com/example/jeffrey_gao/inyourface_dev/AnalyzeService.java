@@ -67,13 +67,15 @@ public class AnalyzeService extends Service {
                                         JsonElement sadness = emotions.get("sadness");
                                         JsonElement surprise = emotions.get("surprise");
 
+                                        Log.d("JOY LEVEL", joy.toString());
+
                                         String string = anger.toString() + "," + fear.toString() + "," + joy.toString()
-                                                + "," + sadness.toString() + "," + surprise.toString();
+                                                + "," + sadness.toString() + "," + surprise.toString() + "\n";
 
                                         try {
                                             FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
                                             OutputStreamWriter writer = new OutputStreamWriter(fos);
-                                            writer.write(string);
+                                            writer.append(string);
                                             writer.flush();
                                             writer.close();
                                         } catch (IOException i) {
