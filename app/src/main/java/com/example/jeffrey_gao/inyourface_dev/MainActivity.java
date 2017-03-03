@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
          * Testing Kairos Services - Jeff
          */
 
-//        testAnalyze();
+//        KairosTest.testAnalyze(this);
     }
 
     private void checkPermissions() {
@@ -78,30 +78,6 @@ public class MainActivity extends AppCompatActivity
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.CAMERA}, 0);
-        }
-    }
-
-    /*
-     * Methods used for testing the Services for communication with Kairos - Jeff
-     */
-    private void testAnalyze() {
-        createProfPic();
-        Intent intent = new Intent(this, AnalyzeService.class);
-        intent.putExtra(AnalyzeService.FACE_IMAGE, "test_photo.png");
-        startService(intent);
-    }
-
-    private void createProfPic() {
-        Bitmap image = BitmapFactory.decodeResource(getResources(), R.drawable.liz);
-        try {
-            FileOutputStream f = openFileOutput("test_photo.png", MODE_PRIVATE);
-            image.compress(Bitmap.CompressFormat.PNG, 100, f);
-            f.flush();
-            f.close();
-            Log.d("jeff", "test_pic created");
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

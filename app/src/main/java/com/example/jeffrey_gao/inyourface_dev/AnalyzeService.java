@@ -2,22 +2,17 @@ package com.example.jeffrey_gao.inyourface_dev;
 
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.kairos.Kairos;
 import com.kairos.KairosListener;
 
 import org.json.JSONException;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -28,9 +23,7 @@ import java.io.OutputStreamWriter;
 
 public class AnalyzeService extends Service {
     public static final String FACE_IMAGE = "face_image";
-    private Kairos myKairos;
     private KairosListener kairosListener;
-
 
     @Override
     public void onCreate() {
@@ -40,7 +33,6 @@ public class AnalyzeService extends Service {
             @Override
             public void onSuccess(String s) {
                 Log.d("KAIROS MEDIA", s);
-//
                 JsonObject response = new JsonParser().parse(s).getAsJsonObject();
 
                 JsonElement frames = response.getAsJsonObject().get("frames");
@@ -88,10 +80,6 @@ public class AnalyzeService extends Service {
                                 }
                             }
                         }
-
-
-
-
                     }
                 }
 
@@ -120,14 +108,13 @@ public class AnalyzeService extends Service {
 
     private void media(String faceImage) {
         try {
-            KairosHelper.media(getApplication().getApplicationContext(), faceImage, kairosListener);
+            KairosHelper.postMedia(getApplication().getApplicationContext(), faceImage, kairosListener);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
-
 
     @Override
     public IBinder onBind(Intent intent) {

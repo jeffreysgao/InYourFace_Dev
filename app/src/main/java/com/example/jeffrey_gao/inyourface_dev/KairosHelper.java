@@ -11,7 +11,6 @@ import com.loopj.android.http.Base64;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +27,10 @@ import java.io.UnsupportedEncodingException;
 
 public class KairosHelper {
 
-    public static void media(Context context, String image, final KairosListener callback)
+    /*
+     * Uploads image to Kairos for analysis
+     */
+    public static void postMedia(Context context, String image, final KairosListener callback)
             throws JSONException, UnsupportedEncodingException {
         AsyncHttpClient client = new AsyncHttpClient();
         AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
@@ -61,9 +63,69 @@ public class KairosHelper {
         client.addHeader("app_id", Globals.APP_ID);
         client.addHeader("app_key", Globals.APP_KEY);
         Log.d("jeff", "posting");
-        client.post(context, "http://api.kairos.com/v2/media", requestParams, responseHandler);
+        client.post(context, "http://api.kairos.com/v2/postMedia", requestParams, responseHandler);
     }
 
+    /*
+     * Gets detailed information on a previously uploaded image
+     */
+    public static void getMedia(Context context, String id, final KairosListener callback)
+            throws JSONException, UnsupportedEncodingException {
+        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            public void onStart() {
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                callback.onSuccess(responseString);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                callback.onFail(responseString);
+            }
+
+            public void onRetry(int retryNo) {
+            }
+        };
+
+        client.addHeader("app_id", Globals.APP_ID);
+        client.addHeader("app_key", Globals.APP_KEY);
+        client.get(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
+    }
+
+    /*
+     * Deletes uploaded image once analysis is complete
+     */
+    public static void deleteMedia(Context context, String id, final KairosListener callback) {
+        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            public void onStart() {
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                callback.onSuccess(responseString);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                callback.onFail(responseString);
+            }
+
+            public void onRetry(int retryNo) {
+            }
+        };
+
+        client.addHeader("app_id", Globals.APP_ID);
+        client.addHeader("app_key", Globals.APP_KEY);
+        client.delete(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
+    }
+
+    /*
+     * Retrieves summary data on an uploaded image
+     */
     public static void analytics(Context context, String id, final KairosListener callback)
             throws JSONException, UnsupportedEncodingException {
         AsyncHttpClient client = new AsyncHttpClient();
@@ -87,7 +149,6 @@ public class KairosHelper {
 
         client.addHeader("app_id", Globals.APP_ID);
         client.addHeader("app_key", Globals.APP_KEY);
-        Log.d("jeff", "getting");
         client.get(context, "http://api.kairos.com/v2/analytics/" + id, responseHandler);
     }
 
