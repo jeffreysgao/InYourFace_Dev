@@ -39,13 +39,13 @@ public class AnalyzeService extends Service {
 
                 if (response.getAsJsonObject().get("frames") != null
                         && response.getAsJsonObject().get("frames").getAsJsonArray() != null
-                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0) != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().size() > 0
                         && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
                         .get("people") != null
                         && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
                         .get("people").getAsJsonArray() != null
                         && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
-                        .get("people").getAsJsonArray().get(0) != null) {
+                        .get("people").getAsJsonArray().size() > 0) {
 
                     // Create emotions object from returned JSON data
                     JsonObject emotions = response.getAsJsonObject()
@@ -73,6 +73,11 @@ public class AnalyzeService extends Service {
                         Log.d("EMOTIONS", displayString);
                         Toast.makeText(getApplicationContext(), displayString, Toast.LENGTH_LONG).show();
 
+                        if (response.get("id") != null) {
+                            // Delete the uploaded photo
+                            deleteMedia(response.get("id").getAsString());
+                        }
+
                         try {
                             FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
                             OutputStreamWriter writer = new OutputStreamWriter(fos);
@@ -85,7 +90,9 @@ public class AnalyzeService extends Service {
                             i.printStackTrace();
                         }
                     }
-                } else {
+                } else if (response.get("id") != null) {
+                    Log.d("KAIROS MEDIA", "information not returned");
+                    getMedia(response.get("id").getAsString());
                     // If response only contains success message
                 }
 
@@ -124,6 +131,16 @@ public class AnalyzeService extends Service {
     private void getMedia(String id) {
         try {
             KairosHelper.getMedia(getApplicationContext(), id, kairosListener);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void deleteMedia(String id) {
+        try {
+            KairosHelper.deleteMedia(getApplicationContext(), id, kairosListener);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

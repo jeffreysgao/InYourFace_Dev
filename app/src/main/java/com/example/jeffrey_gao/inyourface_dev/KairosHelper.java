@@ -98,7 +98,8 @@ public class KairosHelper {
     /*
      * Deletes uploaded image once analysis is complete
      */
-    public static void deleteMedia(Context context, String id, final KairosListener callback) {
+    public static void deleteMedia(Context context, String id, final KairosListener callback)
+            throws JSONException, UnsupportedEncodingException{
         AsyncHttpClient client = new AsyncHttpClient();
         AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
             public void onStart() {
