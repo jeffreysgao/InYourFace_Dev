@@ -88,7 +88,8 @@ public class EmotionsFragment extends Fragment
 
         try {
             //read from the csv file
-            FileInputStream fis = context.openFileInput("emotions.csv");
+            //FileInputStream fis = context.openFileInput("emotions.csv");
+            FileInputStream fis = context.openFileInput("emotionz.csv");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader reader = new BufferedReader(isr);
 
@@ -102,7 +103,7 @@ public class EmotionsFragment extends Fragment
             try {
                 while ((line = reader.readLine()) != null) {
                     String[] broken = line.split(",");
-                    Entry entry = new Entry(Float.parseFloat(broken[2]), instances);
+                    Entry entry = new Entry(Float.parseFloat(broken[3]), instances);
                     values.add(entry);
 
 
@@ -151,7 +152,8 @@ public class EmotionsFragment extends Fragment
 
         try {
             //read from the csv file
-            FileInputStream fis = context.openFileInput("emotions.csv");
+            //FileInputStream fis = context.openFileInput("emotions.csv");
+            FileInputStream fis = context.openFileInput("emotionz.csv");
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader reader = new BufferedReader(isr);
 
@@ -160,6 +162,7 @@ public class EmotionsFragment extends Fragment
             String line;
             float angerAvg = 0;
             float fearAvg = 0;
+            float disgustAvg = 0;
             float joyAvg = 0;
             float sadnessAvg = 0;
             float surpriseAvg = 0;
@@ -171,9 +174,10 @@ public class EmotionsFragment extends Fragment
                     String[] broken = line.split(",");
                     angerAvg += Float.parseFloat(broken[0]);
                     fearAvg += Float.parseFloat(broken[1]);
-                    joyAvg += Float.parseFloat(broken[2]);
-                    sadnessAvg += Float.parseFloat(broken[3]);
-                    surpriseAvg += Float.parseFloat(broken[4]);
+                    disgustAvg += Float.parseFloat(broken[2]);
+                    joyAvg += Float.parseFloat(broken[3]);
+                    sadnessAvg += Float.parseFloat(broken[4]);
+                    surpriseAvg += Float.parseFloat(broken[5]);
 
                     instances ++;
 
@@ -185,6 +189,7 @@ public class EmotionsFragment extends Fragment
             if (instances != 0) {
                 angerAvg = angerAvg/ (float) instances;
                 fearAvg = fearAvg/ (float) instances;
+                disgustAvg = disgustAvg/ (float) instances;
                 joyAvg = joyAvg/ (float) instances;
                 sadnessAvg = sadnessAvg/ (float) instances;
                 surpriseAvg = surpriseAvg/ (float) instances;
@@ -192,9 +197,10 @@ public class EmotionsFragment extends Fragment
 
             values.add(new Entry(angerAvg, 0));
             values.add(new Entry(fearAvg, 1));
-            values.add(new Entry(joyAvg, 2));
-            values.add(new Entry(sadnessAvg, 3));
-            values.add(new Entry(surpriseAvg, 4));
+            values.add(new Entry(disgustAvg, 2));
+            values.add(new Entry(joyAvg, 3));
+            values.add(new Entry(sadnessAvg, 4));
+            values.add(new Entry(surpriseAvg, 5));
 
             //close readers
             try {
@@ -220,6 +226,7 @@ public class EmotionsFragment extends Fragment
 
         labels.add("Anger");
         labels.add("Fear");
+        labels.add("Disgust");
         labels.add("Joy");
         labels.add("Sadness");
         labels.add("Surprise");
