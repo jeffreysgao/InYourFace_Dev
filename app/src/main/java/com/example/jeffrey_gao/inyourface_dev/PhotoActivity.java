@@ -57,7 +57,7 @@ public class PhotoActivity extends AppCompatActivity {
                 mImageView.setImageURI(imgUriAfterCropped);
         }
         else {
-            loadPicture();      // load the picture saved from the taken picture
+            loadPicture();
         }
     }
 
@@ -66,7 +66,6 @@ public class PhotoActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        // save the new image
         outState.putParcelable(SAVED_URI, imgUriAfterCropped);
     }
 
@@ -140,7 +139,7 @@ public class PhotoActivity extends AppCompatActivity {
     private void loadPicture()
     {
         try
-        {   // open the the file where the photo is stored
+        {
             FileInputStream fis = openFileInput(getString(R.string.photo_name));
             Bitmap bmap = BitmapFactory.decodeStream(fis);
 
@@ -159,7 +158,6 @@ public class PhotoActivity extends AppCompatActivity {
      */
     private void savePicture()
     {
-        // build and save into the pictures
         mImageView.buildDrawingCache();
         Bitmap bmap = mImageView.getDrawingCache();
 

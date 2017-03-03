@@ -1,16 +1,18 @@
 <resources>
     <string name="app_name">InYourFace</string>
 
-    <string name="photo_preference">Photo Settings</string>
-    <string name="photo_setting_title">Enroll User Photo</string>
+    <string name="photo_preference">User Profile</string>
+    <string name="photo_setting_title">Enroll User</string>
     <string name="photo_setting_summary">Enroll a photo of the user</string>
-    <string name="authentication_preference">Security Settings</string>
-    <string name="authentication_title">Automatic Photo Authentication</string>
+    <string name="authentication_preference">Security</string>
+    <string name="authentication_title">Photo Authentication</string>
     <string name="authentication_summary">Toggle active photo authentication</string>
+    <string name="lock_title">Phone Lock</string>
+    <string name="lock_summary">Lock your phone on failed authentication</string>
 
     <string name="demo_preference">Demo</string>
-    <string name="demo_setting_title">Authentication Demo</string>
-    <string name="demo_setting_summary">Demo the security feature</string>
+    <string name="demo_setting_title">Kairos Demo</string>
+    <string name="demo_setting_summary">Demo the facial analysis features</string>
 
     <string name="misc_pref">Misc.</string>
     <string name="webpage_title">Webpage</string>

@@ -60,10 +60,10 @@ public class KairosHelper {
             e.printStackTrace();
         }
 
-        client.addHeader("app_id", Globals.APP_ID);
-        client.addHeader("app_key", Globals.APP_KEY);
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
         Log.d("jeff", "posting");
-        client.post(context, "http://api.kairos.com/v2/postMedia", requestParams, responseHandler);
+        client.post(context, "http://api.kairos.com/v2/media", requestParams, responseHandler);
     }
 
     /*
@@ -90,8 +90,8 @@ public class KairosHelper {
             }
         };
 
-        client.addHeader("app_id", Globals.APP_ID);
-        client.addHeader("app_key", Globals.APP_KEY);
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
         client.get(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
     }
 
@@ -118,8 +118,8 @@ public class KairosHelper {
             }
         };
 
-        client.addHeader("app_id", Globals.APP_ID);
-        client.addHeader("app_key", Globals.APP_KEY);
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
         client.delete(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
     }
 
@@ -147,8 +147,8 @@ public class KairosHelper {
             }
         };
 
-        client.addHeader("app_id", Globals.APP_ID);
-        client.addHeader("app_key", Globals.APP_KEY);
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
         client.get(context, "http://api.kairos.com/v2/analytics/" + id, responseHandler);
     }
 

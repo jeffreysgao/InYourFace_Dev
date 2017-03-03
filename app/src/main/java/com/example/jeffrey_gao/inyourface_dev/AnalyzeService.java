@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -12,6 +13,7 @@ import com.google.gson.JsonParser;
 import com.kairos.KairosListener;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,54 +37,57 @@ public class AnalyzeService extends Service {
                 Log.d("KAIROS MEDIA", s);
                 JsonObject response = new JsonParser().parse(s).getAsJsonObject();
 
-                JsonElement frames = response.getAsJsonObject().get("frames");
+                if (response.getAsJsonObject().get("frames") != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray() != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0) != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
+                        .get("people") != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
+                        .get("people").getAsJsonArray() != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
+                        .get("people").getAsJsonArray().get(0) != null) {
 
-                if (frames != null) {
-                    JsonArray framesAsJsonArray = frames.getAsJsonArray();
+                    // Create emotions object from returned JSON data
+                    JsonObject emotions = response.getAsJsonObject()
+                            .get("frames").getAsJsonArray().get(0).getAsJsonObject()
+                            .get("people").getAsJsonArray().get(0).getAsJsonObject()
+                            .get("emotions").getAsJsonObject();
+
+                    if (emotions != null) {
+                        JsonElement anger = emotions.get("anger");
+                        JsonElement fear = emotions.get("fear");
+                        JsonElement joy = emotions.get("joy");
+                        JsonElement sadness = emotions.get("sadness");
+                        JsonElement surprise = emotions.get("surprise");
 
 
-                    if (framesAsJsonArray != null) {
-                        JsonObject element = framesAsJsonArray.get(0).getAsJsonObject();
+                        String displayString = "ANGER: " + anger.toString() +
+                                " FEAR: " + fear.toString() +
+                                " JOY: " + joy.toString() +
+                                " SADNESS: " + sadness.toString() +
+                                " SURPRISE: " + surprise.toString();
 
-                        if (element != null) {
-                            JsonArray people = element.get("people").getAsJsonArray();
-                            if (people != null) {
-                                JsonObject peopleAsObject = people.get(0).getAsJsonObject();
+                        String emotString = anger.toString() + "," + fear.toString() + "," + joy.toString()
+                                + "," + sadness.toString() + "," + surprise.toString() + "\n";
 
-                                if (peopleAsObject != null) {
-                                    JsonObject emotions = peopleAsObject.get("emotions").getAsJsonObject();
+                        Log.d("EMOTIONS", displayString);
+                        Toast.makeText(getApplicationContext(), displayString, Toast.LENGTH_LONG).show();
 
-                                    if (emotions != null) {
-                                        JsonElement anger = emotions.get("anger");
-                                        JsonElement fear = emotions.get("fear");
-                                        JsonElement joy = emotions.get("joy");
-                                        JsonElement sadness = emotions.get("sadness");
-                                        JsonElement surprise = emotions.get("surprise");
+                        try {
+                            FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
+                            OutputStreamWriter writer = new OutputStreamWriter(fos);
+                            writer.append(emotString);
+                            writer.flush();
+                            writer.close();
+                            EmotionsFragment.refresh();
 
-                                        Log.d("JOY LEVEL", joy.toString());
-
-                                        String string = anger.toString() + "," + fear.toString() + "," + joy.toString()
-                                                + "," + sadness.toString() + "," + surprise.toString() + "\n";
-
-                                        try {
-                                            FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
-                                            OutputStreamWriter writer = new OutputStreamWriter(fos);
-                                            writer.append(string);
-                                            writer.flush();
-                                            writer.close();
-                                            EmotionsFragment.refresh();
-
-                                        } catch (IOException i) {
-                                            i.printStackTrace();
-                                        }
-
-                                    }
-                                }
-                            }
+                        } catch (IOException i) {
+                            i.printStackTrace();
                         }
                     }
+                } else {
+                    // If response only contains success message
                 }
-
 
                 stopSelf();
             }
@@ -101,14 +106,24 @@ public class AnalyzeService extends Service {
         Log.d("jeff", "service started");
 
         String faceImage = intent.getStringExtra(FACE_IMAGE);
-        media(faceImage);
+        postMedia(faceImage);
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void media(String faceImage) {
+    private void postMedia(String faceImage) {
         try {
-            KairosHelper.postMedia(getApplication().getApplicationContext(), faceImage, kairosListener);
+            KairosHelper.postMedia(getApplicationContext(), faceImage, kairosListener);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void getMedia(String id) {
+        try {
+            KairosHelper.getMedia(getApplicationContext(), id, kairosListener);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

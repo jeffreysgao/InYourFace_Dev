@@ -1,7 +1,5 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.*;
 
 import android.Manifest;
@@ -10,15 +8,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.design.widget.TabLayout;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 
 
 public class MainActivity extends AppCompatActivity
@@ -43,7 +38,7 @@ public class MainActivity extends AppCompatActivity
 
         // create the array of fragments
         fragmentArray = new ArrayList<Fragment>();
-        fragmentArray.add(new SettingFragment());
+        fragmentArray.add(new SettingsFragment());
         fragmentArray.add(new AuthenticationFragment());
         fragmentArray.add(new EmotionsFragment());
 

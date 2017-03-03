@@ -88,10 +88,4 @@ public class DemoActivity extends Activity implements Button.OnClickListener{
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
 }

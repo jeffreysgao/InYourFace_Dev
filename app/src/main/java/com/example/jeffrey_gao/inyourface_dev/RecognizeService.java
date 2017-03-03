@@ -4,9 +4,11 @@ import android.app.Service;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -76,11 +78,13 @@ public class RecognizeService extends Service {
                             Log.d("KAIROS RECOGNIZE", "success");
 
                         } else if (status != null && status.getAsString().equals("failure")) {
-                            Toast.makeText(getApplicationContext(), "ERROR invalid user identified",
+                            Toast.makeText(getApplicationContext(), "Invalid user identified!",
                                     Toast.LENGTH_LONG).show();
                             Log.d("KAIROS RECOGNIZE", "failure");
-                            // TODO: CODE TO LOCK THE PHONE GOES HERE
-                            if (MainActivity.dpm.isAdminActive(MainActivity.compName)) {
+                            SharedPreferences settings = PreferenceManager
+                                    .getDefaultSharedPreferences(getApplicationContext());
+                            if (settings.getBoolean("lock_preference", false)
+                                    && MainActivity.dpm.isAdminActive(MainActivity.compName)) {
                                 MainActivity.dpm.lockNow();
                             }
                         }
@@ -114,8 +118,7 @@ public class RecognizeService extends Service {
             Bitmap image = BitmapFactory.decodeStream(fis);
             String selector = "FULL";
             String threshold = "0.75";
-            // TODO: figure out the best size for the head scale
-            String minHeadScale = Globals.MIN_HEAD_SCALE;
+            String minHeadScale = null;
             String maxNumResults = "25";
             myKairos.recognize(image,
                     GALLERY_ID,

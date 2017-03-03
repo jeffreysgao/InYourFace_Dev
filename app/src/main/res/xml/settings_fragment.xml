@@ -12,17 +12,23 @@
             <intent android:action="android.intent.action.PhotoActivity"/>
         </PreferenceScreen>
 
-
     </PreferenceCategory>
 
     <PreferenceCategory
         android:title="@string/authentication_preference">
 
     <SwitchPreference
-        android:key="authen_switch"
+        android:key="auth_preference"
         android:title="@string/authentication_title"
-        android:defaultValue="true"
+        android:defaultValue="false"
         android:summary="@string/authentication_summary"/>
+
+    <CheckBoxPreference
+        android:key="lock_preference"
+        android:title="@string/lock_title"
+        android:defaultValue="false"
+        android:summary="@string/lock_summary"
+        android:dependency="auth_preference"/>
 
         <!--<ListPreference-->
             <!--android:key="list_preference"-->
@@ -44,7 +50,7 @@
         android:title="@string/demo_preference">
 
         <PreferenceScreen
-            android:key="demo_checkbox"
+            android:key="launch_demo"
             android:title="@string/demo_setting_title"
             android:summary="@string/demo_setting_summary">
 

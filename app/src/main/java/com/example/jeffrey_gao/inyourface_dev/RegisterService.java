@@ -45,20 +45,21 @@ public class RegisterService extends Service {
             public void onSuccess(String s) {
                 Log.d("KAIROS ENROLL", s);
                 JsonObject response = new JsonParser().parse(s).getAsJsonObject();
+
                 if (response.get("gallery_ids") != null) {
-                    JsonArray galleries = response.get("gallery_ids").getAsJsonArray();
-                    Iterator<JsonElement> elements = galleries.iterator();
+                    // Lists all the galleries so we can delete them
+                    Iterator<JsonElement> elements = response.get("gallery_ids").getAsJsonArray().iterator();
                     while(elements.hasNext()) {
                         JsonElement gallery = elements.next();
                         deleteGallery(gallery.getAsString());
                     }
-                } else if (response.get("images") != null) {
-                    JsonArray images = response.get("images").getAsJsonArray();
-                    JsonObject transaction = images
-                        .get(0)
-                        .getAsJsonObject()
-                        .get("transaction")
-                        .getAsJsonObject();
+                } else if (response.get("images") != null
+                        && response.get("images").getAsJsonArray() != null
+                        && response.get("images").getAsJsonArray().get(0) != null) {
+                    // Check whether registration was successful
+                    JsonObject transaction = response.get("images").getAsJsonArray().get(0).getAsJsonObject()
+                        .get("transaction").getAsJsonObject();
+
                     if (transaction != null) {
                         JsonElement status = transaction.get("status");
                         if (status != null && status.getAsString().equals("success")) {
@@ -120,7 +121,7 @@ public class RegisterService extends Service {
                     galleryId,
                     selector,
                     multipleFaces,
-                    Globals.MIN_HEAD_SCALE,
+                    null,
                     kairosListener);
             fis.close();
         } catch (IOException e) {
