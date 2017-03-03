@@ -94,6 +94,12 @@ public class AnalyzeService extends Service {
                             i.printStackTrace();
                         }
                     }
+                } else if (response.get("status_message") != null) {
+                    Log.d("KAIROS MEDIA", "status message: " + response.get("status_message").getAsString());
+                    if (response.get("status_message").getAsString().equals("Analyzing")
+                            && response.get("id") != null) {
+                        getMedia(response.get("id").getAsString());
+                    }
                 } else if (response.get("id") != null) {
                     Log.d("KAIROS MEDIA", "information not returned");
                     getMedia(response.get("id").getAsString());
