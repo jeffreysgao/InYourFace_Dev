@@ -18,7 +18,9 @@ import com.kairos.KairosListener;
 import org.json.JSONException;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * Created by jeffreygao on 3/2/17.
@@ -38,45 +40,58 @@ public class AnalyzeService extends Service {
             @Override
             public void onSuccess(String s) {
                 Log.d("KAIROS MEDIA", s);
-//                JsonObject response = new JsonParser().parse(s).getAsJsonObject();
-//                JsonElement element = response.getAsJsonObject().get("images");
-//                JsonArray images = null;
 //
-//                if (element != null) {
-//                    images = element.getAsJsonArray();
-//                } else {
-//
-//                    Toast.makeText(getApplicationContext(), "No faces identified",
-//                            Toast.LENGTH_LONG).show();
-//                    Log.d("KAIROS MEDIA", "no faces");
-//                }
-//
-//                if (images != null && images.size() > 0) {
-//                    JsonObject transaction = images
-//                            .get(0)
-//                            .getAsJsonObject()
-//                            .get("transaction")
-//                            .getAsJsonObject();
-//
-//                    if (transaction != null) {
-//                        JsonElement status = transaction.get("status");
-//
-//                        if (status != null && status.getAsString().equals("success")) {
-//                            Toast.makeText(getApplicationContext(), "Valid user identified",
-//                                    Toast.LENGTH_LONG).show();
-//                            Log.d("KAIROS RECOGNIZE", "success");
-//
-//                        } else if (status != null && status.getAsString().equals("failure")) {
-//                            Toast.makeText(getApplicationContext(), "ERROR invalid user identified",
-//                                    Toast.LENGTH_LONG).show();
-//                            Log.d("KAIROS RECOGNIZE", "failure");
-//                            // TODO: CODE TO LOCK THE PHONE GOES HERE
-//                            if (MainActivity.dpm.isAdminActive(MainActivity.compName)) {
-//                                MainActivity.dpm.lockNow();
-//                            }
-//                        }
-//                    }
-//                }
+                JsonObject response = new JsonParser().parse(s).getAsJsonObject();
+
+                JsonElement frames = response.getAsJsonObject().get("frames");
+
+                if (frames != null) {
+                    JsonArray framesAsJsonArray = frames.getAsJsonArray();
+
+
+                    if (framesAsJsonArray != null) {
+                        JsonObject element = framesAsJsonArray.get(0).getAsJsonObject();
+
+                        if (element != null) {
+                            JsonArray people = element.get("people").getAsJsonArray();
+                            if (people != null) {
+                                JsonObject peopleAsObject = people.get(0).getAsJsonObject();
+
+                                if (peopleAsObject != null) {
+                                    JsonObject emotions = peopleAsObject.get("emotions").getAsJsonObject();
+
+                                    if (emotions != null) {
+                                        JsonElement anger = emotions.get("anger");
+                                        JsonElement fear = emotions.get("fear");
+                                        JsonElement joy = emotions.get("joy");
+                                        JsonElement sadness = emotions.get("sadness");
+                                        JsonElement surprise = emotions.get("surprise");
+
+                                        String string = anger.toString() + "," + fear.toString() + "," + joy.toString()
+                                                + "," + sadness.toString() + "," + surprise.toString();
+
+                                        try {
+                                            FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
+                                            OutputStreamWriter writer = new OutputStreamWriter(fos);
+                                            writer.write(string);
+                                            writer.flush();
+                                            writer.close();
+                                        } catch (IOException i) {
+                                            i.printStackTrace();
+                                        }
+
+                                    }
+                                }
+                            }
+                        }
+
+
+
+
+                    }
+                }
+
+
                 stopSelf();
             }
 

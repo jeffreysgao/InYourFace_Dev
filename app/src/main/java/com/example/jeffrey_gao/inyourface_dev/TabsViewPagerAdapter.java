@@ -19,8 +19,8 @@ public class TabsViewPagerAdapter extends FragmentPagerAdapter
     public static final int AUTHEN_INDEX = 1;
     public static final int EMOTIONS_INDEX = 2;
     public static final String SETTING_TITLE = "SETTINGS";
-    public static final String AUTHEN_TITLE = "[PLACEHOLDER]";
-    public static final String EMOTIONS_TITLE = "[PLACEHOLDER]";
+    public static final String AUTHEN_TITLE = "ATTENTION";
+    public static final String EMOTIONS_TITLE = "EMOTIONS";
 
     public TabsViewPagerAdapter(FragmentManager fragManager, ArrayList<Fragment> fragments)
     {
