@@ -78,6 +78,8 @@ public class AnalyzeService extends Service {
                                             writer.append(string);
                                             writer.flush();
                                             writer.close();
+                                            EmotionsFragment.refresh();
+
                                         } catch (IOException i) {
                                             i.printStackTrace();
                                         }
