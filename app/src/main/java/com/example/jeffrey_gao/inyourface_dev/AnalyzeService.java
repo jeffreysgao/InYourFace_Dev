@@ -56,6 +56,7 @@ public class AnalyzeService extends Service {
                     if (emotions != null) {
                         JsonElement anger = emotions.get("anger");
                         JsonElement fear = emotions.get("fear");
+                        JsonElement disgust = emotions.get("disgust");
                         JsonElement joy = emotions.get("joy");
                         JsonElement sadness = emotions.get("sadness");
                         JsonElement surprise = emotions.get("surprise");
@@ -63,12 +64,14 @@ public class AnalyzeService extends Service {
 
                         String displayString = "ANGER: " + anger.toString() +
                                 " FEAR: " + fear.toString() +
+                                "DISGUST: " + disgust.toString() +
                                 " JOY: " + joy.toString() +
                                 " SADNESS: " + sadness.toString() +
                                 " SURPRISE: " + surprise.toString();
 
-                        String emotString = anger.toString() + "," + fear.toString() + "," + joy.toString()
-                                + "," + sadness.toString() + "," + surprise.toString() + "\n";
+                        String emotString = anger.toString() + "," + fear.toString() + ","
+                                + disgust.toString() + "," + joy.toString() + ","
+                                + sadness.toString() + "," + surprise.toString() + "\n";
 
                         Log.d("EMOTIONS", displayString);
                         Toast.makeText(getApplicationContext(), displayString, Toast.LENGTH_LONG).show();
@@ -79,7 +82,8 @@ public class AnalyzeService extends Service {
                         }
 
                         try {
-                            FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
+                            //FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
+                            FileOutputStream fos = openFileOutput("emotionz.csv", MODE_APPEND);
                             OutputStreamWriter writer = new OutputStreamWriter(fos);
                             writer.append(emotString);
                             writer.flush();
