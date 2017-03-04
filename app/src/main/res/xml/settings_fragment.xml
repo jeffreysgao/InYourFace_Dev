@@ -47,6 +47,22 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+        android:title="@string/analysis_pref">
+
+        <SwitchPreference
+            android:key="emotions_pref"
+            android:title="@string/emotions_pref"
+            android:defaultValue="true"
+            android:summary="@string/emotions_pref_details"/>
+
+        <SwitchPreference
+            android:key="attention_pref"
+            android:title="@string/attention_pref"
+            android:defaultValue="true"
+            android:summary="@string/attention_pref_details"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
         android:title="@string/demo_preference">
 
         <PreferenceScreen

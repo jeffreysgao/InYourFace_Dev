@@ -39,6 +39,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             } else {
                 Log.d("PREFERENCES", "auto-lock deactivated");
             }
+        } else if (s.equals("emotions_pref")) {
+            if (sharedPreferences.getBoolean("emotions_pref", false)) {
+                Log.d("PREFERENCES", "emotion tracking activated");
+            } else {
+                Log.d("PREFERENCES", "emotion tracking deactivated");
+            }
+        } else if (s.equals("attention_pref")) {
+            if (sharedPreferences.getBoolean("attention_pref", false)) {
+                Log.d("PREFERENCES", "attention tracking activated");
+            } else {
+                Log.d("PREFERENCES", "attention tracking deactivated");
+            }
         }
     }
 
