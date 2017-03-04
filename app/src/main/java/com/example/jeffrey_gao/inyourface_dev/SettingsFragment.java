@@ -25,7 +25,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        // TODO: every time the user changes an aspect of how the feature runs, either send message to the background service or restart it with new options
+        // TODO: every time the user changes an aspect of how the feature runs,
+        // TODO: either send message to the background service or restart it with new options
         if (s.equals("auth_preference")) {
             if (sharedPreferences.getBoolean("auth_preference", false)) {
                 Log.d("PREFERENCES", "authentication activated");

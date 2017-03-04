@@ -29,8 +29,16 @@
     <string name="DeviceAdmin">Device Admin</string>
     <string name="b">b</string>
 
+    <string name="setting_page_title">Setting</string>
+    <string name="analysis_page_title">Analysis</string>
+    <string name="open">open navigation drawer</string>
+    <string name="close">close navigation drawer</string>
+
     <!--<string name=""></string>-->
     <!--<string name=""></string>-->
+    <!--<string name=""></string>-->
+    <!--<string name=""></string>-->
+
     <!--<string name=""></string>-->
     <!--<string name=""></string>-->
     <!--<string name=""></string>-->
