@@ -41,6 +41,7 @@
     <string name="attention_pref">Attention Tracking</string>
     <string name="attention_pref_details">Toggle to activate tracking level of attention</string>
 
+    <string name="analysis_app_prompt">Choose an app:</string>
     <!--<string name=""></string>-->
 
     <!--<string name=""></string>-->

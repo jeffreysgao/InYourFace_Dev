@@ -10,12 +10,12 @@ import android.view.ViewGroup;
  * Created by jinnan on 2/25/17.
  */
 
-public class AuthenticationFragment extends Fragment
+public class AttentionFragment extends Fragment
 {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.authentication_fragment, container, false);
+        return inflater.inflate(R.layout.attention_fragment, container, false);
     }
 }

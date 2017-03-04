@@ -1,7 +1,5 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
-import java.util.*;
-
 import android.Manifest;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
@@ -13,12 +11,9 @@ import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.design.widget.TabLayout;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -27,46 +22,11 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener
 {
-//    private TabLayout tabLayout;
-//    private ViewPager viewPager;
-//    private ArrayList<Fragment> fragmentArray;
-//    private TabsViewPagerAdapter viewPageAdapter;   // self-defined adapter
-//
-//    public static DevicePolicyManager dpm;
-//    public static ComponentName compName;
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState)
-//    {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        // create the instance of the tablayout from the main layout
-//        tabLayout = (TabLayout) findViewById(R.id.tab);         // defined in main xml
-//        viewPager = (ViewPager) findViewById(R.id.viewpager);   // defined in main xml
-//
-//        // create the array of fragments
-//        fragmentArray = new ArrayList<Fragment>();
-//        fragmentArray.add(new SettingsFragment());
-//        fragmentArray.add(new AuthenticationFragment());
-//        fragmentArray.add(new EmotionsFragment());
-//
-//        // bind the tab layout to the viewpager
-//        viewPageAdapter = new TabsViewPagerAdapter(getFragmentManager(), fragmentArray);
-//        viewPager.setAdapter(viewPageAdapter);
-//        tabLayout.setupWithViewPager(viewPager);
-//        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-//        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
-
     private static final long DRAWER_CLOSE_DELAY_MS = 350;
     private static final String NAV_ITEM_ID = "navItemId";
 
-//    private final GridViewFragment gridViewFragment = new GridViewFragment();
-//    private final ResultFragment resultFragment = new ResultFragment();
-
     private SettingsFragment settingsFragment = new SettingsFragment();
-    private AuthenticationFragment authenticationFragment = new AuthenticationFragment();
+//    private AttentionFragment attentionFragment = new AttentionFragment();
     private EmotionsFragment emotionsFragment = new EmotionsFragment();
     private final Handler drawerActionHandler = new Handler();
     private DrawerLayout drawerLayout;

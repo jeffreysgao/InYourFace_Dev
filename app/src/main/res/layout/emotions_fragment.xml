@@ -4,13 +4,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="@dimen/font_medium">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/analysis_app_prompt"
+            android:textSize="@dimen/font_small" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:entries="@array/app_list">
+        </Spinner>
+
+    </LinearLayout>
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:textSize="18dp"
-        android:text="Joy vs. Instances" />
+        android:textSize="@dimen/font_medium"
+        android:text="Joy vs. Instances"
+        android:paddingTop="@dimen/font_medium"/>
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
