@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 public class BackgroundService extends Service {
 
     private static final String TAG = "CAMERA";
+    private static boolean isRunning = false;
 
     Camera mCamera =  null;
     Camera.Parameters params;
@@ -41,6 +42,24 @@ public class BackgroundService extends Service {
     };
 
     public BackgroundService() {
+    }
+
+    public static boolean isRunning() {
+        return isRunning;
+    }
+
+    @Override
+    public void onCreate() {
+        isRunning = true;
+
+        super.onCreate();
+    }
+
+    @Override
+    public void onDestroy() {
+        isRunning = false;
+
+        super.onDestroy();
     }
 
     @Override
@@ -94,4 +113,12 @@ public class BackgroundService extends Service {
         return super.onStartCommand(intent, flags, startId);
 
     }
+
+    //TODO: alarm manager for calling the service over time
+
+    //TODO: get the activity running in the foreground
+
+    //TODO: pass the photo to RecognizeService
+
+    //TODO: pass the photo to AnalyzeService
 }

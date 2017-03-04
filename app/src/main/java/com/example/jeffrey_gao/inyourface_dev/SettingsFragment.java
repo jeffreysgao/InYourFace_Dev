@@ -1,10 +1,13 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.widget.ListView;
 
 /**
  * Created by jinnan on 2/25/17.
@@ -18,6 +21,21 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings_fragment);
+
+        Preference startButton = findPreference("start_button");
+        startButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity().getApplicationContext(), BackgroundService.class);
+
+                if (!BackgroundService.isRunning())
+                    getActivity().startService(intent);
+
+                //TODO: Bind to the service so we can send messages to it
+
+                return false;
+            }
+        });
     }
 
     /*

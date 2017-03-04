@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <Preference android:title="Start Running!"
+        android:key="start_button"
+        android:summary="Initiate the background service"/>
+
     <PreferenceCategory
         android:title="@string/photo_preference">
 
@@ -11,6 +15,20 @@
 
             <intent android:action="android.intent.action.PhotoActivity"/>
         </PreferenceScreen>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Customize">
+
+        <ListPreference
+            android:key="interval_preference"
+            android:title="Interval Preference"
+            android:summary="Select time between snapshots"
+            android:entries="@array/entries_intervals"
+            android:entryValues="@array/entries_intervals"
+            android:defaultValue="10 sec"
+            android:dialogTitle="Interval Preference"/>
 
     </PreferenceCategory>
 
