@@ -29,8 +29,20 @@
     <string name="DeviceAdmin">Device Admin</string>
     <string name="b">b</string>
 
+    <string name="setting_page_title">Setting</string>
+    <string name="analysis_page_title">Analysis</string>
+    <string name="open">open navigation drawer</string>
+    <string name="close">close navigation drawer</string>
+
+    <string name="analysis_pref">Analysis</string>
+    <string name="emotions_pref">Emotions Tracking</string>
+    <string name="emotions_pref_details">Toggle to activate your emotions level analysis</string>
+
+    <string name="attention_pref">Attention Tracking</string>
+    <string name="attention_pref_details">Toggle to activate tracking level of attention</string>
+
     <!--<string name=""></string>-->
-    <!--<string name=""></string>-->
+
     <!--<string name=""></string>-->
     <!--<string name=""></string>-->
     <!--<string name=""></string>-->

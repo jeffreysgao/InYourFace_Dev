@@ -25,7 +25,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        // TODO: every time the user changes an aspect of how the feature runs, either send message to the background service or restart it with new options
+        // TODO: every time the user changes an aspect of how the feature runs,
+        // TODO: either send message to the background service or restart it with new options
         if (s.equals("auth_preference")) {
             if (sharedPreferences.getBoolean("auth_preference", false)) {
                 Log.d("PREFERENCES", "authentication activated");
@@ -37,6 +38,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 Log.d("PREFERENCES", "auto-lock activated");
             } else {
                 Log.d("PREFERENCES", "auto-lock deactivated");
+            }
+        } else if (s.equals("emotions_pref")) {
+            if (sharedPreferences.getBoolean("emotions_pref", false)) {
+                Log.d("PREFERENCES", "emotion tracking activated");
+            } else {
+                Log.d("PREFERENCES", "emotion tracking deactivated");
+            }
+        } else if (s.equals("attention_pref")) {
+            if (sharedPreferences.getBoolean("attention_pref", false)) {
+                Log.d("PREFERENCES", "attention tracking activated");
+            } else {
+                Log.d("PREFERENCES", "attention tracking deactivated");
             }
         }
     }
