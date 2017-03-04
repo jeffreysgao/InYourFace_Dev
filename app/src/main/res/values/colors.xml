@@ -4,6 +4,9 @@
     <color name="colorPrimaryDark">#6600ff</color>
     <color name="colorAccent">#6666ff</color>
     <color name="colorBackground">#b3f0ff</color>
-    <color name="drawer_item_text_default">#bebebe</color>
-    <color name="drawer_item_text_checked">@color/colorPrimary</color>
+
+    <color name="dark">#3333cc</color>
+    <color name="light">#8080ff</color>
+    <color name="drawer_item_text_default">@color/light</color>
+    <color name="drawer_item_text_checked">@color/dark</color>
 </resources>
