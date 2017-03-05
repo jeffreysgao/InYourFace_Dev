@@ -5,6 +5,10 @@
         android:key="start_button"
         android:summary="Initiate the background service"/>
 
+    <Preference android:title="Stop Running"
+        android:key="stop_button"
+        android:summary="Stop the background service"/>
+
     <PreferenceCategory
         android:title="@string/photo_preference">
 

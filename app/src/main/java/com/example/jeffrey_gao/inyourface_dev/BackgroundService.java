@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Camera;
+import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -16,6 +18,10 @@ public class BackgroundService extends Service {
 
     private static final String TAG = "CAMERA";
     private static boolean isRunning = false;
+    private MyBinder myBinder;
+    private Handler handler;
+    private boolean isBind = false;
+    //private boolean shouldContinueThread = false;
 
     ActivityManager am;
 
@@ -56,7 +62,13 @@ public class BackgroundService extends Service {
 
     @Override
     public void onCreate() {
+
+        Log.d("SERVICE CREATED", "SERVICE CREATED");
         isRunning = true;
+
+        handler = null;
+
+        myBinder = new MyBinder();
 
         am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
 
@@ -66,18 +78,36 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         isRunning = false;
+        //shouldContinueThread = false;
 
+        Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
         super.onDestroy();
+    }
+
+    public class MyBinder extends Binder {
+
+        public void setMessageHandler(Handler messageHandler) {handler = messageHandler;}
+
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-        return null;
+        isBind = true;
+        return myBinder;
+    }
+
+    @Override
+    public boolean onUnbind (Intent intent) {
+        handler = null;
+        isBind = false;
+        return true;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+
 
         try {
             mCamera = Camera.open();
@@ -118,7 +148,8 @@ public class BackgroundService extends Service {
             e.printStackTrace();
         }
 
-        startThread();
+        //shouldContinueThread = true;
+        //startThread();
 
         return super.onStartCommand(intent, flags, startId);
 
@@ -139,7 +170,8 @@ public class BackgroundService extends Service {
 
     }
 
-    //checks foreground app every five seconds, this is just here to test the package get method
+    /*
+    //checks foreground app every five seconds, this is just here to test the package get method, kill this once you get AlarmManagerr
     public void startThread() {
         new Thread() {
 
@@ -147,13 +179,15 @@ public class BackgroundService extends Service {
                 new Timer().scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        getForegroundActivityPackage();
+                        if (shouldContinueThread) {
+                            getForegroundActivityPackage();
+                        }
                     }
                 }, 0, 5000);
             }
 
         }.run();
-    }
+    }*/
 
     //TODO: pass the photo to RecognizeService
 
