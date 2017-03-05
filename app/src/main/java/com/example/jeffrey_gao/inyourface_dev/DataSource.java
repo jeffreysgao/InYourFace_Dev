@@ -15,14 +15,14 @@ import java.util.ArrayList;
  */
 
 //the middle layer which handles the insertions of the ExerciseEntries into the database
-public class EmotionDataSource {
+public class DataSource {
     private SQLiteDatabase database;
     private SQLiteOpenHelper mySQLiteOpenHelper;
     private Context context;
 
 
     //constructor, which just creates a SQLiteOpenHelper
-    public EmotionDataSource(Context context) {
+    public DataSource(Context context) {
         this.context = context;
         mySQLiteOpenHelper = new MySQLiteOpenHelper(context);
 
@@ -42,15 +42,16 @@ public class EmotionDataSource {
 
 
     //inserts a point of emotion data into the database
-    public long insertDataPoint(EmotionDataPoint emotionDataPoint) {
+    public long insertDataPoint(DataPoint dataPoint) {
         ContentValues values  = new ContentValues();
-        values.put(MySQLiteOpenHelper.COLUMN_ACTIVITY, emotionDataPoint.getActivity());
-        values.put(MySQLiteOpenHelper.COLUMN_ANGER, emotionDataPoint.getAnger());
-        values.put(MySQLiteOpenHelper.COLUMN_FEAR, emotionDataPoint.getFear());
-        values.put(MySQLiteOpenHelper.COLUMN_DISGUST, emotionDataPoint.getDisgust());
-        values.put(MySQLiteOpenHelper.COLUMN_JOY, emotionDataPoint.getJoy());
-        values.put(MySQLiteOpenHelper.COLUMN_SADNESS, emotionDataPoint.getSadness());
-        values.put(MySQLiteOpenHelper.COLUMN_SURPRISE, emotionDataPoint.getSurprise());
+        values.put(MySQLiteOpenHelper.COLUMN_ACTIVITY, dataPoint.getActivity());
+        values.put(MySQLiteOpenHelper.COLUMN_ANGER, dataPoint.getAnger());
+        values.put(MySQLiteOpenHelper.COLUMN_FEAR, dataPoint.getFear());
+        values.put(MySQLiteOpenHelper.COLUMN_DISGUST, dataPoint.getDisgust());
+        values.put(MySQLiteOpenHelper.COLUMN_JOY, dataPoint.getJoy());
+        values.put(MySQLiteOpenHelper.COLUMN_SADNESS, dataPoint.getSadness());
+        values.put(MySQLiteOpenHelper.COLUMN_SURPRISE, dataPoint.getSurprise());
+        values.put(MySQLiteOpenHelper.COLUMN_ATTENTION, dataPoint.getAttention());
 
 
         long id = database.insert(MySQLiteOpenHelper.TABLE_NAME, null, values);
@@ -65,17 +66,17 @@ public class EmotionDataSource {
 
 
     //this returns a data point from a row in the table given the row ID
-    public EmotionDataPoint getEntry(long id) {
+    public DataPoint getEntry(long id) {
         Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_NAME, MySQLiteOpenHelper.ALL_COLUMNS,
                 MySQLiteOpenHelper.COLUMN_ID + " = " + id, null, null, null, null);
 
         cursor.moveToFirst();
 
-        EmotionDataPoint emotionDataPoint = cursorToDataPoint(cursor);
+        DataPoint dataPoint = cursorToDataPoint(cursor);
 
         cursor.close();
 
-        return emotionDataPoint;
+        return dataPoint;
     }
 
     //this deletes the row of a table given its row ID
@@ -91,8 +92,8 @@ public class EmotionDataSource {
         database.delete(MySQLiteOpenHelper.TABLE_NAME, null, null);
     }*/
 
-    public ArrayList<EmotionDataPoint> getSelectedActivityDataPoints(String packageName) {
-        ArrayList<EmotionDataPoint> list = new ArrayList<EmotionDataPoint>();
+    public ArrayList<DataPoint> getSelectedActivityDataPoints(String packageName) {
+        ArrayList<DataPoint> list = new ArrayList<DataPoint>();
 
         Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_NAME, MySQLiteOpenHelper.ALL_COLUMNS,
                 MySQLiteOpenHelper.COLUMN_ACTIVITY + " = " + packageName, null, null, null, null);
@@ -109,8 +110,8 @@ public class EmotionDataSource {
         return list;
     }
 
-    public ArrayList<EmotionDataPoint> getAllDataPoints() {
-        ArrayList<EmotionDataPoint> list = new ArrayList<EmotionDataPoint>();
+    public ArrayList<DataPoint> getAllDataPoints() {
+        ArrayList<DataPoint> list = new ArrayList<DataPoint>();
 
         Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_NAME, MySQLiteOpenHelper.ALL_COLUMNS,
                 null, null, null, null, null);
@@ -128,22 +129,23 @@ public class EmotionDataSource {
     }
 
 
-    private EmotionDataPoint cursorToDataPoint(Cursor cursor) {
+    private DataPoint cursorToDataPoint(Cursor cursor) {
 
-        EmotionDataPoint emotionDataPoint = new EmotionDataPoint(context);
+        DataPoint dataPoint = new DataPoint(context);
 
-        emotionDataPoint.setId(cursor.getLong(0));
-        emotionDataPoint.setActivity(cursor.getString(1));
-        emotionDataPoint.setAnger(cursor.getInt(2));
-        emotionDataPoint.setFear(cursor.getInt(3));
-        emotionDataPoint.setDisgust(cursor.getInt(4));
-        emotionDataPoint.setJoy(cursor.getInt(5));
-        emotionDataPoint.setSadness(cursor.getInt(6));
-        emotionDataPoint.setSurprise(cursor.getInt(7));
+        dataPoint.setId(cursor.getLong(0));
+        dataPoint.setActivity(cursor.getString(1));
+        dataPoint.setAnger(cursor.getFloat(2));
+        dataPoint.setFear(cursor.getFloat(3));
+        dataPoint.setDisgust(cursor.getFloat(4));
+        dataPoint.setJoy(cursor.getFloat(5));
+        dataPoint.setSadness(cursor.getFloat(6));
+        dataPoint.setSurprise(cursor.getFloat(7));
+        dataPoint.setAttention(cursor.getFloat(8));
 
 
 
-        return emotionDataPoint;
+        return dataPoint;
     }
 
 

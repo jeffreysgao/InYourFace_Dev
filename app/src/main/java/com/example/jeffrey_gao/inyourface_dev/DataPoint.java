@@ -13,7 +13,7 @@ import java.util.Locale;
  * Created by Tong on 3/5/2017.
  */
 
-public class EmotionDataPoint {
+public class DataPoint {
 
 
     private long id;
@@ -24,11 +24,13 @@ public class EmotionDataPoint {
     private float joy;
     private float sadness;
     private float surprise;
+    private float attention;
+
     private Context context;
 
 
 
-    public EmotionDataPoint(Context context) {this.context = context;}
+    public DataPoint(Context context) {this.context = context;}
 
     //getter and setter methods for the instance fields
 
@@ -63,6 +65,10 @@ public class EmotionDataPoint {
     public void setSurprise(float surprise) {this.surprise = surprise;}
 
     public float getSurprise() {return surprise;}
+
+    public void setAttention(float attention) {this.attention = attention;}
+
+    public float getAttention() {return attention;}
 
 
 }

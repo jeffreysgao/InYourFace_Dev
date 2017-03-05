@@ -7,18 +7,14 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kairos.KairosListener;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 /**
  * Created by jeffreygao on 3/2/17.
@@ -57,7 +53,12 @@ public class AnalyzeService extends Service {
                             .get("people").getAsJsonArray().get(0).getAsJsonObject()
                             .get("emotions").getAsJsonObject();
 
-                    if (emotions != null) {
+                    JsonObject tracking = response.getAsJsonObject()
+                            .get("frames").getAsJsonArray().get(0).getAsJsonObject()
+                            .get("people").getAsJsonArray().get(0).getAsJsonObject()
+                            .get("tracking").getAsJsonObject();
+
+                    if (emotions != null && tracking != null) {
                         JsonElement anger = emotions.get("anger");
                         JsonElement fear = emotions.get("fear");
                         JsonElement disgust = emotions.get("disgust");
@@ -66,12 +67,17 @@ public class AnalyzeService extends Service {
                         JsonElement surprise = emotions.get("surprise");
 
 
+                        JsonElement attention = tracking.get("attention");
+
+
+
                         String displayString = "ANGER: " + anger.toString() +
                                 " FEAR: " + fear.toString() +
                                 " DISGUST: " + disgust.toString() +
                                 " JOY: " + joy.toString() +
                                 " SADNESS: " + sadness.toString() +
-                                " SURPRISE: " + surprise.toString();
+                                " SURPRISE: " + surprise.toString() +
+                                " ATTENTION: " + attention.toString();
 
                         String emotString = anger.toString() + "," + fear.toString() + ","
                                 + disgust.toString() + "," + joy.toString() + ","
@@ -98,18 +104,19 @@ public class AnalyzeService extends Service {
                             i.printStackTrace();
                         }*/
 
-                        EmotionDataPoint emotionDataPoint = new EmotionDataPoint(context);
-                        emotionDataPoint.setActivity("");
-                        emotionDataPoint.setAnger(Float.parseFloat(anger.toString()));
-                        emotionDataPoint.setFear(Float.parseFloat(fear.toString()));
-                        emotionDataPoint.setDisgust(Float.parseFloat(disgust.toString()));
-                        emotionDataPoint.setJoy(Float.parseFloat(joy.toString()));
-                        emotionDataPoint.setSadness(Float.parseFloat(sadness.toString()));
-                        emotionDataPoint.setSurprise(Float.parseFloat(surprise.toString()));
+                        DataPoint dataPoint = new DataPoint(context);
+                        dataPoint.setActivity("");
+                        dataPoint.setAnger(Float.parseFloat(anger.toString()));
+                        dataPoint.setFear(Float.parseFloat(fear.toString()));
+                        dataPoint.setDisgust(Float.parseFloat(disgust.toString()));
+                        dataPoint.setJoy(Float.parseFloat(joy.toString()));
+                        dataPoint.setSadness(Float.parseFloat(sadness.toString()));
+                        dataPoint.setSurprise(Float.parseFloat(surprise.toString()));
+                        dataPoint.setAttention(Float.parseFloat(attention.toString()));
 
-                        EmotionDataSource source = new EmotionDataSource(context);
+                        DataSource source = new DataSource(context);
                         source.open();
-                        source.insertDataPoint(emotionDataPoint);
+                        source.insertDataPoint(dataPoint);
                         source.close();
 
                         EmotionsFragment.refresh();

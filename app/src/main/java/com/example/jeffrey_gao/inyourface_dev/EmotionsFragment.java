@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +12,6 @@ import android.view.ViewGroup;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.RadarChart;
 
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -23,11 +19,6 @@ import com.github.mikephil.charting.data.RadarData;
 import com.github.mikephil.charting.data.RadarDataSet;
 
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,25 +45,32 @@ public class EmotionsFragment extends Fragment
 
         lineChart = (LineChart) view.findViewById(R.id.line_chart);
 
-        //we get a chartData object from the csv file
-        LineData lineData = generateLineData();
-
-
-        lineChart.setDescription("Instances");
-
-        lineChart.setData(lineData);
-        lineChart.invalidate();
-
         radarChart = (RadarChart) view.findViewById(R.id.radar_chart);
 
-        RadarData radarData = generateRadarData();
+        //we get a chartData object from the database
 
 
-        radarChart.setDescription("Rated from 0 to 100");
+                LineData lineData = generateLineData();
 
-        radarChart.setData(radarData);
-        radarChart.invalidate();
-        radarChart.animate();
+
+                lineChart.setDescription("Instances");
+
+                lineChart.setData(lineData);
+                lineChart.invalidate();
+
+
+
+                RadarData radarData = generateRadarData();
+
+
+                radarChart.setDescription("Rated from 0 to 100");
+
+                radarChart.setData(radarData);
+                radarChart.invalidate();
+                radarChart.animate();
+
+
+                ;
 
 
         return view;
@@ -85,9 +83,9 @@ public class EmotionsFragment extends Fragment
 
         List<Entry> values = new ArrayList<Entry>();
 
-        EmotionDataSource source = new EmotionDataSource(context);
+        DataSource source = new DataSource(context);
         source.open();
-        List<EmotionDataPoint> points = source.getAllDataPoints();
+        List<DataPoint> points = source.getAllDataPoints();
         source.close();
 
         ArrayList<String> labels = new ArrayList<String>();
@@ -167,9 +165,9 @@ public class EmotionsFragment extends Fragment
 
         List<Entry> values = new ArrayList<Entry>();
 
-        EmotionDataSource source = new EmotionDataSource(context);
+        DataSource source = new DataSource(context);
         source.open();
-        List<EmotionDataPoint> points = source.getAllDataPoints();
+        List<DataPoint> points = source.getAllDataPoints();
         source.close();
 
 
@@ -182,6 +180,7 @@ public class EmotionsFragment extends Fragment
         float joyAvg = 0;
         float sadnessAvg = 0;
         float surpriseAvg = 0;
+        float attentionAvg = 0;
 
 
         while (i < size) {
@@ -191,6 +190,7 @@ public class EmotionsFragment extends Fragment
             joyAvg += points.get(i).getJoy();
             sadnessAvg += points.get(i).getSadness();
             surpriseAvg += points.get(i).getSurprise();
+            attentionAvg += points.get(i).getAttention();
 
             i++;
 
@@ -203,6 +203,7 @@ public class EmotionsFragment extends Fragment
             joyAvg = joyAvg/ (float) i;
             sadnessAvg = sadnessAvg/ (float) i;
             surpriseAvg = surpriseAvg/ (float) i;
+            attentionAvg = attentionAvg/ (float) i;
         }
 
         values.add(new Entry(angerAvg, 0));
@@ -211,6 +212,7 @@ public class EmotionsFragment extends Fragment
         values.add(new Entry(joyAvg, 3));
         values.add(new Entry(sadnessAvg, 4));
         values.add(new Entry(surpriseAvg, 5));
+        values.add(new Entry(attentionAvg, 6));
 
         /*try {
             //read from the csv file
@@ -292,6 +294,7 @@ public class EmotionsFragment extends Fragment
         labels.add("Joy");
         labels.add("Sadness");
         labels.add("Surprise");
+        labels.add("Attention");
 
 
         RadarData radarData = new RadarData(labels, radarDataSet);

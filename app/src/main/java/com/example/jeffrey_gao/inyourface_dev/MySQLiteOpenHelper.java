@@ -18,10 +18,11 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     public static final String COLUMN_JOY = "joy";
     public static final String COLUMN_SADNESS = "sadness";
     public static final String COLUMN_SURPRISE = "surprise";
+    public static final String COLUMN_ATTENTION = "attention";
 
 
     public static final String[] ALL_COLUMNS = {COLUMN_ID, COLUMN_ACTIVITY, COLUMN_ANGER, COLUMN_FEAR, COLUMN_DISGUST,
-        COLUMN_JOY, COLUMN_SADNESS, COLUMN_SURPRISE};
+        COLUMN_JOY, COLUMN_SADNESS, COLUMN_SURPRISE, COLUMN_ATTENTION};
     public static final String DATABASE_NAME = "emotion_values.db";
     public static final int DATABASE_VERSION = 1;
 
@@ -34,7 +35,8 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
             + COLUMN_DISGUST + " FLOAT NOT NULL, "
             + COLUMN_JOY + " FLOAT NOT NULL, "
             + COLUMN_SADNESS + " FLOAT NOT NULL, "
-            + COLUMN_SURPRISE + " FLOAT NOT NULL " + ")";
+            + COLUMN_SURPRISE + " FLOAT NOT NULL, "
+            + COLUMN_ATTENTION + " FLOAT NOT NULL " + ")";
 
 
     public static final String DATABASE_DELETE = "DELETE TABLE IF NOT EXISTS " + TABLE_NAME;
