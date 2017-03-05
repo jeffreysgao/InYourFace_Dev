@@ -40,6 +40,7 @@ public class BackgroundService extends Service {
     private boolean isBind = false;
     public final String photoPath = "service_pic.png";
     //private boolean shouldContinueThread = false;
+    //test
 
     private Camera mCamera =  null;
     private Camera.Parameters params;
