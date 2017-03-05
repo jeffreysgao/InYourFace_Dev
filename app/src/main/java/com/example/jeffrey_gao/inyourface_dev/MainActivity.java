@@ -29,46 +29,13 @@ import org.wordpress.passcodelock.AppLockManager;
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener
 {
-//    private TabLayout tabLayout;
-//    private ViewPager viewPager;
-//    private ArrayList<Fragment> fragmentArray;
-//    private TabsViewPagerAdapter viewPageAdapter;   // self-defined adapter
-//
-//    public static DevicePolicyManager dpm;
-//    public static ComponentName compName;
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState)
-//    {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
-//
-//        // create the instance of the tablayout from the main layout
-//        tabLayout = (TabLayout) findViewById(R.id.tab);         // defined in main xml
-//        viewPager = (ViewPager) findViewById(R.id.viewpager);   // defined in main xml
-//
-//        // create the array of fragments
-//        fragmentArray = new ArrayList<Fragment>();
-//        fragmentArray.add(new SettingsFragment());
-//        fragmentArray.add(new AuthenticationFragment());
-//        fragmentArray.add(new EmotionsFragment());
-//
-//        // bind the tab layout to the viewpager
-//        viewPageAdapter = new TabsViewPagerAdapter(getFragmentManager(), fragmentArray);
-//        viewPager.setAdapter(viewPageAdapter);
-//        tabLayout.setupWithViewPager(viewPager);
-//        tabLayout.setTabMode(TabLayout.MODE_FIXED);
-//        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
 
     private static final long DRAWER_CLOSE_DELAY_MS = 350;
     private static final String NAV_ITEM_ID = "navItemId";
 
-//    private final GridViewFragment gridViewFragment = new GridViewFragment();
-//    private final ResultFragment resultFragment = new ResultFragment();
 
     private SettingsFragment settingsFragment = new SettingsFragment();
-    private AuthenticationFragment authenticationFragment = new AuthenticationFragment();
+    // private AttentionFragment attentionFragment = new AttentionFragment();
     private EmotionsFragment emotionsFragment = new EmotionsFragment();
     private final Handler drawerActionHandler = new Handler();
     private DrawerLayout drawerLayout;
@@ -78,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements
     public static DevicePolicyManager dpm;
     public static ComponentName compName;
 
+    public static Context mContext;
+
     /**
      * When main activity is created, the main function
      * @param savedInstanceState
@@ -86,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mContext = getApplicationContext();
 
         // replace the content with the gridview in GridViewFragment
         getFragmentManager().beginTransaction().replace(R.id.content,
