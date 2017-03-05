@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 
 /**
- * Created by ER on 1/28/2017.
+ * Created by Tong on 3/5/2017.
  */
 
 //the middle layer which handles the insertions of the ExerciseEntries into the database
@@ -90,6 +90,24 @@ public class EmotionDataSource {
     /*public void deleteAllDataPoints() {
         database.delete(MySQLiteOpenHelper.TABLE_NAME, null, null);
     }*/
+
+    public ArrayList<EmotionDataPoint> getSelectedActivityDataPoints(String packageName) {
+        ArrayList<EmotionDataPoint> list = new ArrayList<EmotionDataPoint>();
+
+        Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_NAME, MySQLiteOpenHelper.ALL_COLUMNS,
+                MySQLiteOpenHelper.COLUMN_ACTIVITY + " = " + packageName, null, null, null, null);
+
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            list.add(cursorToDataPoint(cursor));
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+
+        return list;
+    }
 
     public ArrayList<EmotionDataPoint> getAllDataPoints() {
         ArrayList<EmotionDataPoint> list = new ArrayList<EmotionDataPoint>();

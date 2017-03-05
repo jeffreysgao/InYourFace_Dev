@@ -10,7 +10,7 @@ import java.util.Calendar;
 import java.util.Locale;
 
 /**
- * Created by ER on 3/5/2017.
+ * Created by Tong on 3/5/2017.
  */
 
 public class EmotionDataPoint {
