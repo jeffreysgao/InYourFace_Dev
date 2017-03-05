@@ -27,6 +27,8 @@ import java.util.List;
  * Created by jinnan on 2/25/17.
  */
 
+// edited by Tong on 3/5/17
+
 
 public class EmotionsFragment extends Fragment
 {
@@ -75,9 +77,6 @@ public class EmotionsFragment extends Fragment
             }
 
         }.run();
-
-
-                ;
 
 
         return view;
