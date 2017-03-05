@@ -1,11 +1,13 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
@@ -14,6 +16,8 @@ import android.hardware.Camera;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.v13.app.ActivityCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.SurfaceHolder;
@@ -22,7 +26,17 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.androidhiddencamera.CameraConfig;
+import com.androidhiddencamera.CameraError;
+import com.androidhiddencamera.HiddenCameraService;
+import com.androidhiddencamera.HiddenCameraUtils;
+import com.androidhiddencamera.config.CameraFacing;
+import com.androidhiddencamera.config.CameraImageFormat;
+import com.androidhiddencamera.config.CameraResolution;
+
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
@@ -31,7 +45,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 @SuppressWarnings("deprecation")
-public class BackgroundService extends Service {
+public class BackgroundService extends HiddenCameraService {
 
     private static final String TAG = "CAMERA";
     private static boolean isRunning = false;
@@ -44,6 +58,18 @@ public class BackgroundService extends Service {
 
     private Camera mCamera =  null;
     private Camera.Parameters params;
+
+
+    //Setting camera configuration
+    public CameraConfig mCamConfig = new CameraConfig().getBuilder()
+    public CameraConfig mCameraConfig = new CameraConfig()
+    .getBuilder(this)
+            .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
+    .setCameraResolution(CameraResolution.MEDIUM_RESOLUTION)
+    .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+    .build();
+
+
 
     ActivityManager am;
 
@@ -100,6 +126,18 @@ public class BackgroundService extends Service {
 
         am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) == PackageManager.PERMISSION_GRANTED) {
+            if (HiddenCameraUtils.canOverDrawOtherApps(this)) {
+                startCamera(mCameraConfig);
+            } else {
+                //Open settings to grant permission for "Draw other apps".
+                HiddenCameraUtils.openDrawOverPermissionSetting(this);
+            }
+        } else {
+            //TODO Ask your parent activity for providing runtime permission
+        }
+
         super.onCreate();
     }
 
@@ -135,98 +173,43 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        try {
-            mCamera = Camera.open();
-            Log.d(TAG, "Camera Opened Successfully");
-        }
-        catch (RuntimeException e) {
-            Log.e(TAG, "Camera Unavailable for Opening");
-            e.printStackTrace();
-        }
+       takePicture();
 
-        try {
-            params = mCamera.getParameters();
-            params.setPreviewFormat(ImageFormat.NV21);
-            //params.setPreviewSize(1, 1);
-            mCamera.setParameters(params);
-            Log.d(TAG, "Camera Parameters Set Successfully");
-        }
-        catch (Exception e) {
-            Log.e(TAG, "Camera Parameters Error");
-            e.printStackTrace();
-        }
-
-        try {
-            SurfaceView surfaceView = new SurfaceView(this);
-            surfaceView.setVisibility(View.GONE);
-            SurfaceHolder holder = surfaceView.getHolder();
-            Log.d(TAG, "Got View Holder");
-            holder.addCallback(new SurfaceHolder.Callback() {
-                @Override
-                public void surfaceCreated(SurfaceHolder holder) {
-                    Log.d(TAG, "Surface Created!");
-                    try {
-                        mCamera.setPreviewDisplay(holder);
-                        Log.d(TAG, "Set Preview Display");
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-
-                    mCamera.startPreview();
-                    safeToTakePicture = true;
-                    Log.d(TAG, "Started Preview");
-                }
-
-                @Override
-                public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
-
-                @Override
-                public void surfaceDestroyed(SurfaceHolder holder) {}
-            });
-
-//            WindowManager windowManager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-//            WindowManager.LayoutParams windowParams = new WindowManager.LayoutParams(
-//                    1, 1, //Must be at least 1x1
-//                    WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
-//                    0,
-//                    //Don't know if this is a safe default
-//                    PixelFormat.UNKNOWN);
-//
-//            //Don't set the preview visibility to GONE or INVISIBLE
-//            windowManager.addView(surfaceView, windowParams);
-
-            Log.d(TAG, "View successfully set");
-        }
-        catch(Exception e) {
-            Log.e(TAG, "Error in setting Preview");
-            e.printStackTrace();
-        }
-
-
-
-        try {
-
-            if (safeToTakePicture) {
-                mCamera.takePicture(null, null, callbackForRaw);
-                safeToTakePicture = false;
-            }
-            Log.d(TAG, "Picture successfully taken");
-        }
-        catch (Exception e) {
-            Log.e(TAG, "Error taking picture");
-            e.printStackTrace();
-        }
-
-
-
-        repeatService();
-
-        //shouldContinueThread = true;
-        //startThread();
+//        repeatService();
 
         return super.onStartCommand(intent, flags, startId);
 
     }
+
+    @Override
+    public void onImageCapture(@NonNull File imageFile) {
+        Log.d(TAG, "PICTURE TAKEN!");
+
+    }
+
+    @Override
+    public void onCameraError(@CameraError.CameraErrorCodes int errorCode) {
+        switch (errorCode) {
+            case CameraError.ERROR_CAMERA_OPEN_FAILED:
+                //Camera open failed. Probably because another application
+                //is using the camera
+                break;
+            case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
+                //camera permission is not available
+                //Ask for the camra permission before initializing it.
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_OVERDRAW_PERMISSION:
+                //Display information dialog to the user with steps to grant "Draw over other app"
+                //permission for the app.
+                HiddenCameraUtils.openDrawOverPermissionSetting(this);
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
+                Toast.makeText(this, "Your device does not have front camera.", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
+
+
 
     //TODO: alarm manager for calling the service over time
 
@@ -246,39 +229,6 @@ public class BackgroundService extends Service {
 
 
     //TODO: get the activity running in the foreground
-    //Don't think this is possible
-    //THIS DOES NOT WORK
-    public String getForegroundActivityPackage() {
-        String packageName = "";
-        ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
-
-        packageName = foregroundTaskInfo.topActivity.getPackageName();
-        Log.d("PACKAGE NAME", packageName);
-        return packageName;
-
-    }
-
-
-    /*
-    checks foreground app every five seconds, this is just here to test the package
-    get method, kill this once you get AlarmManager
-    public void startThread() {
-        new Thread() {
-
-            public void run() {
-                new Timer().scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (shouldContinueThread) {
-                            getForegroundActivityPackage();
-                        }
-                    }
-                }, 0, 5000);
-            }
-
-        }.run();
-    }
-    */
 
     //TODO: pass the photo to RecognizeService
 

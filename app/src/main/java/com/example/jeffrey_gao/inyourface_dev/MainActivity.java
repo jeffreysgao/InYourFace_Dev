@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements
 
         checkPermissions();
 
+
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         compName = new ComponentName(this, admin.class);
@@ -113,9 +114,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private void checkPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.CAMERA}, 0);
+                    Manifest.permission.CAMERA, Manifest.permission.SYSTEM_ALERT_WINDOW}, 0);
         }
     }
 
