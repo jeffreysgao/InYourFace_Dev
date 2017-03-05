@@ -171,7 +171,7 @@ public class BackgroundService extends Service {
     }
 
     /*
-    //checks foreground app every five seconds, this is just here to test the package get method, kill this once you get AlarmManagerr
+    //checks foreground app every five seconds, this is just here to test the package get method, kill this once you get AlarmManager
     public void startThread() {
         new Thread() {
 
