@@ -82,11 +82,28 @@ public class EmotionsFragment extends Fragment
 
     public static LineData generateLineData() {
 
+
         List<Entry> values = new ArrayList<Entry>();
+
+        EmotionDataSource source = new EmotionDataSource(context);
+        source.open();
+        List<EmotionDataPoint> points = source.getAllDataPoints();
+        source.close();
 
         ArrayList<String> labels = new ArrayList<String>();
 
-        try {
+        int size = points.size();
+        int i = 0;
+
+        while (i < size) {
+            Entry entry = new Entry(points.get(i).getJoy(), i);
+            values.add(entry);
+
+            labels.add(Integer.toString(i + 1));
+            i++;
+        }
+
+        /*try {
             //read from the csv file
             //FileInputStream fis = context.openFileInput("emotions.csv");
             FileInputStream fis = context.openFileInput("emotionz.csv");
@@ -125,7 +142,7 @@ public class EmotionsFragment extends Fragment
 
         } catch(FileNotFoundException i) {
             i.printStackTrace();
-        }
+        }*/
 
         //create a line object from the point objects
         LineDataSet lineDataSet = new LineDataSet(values, "Joy");
@@ -150,7 +167,52 @@ public class EmotionsFragment extends Fragment
 
         List<Entry> values = new ArrayList<Entry>();
 
-        try {
+        EmotionDataSource source = new EmotionDataSource(context);
+        source.open();
+        List<EmotionDataPoint> points = source.getAllDataPoints();
+        source.close();
+
+
+        int size = points.size();
+        int i = 0;
+
+        float angerAvg = 0;
+        float fearAvg = 0;
+        float disgustAvg = 0;
+        float joyAvg = 0;
+        float sadnessAvg = 0;
+        float surpriseAvg = 0;
+
+
+        while (i < size) {
+            angerAvg += points.get(i).getAnger();
+            fearAvg += points.get(i).getFear();
+            disgustAvg += points.get(i).getDisgust();
+            joyAvg += points.get(i).getJoy();
+            sadnessAvg += points.get(i).getSadness();
+            surpriseAvg += points.get(i).getSurprise();
+
+            i++;
+
+        }
+
+        if (i != 0) {
+            angerAvg = angerAvg/ (float) i;
+            fearAvg = fearAvg/ (float) i;
+            disgustAvg = disgustAvg/ (float) i;
+            joyAvg = joyAvg/ (float) i;
+            sadnessAvg = sadnessAvg/ (float) i;
+            surpriseAvg = surpriseAvg/ (float) i;
+        }
+
+        values.add(new Entry(angerAvg, 0));
+        values.add(new Entry(fearAvg, 1));
+        values.add(new Entry(disgustAvg, 2));
+        values.add(new Entry(joyAvg, 3));
+        values.add(new Entry(sadnessAvg, 4));
+        values.add(new Entry(surpriseAvg, 5));
+
+        /*try {
             //read from the csv file
             //FileInputStream fis = context.openFileInput("emotions.csv");
             FileInputStream fis = context.openFileInput("emotionz.csv");
@@ -213,7 +275,7 @@ public class EmotionsFragment extends Fragment
 
         } catch(FileNotFoundException i) {
             i.printStackTrace();
-        }
+        }*/
 
 
         RadarDataSet radarDataSet = new RadarDataSet(values, "Emotions");
@@ -232,7 +294,6 @@ public class EmotionsFragment extends Fragment
         labels.add("Surprise");
 
 
-
         RadarData radarData = new RadarData(labels, radarDataSet);
 
         return radarData;
@@ -242,7 +303,7 @@ public class EmotionsFragment extends Fragment
 
 
         if (lineChart != null) {
-            //we get a chartData object from the csv file
+
             LineData lineData = generateLineData();
 
 

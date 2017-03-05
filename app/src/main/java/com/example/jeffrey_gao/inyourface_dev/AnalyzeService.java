@@ -1,6 +1,7 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -26,10 +27,13 @@ import java.io.OutputStreamWriter;
 public class AnalyzeService extends Service {
     public static final String FACE_IMAGE = "face_image";
     private KairosListener kairosListener;
+    private Context context;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        this.context = this;
 
         kairosListener = new KairosListener() {
             @Override
@@ -64,7 +68,7 @@ public class AnalyzeService extends Service {
 
                         String displayString = "ANGER: " + anger.toString() +
                                 " FEAR: " + fear.toString() +
-                                "DISGUST: " + disgust.toString() +
+                                " DISGUST: " + disgust.toString() +
                                 " JOY: " + joy.toString() +
                                 " SADNESS: " + sadness.toString() +
                                 " SURPRISE: " + surprise.toString();
@@ -81,7 +85,7 @@ public class AnalyzeService extends Service {
                             deleteMedia(response.get("id").getAsString());
                         }
 
-                        try {
+                        /*try {
                             //FileOutputStream fos = openFileOutput("emotions.csv", MODE_APPEND);
                             FileOutputStream fos = openFileOutput("emotionz.csv", MODE_APPEND);
                             OutputStreamWriter writer = new OutputStreamWriter(fos);
@@ -92,7 +96,25 @@ public class AnalyzeService extends Service {
 
                         } catch (IOException i) {
                             i.printStackTrace();
-                        }
+                        }*/
+
+                        EmotionDataPoint emotionDataPoint = new EmotionDataPoint(context);
+                        emotionDataPoint.setActivity("");
+                        emotionDataPoint.setAnger(Float.parseFloat(anger.toString()));
+                        emotionDataPoint.setFear(Float.parseFloat(fear.toString()));
+                        emotionDataPoint.setDisgust(Float.parseFloat(disgust.toString()));
+                        emotionDataPoint.setJoy(Float.parseFloat(joy.toString()));
+                        emotionDataPoint.setSadness(Float.parseFloat(sadness.toString()));
+                        emotionDataPoint.setSurprise(Float.parseFloat(surprise.toString()));
+
+                        EmotionDataSource source = new EmotionDataSource(context);
+                        source.open();
+                        source.insertDataPoint(emotionDataPoint);
+                        source.close();
+
+                        EmotionsFragment.refresh();
+
+
                     }
                 } else if (response.get("status_message") != null) {
                     Log.d("KAIROS MEDIA", "status message: " + response.get("status_message").getAsString());
