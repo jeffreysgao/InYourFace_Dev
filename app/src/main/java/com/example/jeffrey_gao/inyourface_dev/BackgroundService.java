@@ -139,7 +139,7 @@ public class BackgroundService extends Service {
 
     }
 
-    //checks foreground app every five seconds
+    //checks foreground app every five seconds, this is just here to test the package get method
     public void startThread() {
         new Thread() {
 
