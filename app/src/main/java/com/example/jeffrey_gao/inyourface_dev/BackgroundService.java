@@ -107,8 +107,6 @@ public class BackgroundService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-
-
         try {
             mCamera = Camera.open();
             Log.d(TAG, "Camera Opened Successfully");
