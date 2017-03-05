@@ -46,6 +46,8 @@ public class BackgroundService extends Service {
 
     ActivityManager am;
 
+    private boolean safeToTakePicture = false;
+
 
 
 
@@ -57,6 +59,8 @@ public class BackgroundService extends Service {
 
             camera.stopPreview();
             camera.release();
+
+            safeToTakePicture = true;
         }
     };
 
@@ -142,7 +146,7 @@ public class BackgroundService extends Service {
         try {
             params = mCamera.getParameters();
             params.setPreviewFormat(ImageFormat.NV21);
-            params.setPreviewSize(1, 1);
+            //params.setPreviewSize(1, 1);
             mCamera.setParameters(params);
             Log.d(TAG, "Camera Parameters Set Successfully");
         }
@@ -168,6 +172,7 @@ public class BackgroundService extends Service {
                     }
 
                     mCamera.startPreview();
+                    safeToTakePicture = true;
                     Log.d(TAG, "Started Preview");
                 }
 
@@ -199,7 +204,11 @@ public class BackgroundService extends Service {
 
 
         try {
-            mCamera.takePicture(callbackForShutter, null, callbackForRaw);
+
+            if (safeToTakePicture) {
+                mCamera.takePicture(null, null, callbackForRaw);
+                safeToTakePicture = false;
+            }
             Log.d(TAG, "Picture successfully taken");
         }
         catch (Exception e) {
