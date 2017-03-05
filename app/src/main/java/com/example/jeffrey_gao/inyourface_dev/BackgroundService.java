@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -12,6 +14,7 @@ import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -23,12 +26,19 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.rvalerio.fgchecker.AppChecker;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
 
 @SuppressWarnings("deprecation")
 public class BackgroundService extends Service {
@@ -39,18 +49,17 @@ public class BackgroundService extends Service {
     private Handler handler;
     private boolean isBind = false;
     public final String photoPath = "service_pic.png";
-    //private boolean shouldContinueThread = false;
-    //test
+    ActivityManager am;
+    private boolean shouldContinueThread = false;
+
+
 
     private Camera mCamera =  null;
     private Camera.Parameters params;
 
-    ActivityManager am;
+
 
     private boolean safeToTakePicture = false;
-
-
-
 
     Camera.PictureCallback callbackForRaw = new Camera.PictureCallback() {
         @Override
@@ -97,6 +106,7 @@ public class BackgroundService extends Service {
         handler = null;
 
         myBinder = new MyBinder();
+
 
         am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
 
@@ -209,8 +219,9 @@ public class BackgroundService extends Service {
             if (safeToTakePicture) {
                 mCamera.takePicture(null, null, callbackForRaw);
                 safeToTakePicture = false;
+                Log.d(TAG, "Picture successfully taken");
             }
-            Log.d(TAG, "Picture successfully taken");
+
         }
         catch (Exception e) {
             Log.e(TAG, "Error taking picture");
@@ -221,8 +232,8 @@ public class BackgroundService extends Service {
 
         repeatService();
 
-        //shouldContinueThread = true;
-        //startThread();
+        shouldContinueThread = true;
+        startThread();
 
         return super.onStartCommand(intent, flags, startId);
 
@@ -250,18 +261,57 @@ public class BackgroundService extends Service {
     //THIS DOES NOT WORK
     public String getForegroundActivityPackage() {
         String packageName = "";
-        ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
 
-        packageName = foregroundTaskInfo.topActivity.getPackageName();
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            UsageStatsManager usageStatsManager = (UsageStatsManager) getSystemService(USAGE_STATS_SERVICE);
+
+            long time = System.currentTimeMillis();
+
+            List<UsageStats> stats = usageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_BEST, time - 1000*3, time);
+
+
+            if (stats != null) {
+                SortedMap<Long, UsageStats> sortedMap = new TreeMap<Long, UsageStats>();
+
+                int i = 0;
+                int size = stats.size();
+                Log.d("SIZE", Integer.toString(size));
+
+                while (i < size) {
+                    sortedMap.put(stats.get(i).getLastTimeUsed(), stats.get(i));
+                }
+
+                Log.d("INSIDE LOOP", "INSIDE LOOP");
+
+                if (size > 0) {
+
+                    UsageStats mostRecent = sortedMap.get(sortedMap.lastKey());
+                    packageName = mostRecent.getPackageName();
+                    Log.d("PACKAGE NAME", packageName);
+                }
+            }
+
+        } else {
+            ActivityManager.RunningTaskInfo foregroundInfo = am.getRunningTasks(1).get(0);
+            packageName = foregroundInfo.topActivity.getPackageName();
+            Log.d("PACKAGE NAME", packageName);
+        }*/
+
+        AppChecker appChecker = new AppChecker();
+        packageName = appChecker.getForegroundApp(this);
+
         Log.d("PACKAGE NAME", packageName);
+
+
+
         return packageName;
 
     }
 
 
-    /*
-    checks foreground app every five seconds, this is just here to test the package
-    get method, kill this once you get AlarmManager
+
+    //checks foreground app every five seconds, this is just here to test the package
+    //get method, kill this once you get AlarmManager
     public void startThread() {
         new Thread() {
 
@@ -273,12 +323,12 @@ public class BackgroundService extends Service {
                             getForegroundActivityPackage();
                         }
                     }
-                }, 0, 5000);
+                }, 0, 3000);
             }
 
         }.run();
     }
-    */
+
 
     //TODO: pass the photo to RecognizeService
 

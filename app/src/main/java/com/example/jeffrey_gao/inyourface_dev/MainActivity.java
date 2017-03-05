@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +26,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import org.wordpress.passcodelock.AppLockManager;
+
+import static com.rvalerio.fgchecker.Utils.hasUsageStatsPermission;
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -94,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements
 
         checkPermissions();
 
+        requestUsageStatsPermission();
+
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         compName = new ComponentName(this, admin.class);
@@ -113,9 +119,16 @@ public class MainActivity extends AppCompatActivity implements
 
     private void checkPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.CAMERA}, 0);
+        }
+    }
+
+    private void requestUsageStatsPermission() {
+        if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+                && !hasUsageStatsPermission(this)) {
+            startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
         }
     }
 
