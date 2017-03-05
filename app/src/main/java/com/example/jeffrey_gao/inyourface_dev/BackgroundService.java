@@ -142,7 +142,7 @@ public class BackgroundService extends Service {
         try {
             params = mCamera.getParameters();
             params.setPreviewFormat(ImageFormat.NV21);
-            params.setPreviewSize(1, 1);
+//            params.setPreviewSize(1, 1);
             mCamera.setParameters(params);
             Log.d(TAG, "Camera Parameters Set Successfully");
         }
@@ -199,7 +199,8 @@ public class BackgroundService extends Service {
 
 
         try {
-            mCamera.takePicture(callbackForShutter, null, callbackForRaw);
+            mCamera.takePicture(null, null, callbackForJPG);
+//            mCamera.takePicture(null, null, callbackForRaw);
             Log.d(TAG, "Picture successfully taken");
         }
         catch (Exception e) {
