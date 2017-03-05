@@ -1,6 +1,7 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
 import android.Manifest;
+import android.app.AppOpsManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements
 {
     private static final long DRAWER_CLOSE_DELAY_MS = 350;
     private static final String NAV_ITEM_ID = "navItemId";
+
+    public static final int MY_PERMISSIONS_REQUEST_PACKAGE_USAGE_STATS = 0;
 
     private SettingsFragment settingsFragment = new SettingsFragment();
 //    private AttentionFragment attentionFragment = new AttentionFragment();
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements
 
         checkPermissions();
 
+
         dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
 
         compName = new ComponentName(this, admin.class);
@@ -105,6 +110,8 @@ public class MainActivity extends AppCompatActivity implements
                     Manifest.permission.CAMERA}, 0);
         }
     }
+
+
 
 
     /**
@@ -194,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
         outState.putInt(NAV_ITEM_ID, navItemId);
     }
+
+
 
 }
 
