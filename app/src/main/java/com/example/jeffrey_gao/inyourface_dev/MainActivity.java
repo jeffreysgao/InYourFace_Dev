@@ -40,6 +40,8 @@ public class MainActivity extends AppCompatActivity implements
     public static DevicePolicyManager dpm;
     public static ComponentName compName;
 
+    public static Context mContext;
+
     /**
      * When main activity is created, the main function
      * @param savedInstanceState
@@ -48,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mContext = getApplicationContext();
 
         // replace the content with the gridview in GridViewFragment
         getFragmentManager().beginTransaction().replace(R.id.content,
