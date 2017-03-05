@@ -50,6 +50,11 @@ public class EmotionsFragment extends Fragment
         //we get a chartData object from the database
 
 
+        new Thread() {
+
+            public void run() {
+
+
                 LineData lineData = generateLineData();
 
 
@@ -57,7 +62,6 @@ public class EmotionsFragment extends Fragment
 
                 lineChart.setData(lineData);
                 lineChart.invalidate();
-
 
 
                 RadarData radarData = generateRadarData();
@@ -68,6 +72,9 @@ public class EmotionsFragment extends Fragment
                 radarChart.setData(radarData);
                 radarChart.invalidate();
                 radarChart.animate();
+            }
+
+        }.run();
 
 
                 ;
@@ -307,25 +314,33 @@ public class EmotionsFragment extends Fragment
 
         if (lineChart != null) {
 
-            LineData lineData = generateLineData();
+            new Thread() {
+                public void run() {
+                    LineData lineData = generateLineData();
 
 
-            lineChart.setDescription("Instances");
+                    lineChart.setDescription("Instances");
 
-            lineChart.setData(lineData);
-            lineChart.invalidate();
+                    lineChart.setData(lineData);
+                    lineChart.invalidate();
+                }
+            }.run();
         }
 
 
         if (radarChart != null) {
-            RadarData radarData = generateRadarData();
+            new Thread() {
+                public void run() {
+                    RadarData radarData = generateRadarData();
 
 
-            radarChart.setDescription("Rated from 0 to 100");
+                    radarChart.setDescription("Rated from 0 to 100");
 
-            radarChart.setData(radarData);
-            radarChart.invalidate();
-            radarChart.animate();
+                    radarChart.setData(radarData);
+                    radarChart.invalidate();
+                    radarChart.animate();
+                }
+            }.run();
         }
 
     }
