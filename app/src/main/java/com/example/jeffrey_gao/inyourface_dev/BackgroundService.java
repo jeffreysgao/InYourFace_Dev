@@ -57,6 +57,8 @@ public class BackgroundService extends Service {
     private Camera mCamera =  null;
     private Camera.Parameters params;
 
+    private String currentPackageName = "";
+
 
 
     private boolean safeToTakePicture = false;
@@ -116,7 +118,7 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         isRunning = false;
-        //shouldContinueThread = false;
+        shouldContinueThread = false;
 
         Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
         super.onDestroy();
@@ -302,7 +304,7 @@ public class BackgroundService extends Service {
 
         Log.d("PACKAGE NAME", packageName);
 
-
+        currentPackageName = packageName;
 
         return packageName;
 
@@ -323,7 +325,7 @@ public class BackgroundService extends Service {
                             getForegroundActivityPackage();
                         }
                     }
-                }, 0, 3000);
+                }, 0, 5000);
             }
 
         }.run();
