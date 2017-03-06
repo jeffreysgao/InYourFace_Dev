@@ -132,7 +132,7 @@ public class BackgroundService extends Service {
 
         public void setMessageHandler(Handler messageHandler) {handler = messageHandler;}
 
-//        public void setInterval(int inter_val) {interval = inter_val;}
+        public void setInterval(int inter_val) {interval = inter_val;}
 
         public void setShouldContinueBoolean(boolean shouldContinue) {shouldContinueThread = shouldContinue;}
 
@@ -142,7 +142,7 @@ public class BackgroundService extends Service {
                 isTimerRunning = false;
             }}
 
-//        public void startRepeatService() {repeatService(); isTimerRunning = true;}
+        public void startRepeatService() {repeatService(); isTimerRunning = true;}
 
     }
 
@@ -346,7 +346,7 @@ public class BackgroundService extends Service {
             /*
              * For testing: stop the service after it runs once
              */
-            stopSelf();
+//            stopSelf();
         }
     };
 
