@@ -41,10 +41,14 @@ public class AnalyzeService extends Service {
                 Log.d("KAIROS MEDIA", s);
                 JsonObject response = new JsonParser().parse(s).getAsJsonObject();
 
-                if (response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
-                        .get("people") == null) {
+                if (response.getAsJsonObject().get("frames") != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().size() > 0
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject() != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject().get("people") != null
+                        && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject().get("people").getAsJsonArray().size() == 0) {
                     Handler handler = new Handler(Looper.getMainLooper());
 
+                    Log.d("KAIROS MEDIA", "no faces");
                     handler.post(new Runnable() {
 
                         @Override
