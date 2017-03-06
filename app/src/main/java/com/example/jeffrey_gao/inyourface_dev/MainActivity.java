@@ -7,10 +7,12 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +25,7 @@ import android.support.design.widget.TabLayout;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.github.orangegangsters.lollipin.lib.managers.AppLock;
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements
 {
     private static final long DRAWER_CLOSE_DELAY_MS = 350;
     private static final String NAV_ITEM_ID = "navItemId";
+    private static final String IS_FIRST_ID = "isFirst";
 
     private SettingsFragment settingsFragment = new SettingsFragment();
     // private AttentionFragment attentionFragment = new AttentionFragment();
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements
 
     public static Context mContext;
 
-    public boolean isFirst = true;
+    public static boolean isFirst = true;
 
     private static final int REQUEST_CODE_ENABLE = 11;
 
@@ -63,10 +67,20 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        SharedPreferences sharedPreferences = this.getSharedPreferences("main", 0);
+        boolean isPincodeSet = sharedPreferences.getBoolean("IS_PINCODE_SET", false);
+
         if (isFirst) {
+
             Intent intent = new Intent(MainActivity.this, CustomPinActivity.class);
-            intent.putExtra(AppLock.EXTRA_TYPE, AppLock.ENABLE_PINLOCK);
+            if (!isPincodeSet){
+                intent.putExtra(AppLock.EXTRA_TYPE, AppLock.ENABLE_PINLOCK);
+                sharedPreferences.edit().putBoolean("IS_PINCODE_SET", true).apply();
+            }
             startActivityForResult(intent, REQUEST_CODE_ENABLE);
+
+
+
 
             isFirst = false;
         }
@@ -240,6 +254,12 @@ public class MainActivity extends AppCompatActivity implements
     protected void onSaveInstanceState(final Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(NAV_ITEM_ID, navItemId);
+        outState.putBoolean(IS_FIRST_ID, isFirst);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        isFirst = savedInstanceState.getBoolean(IS_FIRST_ID);
     }
 
 }
