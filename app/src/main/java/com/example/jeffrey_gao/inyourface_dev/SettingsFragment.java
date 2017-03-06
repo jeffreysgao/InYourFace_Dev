@@ -25,7 +25,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private boolean isBind = false;
     private BackgroundService.MyBinder binder;
     private MessageHandler handler;
-    private int mInterval = 1000;
+    private int mInterval = 3000;
 
     private static boolean connectionInitialized = false;
 
@@ -90,29 +90,27 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         String intervalChoice = prefs.getValue();
 
         switch (intervalChoice) {
+            case "3 sec":
+                mInterval = 3000;
+                break;
+            case "5 sec":
+                mInterval = 5000;
+                break;
             case "10 sec":
-                mInterval = 1000;
-
+                mInterval = 10000;
+                break;
+            case "15 sec":
+                mInterval = 15000;
                 break;
             case "30 sec":
-                mInterval = 3000;
-
+                mInterval = 30000;
                 break;
             case "1 min":
-                mInterval = 6000;
-                break;
-            case "5 min":
-                mInterval = 300000;
-                break;
-            case "10 min":
-                mInterval = 600000;
-                break;
-            case "30 min":
-                mInterval = 1800000;
+                mInterval = 60000;
                 break;
 
             default:
-                mInterval = 100000;
+                mInterval = 3000;
                 break;
         }
 
@@ -189,29 +187,29 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         } else if (s.equals("interval_preference")) {
             String intervalChoice = sharedPreferences.getString("interval_preference", "10 sec");
             switch (intervalChoice) {
-                case "10 sec":
-                    mInterval = 1000;
-
-                    break;
-                case "30 sec":
+                case "3 sec":
                     mInterval = 3000;
 
                     break;
+                case "5 sec":
+                    mInterval = 5000;
+
+                    break;
+                case "10 sec":
+                    mInterval = 10000;
+                    break;
+                case "15 sec":
+                    mInterval = 15000;
+                    break;
+                case "30 sec":
+                    mInterval = 30000;
+                    break;
                 case "1 min":
-                    mInterval = 6000;
-                    break;
-                case "5 min":
-                    mInterval = 300000;
-                    break;
-                case "10 min":
-                    mInterval = 600000;
-                    break;
-                case "30 min":
-                    mInterval = 1800000;
+                    mInterval = 60000;
                     break;
 
                 default:
-                    mInterval = 100000;
+                    mInterval = 3000;
                     break;
             }
 

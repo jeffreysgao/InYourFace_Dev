@@ -2,12 +2,12 @@
 <resources>
 
     <string-array name="entries_intervals">
+        <item>3 sec</item>
+        <item>5 sec</item>
         <item>10 sec</item>
+        <item>15 sec</item>
         <item>30 sec</item>
         <item>1 min</item>
-        <item>5 min</item>
-        <item>10 min</item>
-        <item>30 min</item>
     </string-array>
 
 </resources>
