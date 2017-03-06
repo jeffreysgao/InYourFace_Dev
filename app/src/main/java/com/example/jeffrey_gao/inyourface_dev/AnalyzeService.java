@@ -44,7 +44,6 @@ public class AnalyzeService extends Service {
                 JsonObject response = new JsonParser().parse(s).getAsJsonObject();
 
                 if (response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
-                        .get("people").getAsJsonArray().size() == 0 || response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
                         .get("people") == null) {
                     Handler handler = new Handler(Looper.getMainLooper());
 
