@@ -19,6 +19,8 @@ import android.widget.ListView;
  * Created by jinnan on 2/25/17.
  */
 
+//edited by Tong on 3/6/17.
+
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, ServiceConnection{
 
