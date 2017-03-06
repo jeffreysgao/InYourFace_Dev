@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -24,7 +25,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private boolean isBind = false;
     private BackgroundService.MyBinder binder;
     private MessageHandler handler;
-    private int mInterval = 10000;
+    private int mInterval = 1000;
+
+    private static boolean connectionInitialized = false;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         setRetainInstance(true);
 
         handler = new MessageHandler();
+
 
 
 
@@ -71,6 +76,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     }
 
                     getActivity().stopService(intent);
+                    connectionInitialized = false;
 
 
                 }
@@ -79,12 +85,68 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         });
 
+       ListPreference prefs = (ListPreference) findPreference("interval_preference");
+
+        String intervalChoice = prefs.getValue();
+
+        switch (intervalChoice) {
+            case "10 sec":
+                mInterval = 1000;
+
+                break;
+            case "30 sec":
+                mInterval = 3000;
+
+                break;
+            case "1 min":
+                mInterval = 6000;
+                break;
+            case "5 min":
+                mInterval = 300000;
+                break;
+            case "10 min":
+                mInterval = 600000;
+                break;
+            case "30 min":
+                mInterval = 1800000;
+                break;
+
+            default:
+                mInterval = 100000;
+                break;
+        }
+
+
+
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            connectionInitialized = savedInstanceState.getBoolean("INITIALIZED");
+        }
+
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder service) {
+
         binder = (BackgroundService.MyBinder) service;
         binder.setMessageHandler(handler);
+
+
+        binder.setInterval(mInterval);
+
+        if (!connectionInitialized) {
+            binder.stopRepeatService();
+            binder.startRepeatService();
+            connectionInitialized = true;
+        }
+
+
+        binder.setShouldContinueBoolean(true);
     }
 
     @Override
@@ -128,13 +190,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             String intervalChoice = sharedPreferences.getString("interval_preference", "10 sec");
             switch (intervalChoice) {
                 case "10 sec":
-                    mInterval = 10000;
+                    mInterval = 1000;
+
                     break;
                 case "30 sec":
-                    mInterval = 30000;
+                    mInterval = 3000;
+
                     break;
                 case "1 min":
-                    mInterval = 60000;
+                    mInterval = 6000;
                     break;
                 case "5 min":
                     mInterval = 300000;
@@ -150,7 +214,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     mInterval = 100000;
                     break;
             }
+
+            if (isBind && binder != null) {
+                binder.setInterval(mInterval);
+                binder.stopRepeatService();
+                binder.startRepeatService();
+            }
         }
+
+
     }
 
     @Override
@@ -192,5 +264,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         }
 
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean("INITIALIZED", connectionInitialized);
+    }
+
 }
 

@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
@@ -21,9 +20,11 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
@@ -31,11 +32,15 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
 
+import com.rvalerio.fgchecker.AppChecker;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 @SuppressWarnings("deprecation")
@@ -46,6 +51,7 @@ public class BackgroundService extends Service {
     private MyBinder myBinder;
     private Handler handler;
     private boolean isBind = false;
+    private int interval;
 
 
 
@@ -53,10 +59,91 @@ public class BackgroundService extends Service {
     private static SurfaceHolder mSurfaceHolder;
     private Camera mCamera =  null;
     private Camera.Parameters params;
+    private String currentPackageName = "";
+
+    private boolean shouldContinueThread = false;
+    private boolean isTimerRunning = false;
 
     private String mCameraId;
 
     ActivityManager am;
+
+    TimerTask timerTask;
+
+
+    //TODO: pass the photo to RecognizeService
+    //TODO: pass the photo to AnalyzeService
+    Camera.PictureCallback callbackForRaw = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            Log.d(TAG, "onPictureTaken accessed for RAW");
+
+            SharedPreferences settings = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext());
+
+            if (settings.getBoolean("auth_preference", false)) {
+                Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
+                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
+                recognizeIntent.putExtra(RecognizeService.IMAGE_DATA, data);
+                startService(recognizeIntent);
+            }
+
+            else {
+                if(settings.getBoolean("emotions_pref", false)) {
+
+                }
+
+                else if (settings.getBoolean("attention_pref", false)) {
+
+                }
+            }
+
+
+
+
+            camera.stopPreview();
+            camera.release();
+        }
+    };
+
+    Camera.PictureCallback callbackForJPG = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            Log.d(TAG, "onPictureTaken accessed for JPG");
+
+            mCamera.startPreview();
+
+            SharedPreferences settings = PreferenceManager
+                    .getDefaultSharedPreferences(getApplicationContext());
+
+            if (settings.getBoolean("auth_preference", false)) {
+                Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
+                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
+                recognizeIntent.putExtra(RecognizeService.IMAGE_DATA, data);
+                startService(recognizeIntent);
+            }
+
+            else {
+                if(settings.getBoolean("emotions_pref", true) || settings.getBoolean("attention_pref", true)) {
+                    Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
+                    analyzeIntent.putExtra(AnalyzeService.INPUT_TYPE, AnalyzeService.BYTE_DATA);
+                    analyzeIntent.putExtra(AnalyzeService.IMAGE_DATA, data);
+                    startService(analyzeIntent);
+                }
+
+            }
+
+//            camera.stopPreview();
+//            camera.release();
+        }
+    };
+
+    Camera.ShutterCallback callbackForShutter = new Camera.ShutterCallback() {
+        @Override
+        public void onShutter() {
+            Log.d(TAG, "onShutter accessed");
+        }
+    };
 
     public BackgroundService() {
     }
@@ -101,7 +188,8 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         isRunning = false;
-        //shouldContinueThread = false;
+        shouldContinueThread = false;
+        isTimerRunning = false;
 
         Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
 
@@ -113,6 +201,18 @@ public class BackgroundService extends Service {
     public class MyBinder extends Binder {
 
         public void setMessageHandler(Handler messageHandler) {handler = messageHandler;}
+
+        public void setInterval(int inter_val) {interval = inter_val;}
+
+        public void setShouldContinueBoolean(boolean shouldContinue) {shouldContinueThread = shouldContinue;}
+
+        public void stopRepeatService() {
+            if (timerTask!= null) {
+                timerTask.cancel();
+                isTimerRunning = false;
+            }}
+
+        public void startRepeatService() {repeatService(); isTimerRunning = true;}
 
     }
 
@@ -155,32 +255,38 @@ public class BackgroundService extends Service {
 
     //TODO: alarm manager for calling the service over time in settingsfrag with global alarm manager
 
-//    public void repeatService() {
-//        new Thread() {
-//            public void run() {
-//                Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
-//                PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
-//                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//                Calendar mCal = Calendar.getInstance();
-//                mCal.setTimeInMillis(System.currentTimeMillis());
-//                mCal.add(Calendar.SECOND, 10);
-//                alarmManager.setRepeating(AlarmManager.RTC, mCal.getTimeInMillis(), 10000, pendingIntent);
-//            }
-//        }.run();
-//    }
+    public void repeatService() {
+        new Thread() {
+            public void run() {
+                new Timer().scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
+                        PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+//                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//                        Calendar mCal = Calendar.getInstance();
+//                        mCal.setTimeInMillis(System.currentTimeMillis());
+//                        mCal.add(Calendar.SECOND, 10);
+                    }
+                }, 0, 5000);
 
-//    //TODO: get the activity running in the foreground
-//    //Don't think this is possible
-//    //THIS DOES NOT WORK
-//    public String getForegroundActivityPackage() {
-//        String packageName = "";
-//        ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
-//
-//        packageName = foregroundTaskInfo.topActivity.getPackageName();
-//        Log.d("PACKAGE NAME", packageName);
-//        return packageName;
-//
-//    }
+            }
+        }.run();
+    }
+
+    //THIS WORKS NOW
+    public String getForegroundActivityPackage() {
+        String packageName = "";
+        AppChecker appChecker = new AppChecker();
+        packageName = appChecker.getForegroundApp(this);
+
+        currentPackageName = packageName;
+        Log.d("PACKAGE NAME", packageName);
+        return packageName;
+
+
+    }
+
 
     /*
      * Code for launching the camera in the background and taking a photo - Jeff
@@ -253,15 +359,15 @@ public class BackgroundService extends Service {
         try {
             cameraDevice.createCaptureSession(outputSurfaces,
                     new CameraCaptureSession.StateCallback() {
-                @Override
-                public void onConfigured(CameraCaptureSession session) {
-                    cameraCaptureSession = session;
-                    createCaptureRequest();
-                }
+                        @Override
+                        public void onConfigured(CameraCaptureSession session) {
+                            cameraCaptureSession = session;
+                            createCaptureRequest();
+                        }
 
-                @Override
-                public void onConfigureFailed(CameraCaptureSession session) {}
-            }, null);
+                        @Override
+                        public void onConfigureFailed(CameraCaptureSession session) {}
+                    }, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
@@ -327,10 +433,10 @@ public class BackgroundService extends Service {
 
 
 
-    /*
-    checks foreground app every five seconds, this is just here to test the package
-    get method, kill this once you get AlarmManager
-    public void startThread() {
+
+    //checks foreground app every five seconds, this is just here to test the package
+    //get method, kill this once you get AlarmManager
+    /*public void startThread() {
         new Thread() {
 
             public void run() {
@@ -349,8 +455,8 @@ public class BackgroundService extends Service {
             }
 
         }.run();
-    }
-    */
+    }*/
+
 
 
 }
