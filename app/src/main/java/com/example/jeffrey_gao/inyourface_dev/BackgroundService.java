@@ -1,24 +1,46 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
+import android.hardware.camera2.CameraAccessException;
+import android.hardware.camera2.CameraCaptureSession;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
+import android.media.Image;
+import android.media.ImageReader;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -31,89 +53,14 @@ public class BackgroundService extends Service {
     private Handler handler;
     private boolean isBind = false;
 
-
-
     private static SurfaceView mSurfaceView;
     private static SurfaceHolder mSurfaceHolder;
     private Camera mCamera =  null;
     private Camera.Parameters params;
 
+    private String mCameraId;
+
     ActivityManager am;
-
-
-    //TODO: pass the photo to RecognizeService
-    //TODO: pass the photo to AnalyzeService
-    Camera.PictureCallback callbackForRaw = new Camera.PictureCallback() {
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            Log.d(TAG, "onPictureTaken accessed for RAW");
-
-            SharedPreferences settings = PreferenceManager
-                    .getDefaultSharedPreferences(getApplicationContext());
-
-            if (settings.getBoolean("auth_preference", false)) {
-                Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
-                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
-                recognizeIntent.putExtra(RecognizeService.IMAGE_DATA, data);
-                startService(recognizeIntent);
-            }
-
-            else {
-                if(settings.getBoolean("emotions_pref", false)) {
-
-                }
-
-                else if (settings.getBoolean("attention_pref", false)) {
-
-                }
-            }
-
-
-
-
-            camera.stopPreview();
-            camera.release();
-        }
-    };
-
-    Camera.PictureCallback callbackForJPG = new Camera.PictureCallback() {
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            Log.d(TAG, "onPictureTaken accessed for JPG");
-
-            mCamera.startPreview();
-
-            SharedPreferences settings = PreferenceManager
-                    .getDefaultSharedPreferences(getApplicationContext());
-
-            if (settings.getBoolean("auth_preference", false)) {
-                Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
-                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
-                recognizeIntent.putExtra(RecognizeService.IMAGE_DATA, data);
-                startService(recognizeIntent);
-            }
-
-            else {
-                if(settings.getBoolean("emotions_pref", false)) {
-
-                }
-
-                else if (settings.getBoolean("attention_pref", false)) {
-
-                }
-            }
-
-//            camera.stopPreview();
-//            camera.release();
-        }
-    };
-
-    Camera.ShutterCallback callbackForShutter = new Camera.ShutterCallback() {
-        @Override
-        public void onShutter() {
-            Log.d(TAG, "onShutter accessed");
-        }
-    };
 
     public BackgroundService() {
     }
@@ -152,7 +99,6 @@ public class BackgroundService extends Service {
         });
 
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
     }
 
     @Override
@@ -161,6 +107,9 @@ public class BackgroundService extends Service {
         //shouldContinueThread = false;
 
         Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
+
+
+
         super.onDestroy();
     }
 
@@ -186,47 +135,7 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        try {
-            mCamera = Camera.open();
-            Log.d(TAG, "Camera Opened Successfully");
-            params = mCamera.getParameters();
-            mCamera.setParameters(params);
-            Camera.Parameters p = mCamera.getParameters();
-
-            final List<Size> listPreviewSize = p.getSupportedPreviewSizes();
-            for (Size size : listPreviewSize) {
-                Log.d(TAG, String.format("Supported Preview Size (%d, %d)", size.width, size.height));
-            }
-
-            Size previewSize = listPreviewSize.get(0);
-            p.setPreviewSize(previewSize.width, previewSize.height);
-            mCamera.setParameters(p);
-            Log.d(TAG, "Camera Parameters Set Successfully");
-        }
-        catch (Exception e) {
-            Log.e(TAG, "Camera Parameters Error");
-            e.printStackTrace();
-        }
-
-        try {
-            mCamera.setPreviewDisplay(mSurfaceHolder);
-            mCamera.startPreview();
-            Log.d(TAG, "Preview Display set and preview started");
-        }
-        catch(Exception e) {
-            Log.e(TAG, "Error in starting Preview");
-            e.printStackTrace();
-        }
-
-        try {
-            mCamera.takePicture(null, null, callbackForJPG);
-            Log.d(TAG, "Picture successfully taken");
-        }
-        catch (Exception e) {
-            Log.e(TAG, "Error taking picture");
-            e.printStackTrace();
-        }
+        takePhoto();
 
 //        repeatService();
 
@@ -237,35 +146,188 @@ public class BackgroundService extends Service {
 
     }
 
+    // Sets up the camera and takes the photo, passing it to the services
+    // TODO: Handle the exception that gets thrown when camera has been opened before
+    private void takePhoto() {
+        setUpCamera();
+
+        openCamera();
+
+        Log.d("jeff", "all calls made");
+    }
+
     //TODO: alarm manager for calling the service over time in settingsfrag with global alarm manager
 
-    public void repeatService() {
-        new Thread() {
-            public void run() {
-                Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
-                PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                Calendar mCal = Calendar.getInstance();
-                mCal.setTimeInMillis(System.currentTimeMillis());
-                mCal.add(Calendar.SECOND, 10);
-                alarmManager.setRepeating(AlarmManager.RTC, mCal.getTimeInMillis(), 10000, pendingIntent);
+//    public void repeatService() {
+//        new Thread() {
+//            public void run() {
+//                Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
+//                PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+//                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//                Calendar mCal = Calendar.getInstance();
+//                mCal.setTimeInMillis(System.currentTimeMillis());
+//                mCal.add(Calendar.SECOND, 10);
+//                alarmManager.setRepeating(AlarmManager.RTC, mCal.getTimeInMillis(), 10000, pendingIntent);
+//            }
+//        }.run();
+//    }
+
+//    //TODO: get the activity running in the foreground
+//    //Don't think this is possible
+//    //THIS DOES NOT WORK
+//    public String getForegroundActivityPackage() {
+//        String packageName = "";
+//        ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
+//
+//        packageName = foregroundTaskInfo.topActivity.getPackageName();
+//        Log.d("PACKAGE NAME", packageName);
+//        return packageName;
+//
+//    }
+
+    /*
+     * Code for launching the camera in the background and taking a photo - Jeff
+     * http://stackoverflow.com/questions/28003186/capture-picture-without-preview-using-camera2-api
+     * https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java
+     *
+     */
+
+    private ImageReader imageReader;
+    private Handler backgroundHandler;
+    private HandlerThread backgroundThread;
+    private CameraDevice cameraDevice;
+    private CameraCaptureSession cameraCaptureSession;
+
+    private void setUpCamera() {
+        CameraManager cameraManager = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
+
+        try {
+            for (String cameraId : cameraManager.getCameraIdList()) {
+                CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+
+                if (characteristics.get(CameraCharacteristics.LENS_FACING)
+                        != CameraCharacteristics.LENS_FACING_FRONT)
+                    continue;
+
+                mCameraId = cameraId;
+
+                imageReader = ImageReader.newInstance(100, 100, ImageFormat.JPEG, 1);
+                imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
+
             }
-        }.run();
+        } catch (CameraAccessException | NullPointerException e) {
+            e.printStackTrace();
+        }
     }
 
-
-    //TODO: get the activity running in the foreground
-    //Don't think this is possible
-    //THIS DOES NOT WORK
-    public String getForegroundActivityPackage() {
-        String packageName = "";
-        ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
-
-        packageName = foregroundTaskInfo.topActivity.getPackageName();
-        Log.d("PACKAGE NAME", packageName);
-        return packageName;
-
+    private void openCamera() {
+        CameraManager cameraManager = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
+        try {
+            cameraManager.openCamera(mCameraId, cameraStateCallback, backgroundHandler);
+        } catch (CameraAccessException | SecurityException e) {
+            e.printStackTrace();
+        }
     }
+
+    private final CameraDevice.StateCallback cameraStateCallback
+            = new CameraDevice.StateCallback() {
+        @Override
+        public void onOpened(CameraDevice device) {
+            Log.d("jeff", "camera opened");
+            cameraDevice = device;
+            createCaptureSession();
+        }
+
+        @Override
+        public void onDisconnected(CameraDevice cameraDevice) {
+            Log.d("jeff", "camera disconnected");
+        }
+
+        @Override
+        public void onError(CameraDevice cameraDevice, int error) {
+            Log.d("jeff", "camera error");
+        }
+    };
+
+    private void createCaptureSession() {
+        List<Surface> outputSurfaces = new LinkedList<>();
+        outputSurfaces.add(imageReader.getSurface());
+
+        try {
+            cameraDevice.createCaptureSession(outputSurfaces,
+                    new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(CameraCaptureSession session) {
+                    cameraCaptureSession = session;
+                    createCaptureRequest();
+                }
+
+                @Override
+                public void onConfigureFailed(CameraCaptureSession session) {}
+            }, null);
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private final ImageReader.OnImageAvailableListener onImageAvailableListener
+            = new ImageReader.OnImageAvailableListener() {
+        @Override
+        public void onImageAvailable(ImageReader imageReader) {
+            Image image = imageReader.acquireNextImage();
+            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+            byte[] bytes = new byte[buffer.remaining()];
+            buffer.get(bytes);
+            Log.d("jeff", "image captured" + bytes.length);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            if (settings.getBoolean("auth_preference", false)) {
+                Intent intent = new Intent(getApplicationContext(), RecognizeService.class);
+                intent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
+                intent.putExtra(RecognizeService.FACE_IMAGE, bytes);
+
+                startService(intent);
+            } else if (settings.getBoolean("emotions_pref", false)
+                    || settings.getBoolean("attention_pref", false)) {
+                // TODO: Send byte array to analyze service
+            }
+
+            image.close();
+        }
+    };
+
+    private void createCaptureRequest() {
+        try {
+            CaptureRequest.Builder requestBuilder = cameraDevice
+                    .createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+            requestBuilder.addTarget(imageReader.getSurface());
+
+            // Set the focus of the camera
+            requestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                    CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+
+            // Set the orientation for the camera based on device's orientation
+            WindowManager windowService = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+            int currentRotation = windowService.getDefaultDisplay().getRotation();
+            Log.d("jeff", "" + currentRotation);
+            requestBuilder.set(CaptureRequest.JPEG_ORIENTATION, currentRotation * 90 + 90);
+
+            cameraCaptureSession.capture(requestBuilder.build(), cameraCallback, null);
+
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private CameraCaptureSession.CaptureCallback cameraCallback
+            = new CameraCaptureSession.CaptureCallback() {
+        @Override
+        public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
+            super.onCaptureCompleted(session, request, result);
+        }
+    };
+
+
 
 
     /*
@@ -288,5 +350,6 @@ public class BackgroundService extends Service {
         }.run();
     }
     */
+
 
 }

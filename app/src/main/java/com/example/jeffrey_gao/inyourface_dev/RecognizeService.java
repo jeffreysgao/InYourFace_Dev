@@ -30,7 +30,6 @@ import java.io.IOException;
 
 public class RecognizeService extends Service {
     public static final String FACE_IMAGE = "face_image";
-    public static final String IMAGE_DATA = "image_data";
     public static final String INPUT_TYPE = "input_type";
     public static final int STRING_DATA = 0;
     public static final int BYTE_DATA = 1;
@@ -113,9 +112,8 @@ public class RecognizeService extends Service {
             recognize(faceImage);
         }
         else if (intent.getIntExtra(INPUT_TYPE, 0) == 1) {
-            byte [] imageData = intent.getByteArrayExtra(IMAGE_DATA);
+            byte [] imageData = intent.getByteArrayExtra(FACE_IMAGE);
             recognize(imageData);
-
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -146,18 +144,22 @@ public class RecognizeService extends Service {
 
     private void recognize(byte[] byteImage) {
         try {
-            Bitmap image = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
-            String selector = "FULL";
-            String threshold = "0.75";
-            String minHeadScale = null;
-            String maxNumResults = "25";
-            myKairos.recognize(image,
-                    GALLERY_ID,
-                    selector,
-                    threshold,
-                    minHeadScale,
-                    maxNumResults,
-                    kairosListener);
+            if (byteImage != null) {
+                Bitmap image = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
+                String selector = "FULL";
+                String threshold = "0.75";
+                String minHeadScale = null;
+                String maxNumResults = "25";
+                myKairos.recognize(image,
+                        GALLERY_ID,
+                        selector,
+                        threshold,
+                        minHeadScale,
+                        maxNumResults,
+                        kairosListener);
+            } else {
+                Log.d("RECOGNIZE", "empty byte array");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

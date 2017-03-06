@@ -33,10 +33,8 @@ import static com.rvalerio.fgchecker.Utils.hasUsageStatsPermission;
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener
 {
-
     private static final long DRAWER_CLOSE_DELAY_MS = 350;
     private static final String NAV_ITEM_ID = "navItemId";
-
 
     private SettingsFragment settingsFragment = new SettingsFragment();
     // private AttentionFragment attentionFragment = new AttentionFragment();
@@ -114,8 +112,11 @@ public class MainActivity extends AppCompatActivity implements
          * Testing Kairos Services - Jeff
          */
 
+        AppLockManager.getInstance().enableDefaultAppLockIfAvailable(getApplication());
 //        KairosTest.testAnalyze(this);
-    }
+
+
+     }
 
     private void checkPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
