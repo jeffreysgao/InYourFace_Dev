@@ -21,6 +21,8 @@ import android.widget.ListView;
  * This class is for the setting page.
  */
 
+//edited by Tong on 3/6/17.
+
 
 public class SettingsFragment extends PreferenceFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener, ServiceConnection{

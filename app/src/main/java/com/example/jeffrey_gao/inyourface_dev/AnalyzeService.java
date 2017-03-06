@@ -3,7 +3,9 @@ package com.example.jeffrey_gao.inyourface_dev;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -42,6 +44,19 @@ public class AnalyzeService extends Service {
             public void onSuccess(String s) {
                 Log.d("KAIROS MEDIA", s);
                 JsonObject response = new JsonParser().parse(s).getAsJsonObject();
+
+                if (response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject()
+                        .get("people") == null) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+
+                    handler.post(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(), "No faces identified", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
 
                 if (response.getAsJsonObject().get("frames") != null
                         && response.getAsJsonObject().get("frames").getAsJsonArray() != null
