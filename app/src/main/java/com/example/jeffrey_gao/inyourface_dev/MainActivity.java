@@ -25,7 +25,8 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import org.wordpress.passcodelock.AppLockManager;
+import com.github.orangegangsters.lollipin.lib.managers.AppLock;
+import com.github.orangegangsters.lollipin.lib.managers.LockManager;
 
 import static com.rvalerio.fgchecker.Utils.hasUsageStatsPermission;
 
@@ -51,6 +52,10 @@ public class MainActivity extends AppCompatActivity implements
 
     public static Context mContext;
 
+    public boolean isFirst = true;
+
+    private static final int REQUEST_CODE_ENABLE = 11;
+
     /**
      * When main activity is created, the main function
      * @param savedInstanceState
@@ -59,6 +64,20 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (isFirst) {
+            Intent intent = new Intent(MainActivity.this, CustomPinActivity.class);
+            intent.putExtra(AppLock.EXTRA_TYPE, AppLock.ENABLE_PINLOCK);
+            startActivityForResult(intent, REQUEST_CODE_ENABLE);
+
+            isFirst = false;
+        }
+
+
+//        LockManager<CustomPinActivity> lockManager = LockManager.getInstance();
+//        lockManager.enableAppLock(this, CustomPinActivity.class);
+
+//        AppLockManager.getInstance().enableDefaultAppLockIfAvailable(getApplication());
 
         mContext = getApplicationContext();
 
@@ -104,10 +123,10 @@ public class MainActivity extends AppCompatActivity implements
 
         compName = new ComponentName(this, admin.class);
 
-        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
-        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
-        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "explanation");
-        startActivityForResult(intent, 3);
+        Intent adminIntent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+        adminIntent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, compName);
+        adminIntent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "explanation");
+        startActivityForResult(adminIntent, 3);
 
 
         /*
