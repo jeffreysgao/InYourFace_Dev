@@ -22,6 +22,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
+/**
+ * Registers the image uploaded, triggered by the "enroll user" button
+ * on the setting page, built on top of Kairos APIs.
+ */
 public class RegisterService extends Service {
     public static final String USER_FACE_IMAGE = "user_face_image";
     public static final String USER_NAME = "user_name";
@@ -81,6 +85,10 @@ public class RegisterService extends Service {
                 stopSelf();
             }
 
+            /**
+             * If fail to enroll the picture
+             * @param s
+             */
             @Override
             public void onFail(String s) {
                 Log.d("KAIROS ENROLL", s);
@@ -108,6 +116,11 @@ public class RegisterService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * Triggered by the "enroll user" button on the setting screen.
+     * @param faceImage
+     * @param name
+     */
     private void register(String faceImage, String name) {
         try {
             FileInputStream fis = openFileInput(faceImage);
@@ -131,6 +144,9 @@ public class RegisterService extends Service {
         }
     }
 
+    /**
+     * Gets all the galleries stored in Kairos.
+     */
     private void listGalleries() {
         try {
             myKairos.listGalleries(kairosListener);
@@ -141,6 +157,10 @@ public class RegisterService extends Service {
         }
     }
 
+    /**
+     * Deletes all galleries stored in Kairos.
+     * @param name
+     */
     private void deleteGallery(String name) {
         try {
             myKairos.deleteGallery(name, kairosListener);

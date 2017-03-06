@@ -17,10 +17,13 @@ import android.widget.ListView;
 
 /**
  * Created by jinnan on 2/25/17.
+ *
+ * This class is for the setting page.
  */
 
 
-public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, ServiceConnection{
+public class SettingsFragment extends PreferenceFragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener, ServiceConnection{
 
     private boolean isBind = false;
     private BackgroundService.MyBinder binder;
@@ -36,8 +39,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         setRetainInstance(true);
 
         handler = new MessageHandler();
-
-
 
 
         // Load the preferences from an XML resource
@@ -113,9 +114,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 mInterval = 3000;
                 break;
         }
-
-
-
 
     }
 

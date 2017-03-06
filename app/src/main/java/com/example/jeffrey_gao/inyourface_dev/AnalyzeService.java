@@ -18,6 +18,8 @@ import java.io.IOException;
 
 /**
  * Created by jeffreygao on 3/2/17.
+ *
+ * Emotion analysis of the image.
  */
 
 public class AnalyzeService extends Service {
@@ -170,6 +172,7 @@ public class AnalyzeService extends Service {
 
         return super.onStartCommand(intent, flags, startId);
     }
+
 
     private void postMedia(String faceImage) {
         try {

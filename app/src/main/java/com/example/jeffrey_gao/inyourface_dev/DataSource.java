@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 /**
  * Created by Tong on 3/5/2017.
+ *
+ * Database class: database, and database operation functions.
  */
 
 //the middle layer which handles the insertions of the ExerciseEntries into the database
@@ -21,27 +23,34 @@ public class DataSource {
     private Context context;
 
 
-    //constructor, which just creates a SQLiteOpenHelper
+    /**
+     * Constructor, which just creates a SQLiteOpenHelper
+     */
     public DataSource(Context context) {
         this.context = context;
         mySQLiteOpenHelper = new MySQLiteOpenHelper(context);
 
     }
 
-    //opens a database for writing
+    /**
+     * Opens a database for writing
+     */
     public void open() {
         database = mySQLiteOpenHelper.getWritableDatabase();
     }
 
 
-    //closes the database
+    /**
+     * Closes the database
+     */
     public void close() {
         mySQLiteOpenHelper.close();
     }
 
 
-
-    //inserts a point of emotion data into the database
+    /**
+     * Inserts a point of emotion data into the database.
+     */
     public long insertDataPoint(DataPoint dataPoint) {
         ContentValues values  = new ContentValues();
         values.put(MySQLiteOpenHelper.COLUMN_ACTIVITY, dataPoint.getActivity());
@@ -56,16 +65,12 @@ public class DataSource {
 
         long id = database.insert(MySQLiteOpenHelper.TABLE_NAME, null, values);
         return id;
-
     }
 
 
-
-
-
-
-
-    //this returns a data point from a row in the table given the row ID
+    /**
+     * this returns a data point from a row in the table given the row ID
+     */
     public DataPoint getEntry(long id) {
         Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_NAME, MySQLiteOpenHelper.ALL_COLUMNS,
                 MySQLiteOpenHelper.COLUMN_ID + " = " + id, null, null, null, null);
@@ -79,7 +84,9 @@ public class DataSource {
         return dataPoint;
     }
 
-    //this deletes the row of a table given its row ID
+    /**
+     * this deletes the row of a table given its row ID.
+     */
     public void deleteEntry(long id) {
 
         database.delete(MySQLiteOpenHelper.TABLE_NAME, MySQLiteOpenHelper.COLUMN_ID + " = " + id, null);
@@ -110,6 +117,10 @@ public class DataSource {
         return list;
     }
 
+    /**
+     * Returns all emotion data points.
+     * @return an arraylist of emotion data points
+     */
     public ArrayList<DataPoint> getAllDataPoints() {
         ArrayList<DataPoint> list = new ArrayList<DataPoint>();
 
@@ -129,6 +140,11 @@ public class DataSource {
     }
 
 
+    /**
+     * Converts the cursor into emotion data points
+     * @param cursor
+     * @return
+     */
     private DataPoint cursorToDataPoint(Cursor cursor) {
 
         DataPoint dataPoint = new DataPoint(context);
@@ -143,10 +159,6 @@ public class DataSource {
         dataPoint.setSurprise(cursor.getFloat(7));
         dataPoint.setAttention(cursor.getFloat(8));
 
-
-
         return dataPoint;
     }
-
-
 }

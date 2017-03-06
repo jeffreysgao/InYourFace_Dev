@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 /**
  * Created by Tong on 3/5/2017.
+ *
+ * Database structure: all columns and data stored.
  */
 
 public class MySQLiteOpenHelper extends SQLiteOpenHelper {

@@ -19,7 +19,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-//For select from gallery
+/**
+ * Takes and saves the photos, triggered by "Enroll User" button on the
+ * setting page.
+ */
 
 public class PhotoActivity extends AppCompatActivity {
     public static final String USER_DETAILS = "MyPrefs";

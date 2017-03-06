@@ -11,7 +11,8 @@ import java.io.IOException;
 
 /**
  * Created by jeffreygao on 3/3/17.
- *  Methods used for testing the Services for communication with Kairos
+ *
+ * Methods used for testing the Services for communication with Kairos
  */
 
 public class KairosTest {
@@ -22,6 +23,10 @@ public class KairosTest {
         context.startService(intent);
     }
 
+    /**
+     * Create the test profile picture.
+     * @param context
+     */
     public static void createProfPic(Context context) {
         Bitmap image = BitmapFactory.decodeResource(context.getResources(), R.drawable.liz);
         try {
