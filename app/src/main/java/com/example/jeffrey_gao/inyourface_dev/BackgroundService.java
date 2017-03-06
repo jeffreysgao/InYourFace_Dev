@@ -184,17 +184,20 @@ public class BackgroundService extends Service {
     public void repeatService() {
         new Thread() {
             public void run() {
-                new Timer().scheduleAtFixedRate(new TimerTask() {
+                new Timer().scheduleAtFixedRate(timerTask = new TimerTask() {
                     @Override
                     public void run() {
-                        Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
-                        PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+                        if (shouldContinueThread) {
+                            getForegroundActivityPackage();
+                        }
+                        //Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
+                        //PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
 //                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 //                        Calendar mCal = Calendar.getInstance();
 //                        mCal.setTimeInMillis(System.currentTimeMillis());
 //                        mCal.add(Calendar.SECOND, 10);
                     }
-                }, 0, 5000);
+                }, 0, interval);
 
             }
         }.run();
