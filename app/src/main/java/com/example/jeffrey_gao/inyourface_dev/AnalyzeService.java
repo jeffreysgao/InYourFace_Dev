@@ -22,6 +22,10 @@ import java.io.IOException;
 
 public class AnalyzeService extends Service {
     public static final String FACE_IMAGE = "face_image";
+    public static final String IMAGE_DATA = "image_data";
+    public static final String INPUT_TYPE = "input_type";
+    public static final int STRING_DATA = 0;
+    public static final int BYTE_DATA = 1;
     private KairosListener kairosListener;
     private Context context;
 
@@ -151,6 +155,16 @@ public class AnalyzeService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("jeff", "service started");
 
+        if (intent.getIntExtra(INPUT_TYPE, 0) == 0) {
+            String faceImage = intent.getStringExtra(FACE_IMAGE);
+            postMedia(faceImage);
+        }
+        else if (intent.getIntExtra(INPUT_TYPE, 0) == 1) {
+            byte [] imageData = intent.getByteArrayExtra(IMAGE_DATA);
+            postMedia(imageData);
+
+        }
+
         String faceImage = intent.getStringExtra(FACE_IMAGE);
         postMedia(faceImage);
 
@@ -159,6 +173,17 @@ public class AnalyzeService extends Service {
 
     private void postMedia(String faceImage) {
         try {
+            KairosHelper.postMedia(getApplicationContext(), faceImage, kairosListener);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void postMedia(byte[] imageData) {
+        try {
+            String faceImage = imageData.toString();
             KairosHelper.postMedia(getApplicationContext(), faceImage, kairosListener);
         } catch (IOException e) {
             e.printStackTrace();

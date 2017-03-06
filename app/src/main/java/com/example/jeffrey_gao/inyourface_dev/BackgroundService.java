@@ -20,6 +20,8 @@ import android.view.SurfaceView;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 @SuppressWarnings("deprecation")
@@ -94,13 +96,13 @@ public class BackgroundService extends Service {
             }
 
             else {
-                if(settings.getBoolean("emotions_pref", false)) {
-
+                if(settings.getBoolean("emotions_pref", true) || settings.getBoolean("attention_pref", true)) {
+                    Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
+                    analyzeIntent.putExtra(AnalyzeService.INPUT_TYPE, AnalyzeService.BYTE_DATA);
+                    analyzeIntent.putExtra(AnalyzeService.IMAGE_DATA, data);
+                    startService(analyzeIntent);
                 }
 
-                else if (settings.getBoolean("attention_pref", false)) {
-
-                }
             }
 
 //            camera.stopPreview();
@@ -242,13 +244,18 @@ public class BackgroundService extends Service {
     public void repeatService() {
         new Thread() {
             public void run() {
-                Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
-                PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
-                AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                Calendar mCal = Calendar.getInstance();
-                mCal.setTimeInMillis(System.currentTimeMillis());
-                mCal.add(Calendar.SECOND, 10);
-                alarmManager.setRepeating(AlarmManager.RTC, mCal.getTimeInMillis(), 10000, pendingIntent);
+                new Timer().scheduleAtFixedRate(new TimerTask() {
+                    @Override
+                    public void run() {
+                        Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
+                        PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+//                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+//                        Calendar mCal = Calendar.getInstance();
+//                        mCal.setTimeInMillis(System.currentTimeMillis());
+//                        mCal.add(Calendar.SECOND, 10);
+                    }
+                }, 0, 5000);
+
             }
         }.run();
     }
@@ -278,9 +285,13 @@ public class BackgroundService extends Service {
                 new Timer().scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if (shouldContinueThread) {
-                            getForegroundActivityPackage();
-                        }
+                        Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
+                        PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                        Calendar mCal = Calendar.getInstance();
+                        mCal.setTimeInMillis(System.currentTimeMillis());
+                        mCal.add(Calendar.SECOND, 10);
+                        alarmManager.setRepeating(AlarmManager.RTC, mCal.getTimeInMillis(), 10000, pendingIntent);
                     }
                 }, 0, 5000);
             }
