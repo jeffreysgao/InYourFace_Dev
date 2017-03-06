@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements
          * Testing Kairos Services - Jeff
          */
 
-        AppLockManager.getInstance().enableDefaultAppLockIfAvailable(getApplication());
+//        AppLockManager.getInstance().enableDefaultAppLockIfAvailable(getApplication());
 //        KairosTest.testAnalyze(this);
 
 
