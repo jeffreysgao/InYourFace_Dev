@@ -6,6 +6,7 @@
   android:background="@color/colorBackground"
   android:orientation="vertical">
 
+  <!-- This class is for the drawer's background setting -->
   <TextView
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
