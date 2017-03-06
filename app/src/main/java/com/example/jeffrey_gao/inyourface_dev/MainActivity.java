@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // ask to set a PIN to lock the app
         SharedPreferences sharedPreferences = this.getSharedPreferences("main", 0);
         boolean isPincodeSet = sharedPreferences.getBoolean("IS_PINCODE_SET", false);
 
@@ -247,7 +248,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    //
     /**
      * Save the current state.
      * @param outState

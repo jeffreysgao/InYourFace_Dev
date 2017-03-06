@@ -25,14 +25,14 @@ import java.util.List;
 
 /**
  * Created by jinnan on 2/25/17.
+ *   edited by Tong on 3/5/17.
+ *
+ * The emotion analysis fragment, triggered by "Emotion Tracking" button
+ * on the setting page.
  */
-
-// edited by Tong on 3/5/17
-
 
 public class EmotionsFragment extends Fragment
 {
-
     public static LineChart lineChart;
     public static RadarChart radarChart;
     public static Context context;
@@ -80,12 +80,14 @@ public class EmotionsFragment extends Fragment
 
 
         return view;
-
-
     }
 
-    public static LineData generateLineData() {
 
+    /**
+     * Generate the line charts.
+     * @return the line chart data
+     */
+    public static LineData generateLineData() {
 
         List<Entry> values = new ArrayList<Entry>();
 
@@ -158,15 +160,16 @@ public class EmotionsFragment extends Fragment
         List<LineDataSet> lines = new ArrayList<LineDataSet>();
         lines.add(lineDataSet);
 
-
-
         //now we have the chart data
         LineData lineData = new LineData(labels, lineDataSet);
-
 
         return lineData;
     }
 
+    /**
+     * Generates the data for the hexagon data.
+     * @return
+     */
     public static RadarData generateRadarData() {
 
         List<Entry> values = new ArrayList<Entry>();
@@ -175,7 +178,6 @@ public class EmotionsFragment extends Fragment
         source.open();
         List<DataPoint> points = source.getAllDataPoints();
         source.close();
-
 
         int size = points.size();
         int i = 0;
@@ -308,9 +310,10 @@ public class EmotionsFragment extends Fragment
         return radarData;
     }
 
+    /**
+     * Refresh the line chart data and the hexagon data.
+     */
     public static void refresh() {
-
-
         if (lineChart != null) {
 
             new Thread() {

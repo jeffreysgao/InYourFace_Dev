@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 /**
  * Created by jinnan on 2/25/17.
+ *
+ * To track the concentration level of an image.
  */
 
 public class AttentionFragment extends Fragment

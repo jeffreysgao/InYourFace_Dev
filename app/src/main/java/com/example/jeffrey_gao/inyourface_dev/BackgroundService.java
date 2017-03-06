@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -34,6 +35,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.rvalerio.fgchecker.AppChecker;
 
@@ -208,6 +210,18 @@ public class BackgroundService extends Service {
 
         currentPackageName = packageName;
         Log.d("PACKAGE NAME", packageName);
+
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return packageName;
 
 

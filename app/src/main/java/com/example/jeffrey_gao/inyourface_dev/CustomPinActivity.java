@@ -11,6 +11,8 @@ import uk.me.lewisdeane.ldialogs.CustomDialog;
 
 /**
  * Created by oliviergoutay on 1/14/15.
+ *
+ * This is from a 3rd party library.
  */
 public class CustomPinActivity extends AppLockActivity {
 

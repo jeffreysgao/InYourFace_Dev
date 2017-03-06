@@ -22,12 +22,13 @@ import java.io.UnsupportedEncodingException;
 
 /**
  * Created by jeffreygao on 3/2/17.
+ *
  * Helper class to enable more specific calls to Kairos to retrieve emotion and attention information
  */
 
 public class KairosHelper {
 
-    /*
+    /**
      * Uploads image to Kairos for analysis
      */
     public static void postMedia(Context context, String image, final KairosListener callback)
@@ -66,7 +67,7 @@ public class KairosHelper {
         client.post(context, "http://api.kairos.com/v2/media", requestParams, responseHandler);
     }
 
-    /*
+    /**
      * Gets detailed information on a previously uploaded image
      */
     public static void getMedia(Context context, String id, final KairosListener callback)
@@ -95,7 +96,7 @@ public class KairosHelper {
         client.get(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
     }
 
-    /*
+    /**
      * Deletes uploaded image once analysis is complete
      */
     public static void deleteMedia(Context context, String id, final KairosListener callback)

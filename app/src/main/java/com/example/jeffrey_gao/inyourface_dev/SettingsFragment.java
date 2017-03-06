@@ -17,10 +17,15 @@ import android.widget.ListView;
 
 /**
  * Created by jinnan on 2/25/17.
+ *
+ * This class is for the setting page.
  */
 
+//edited by Tong on 3/6/17.
 
-public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener, ServiceConnection{
+
+public class SettingsFragment extends PreferenceFragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener, ServiceConnection{
 
     private boolean isBind = false;
     private BackgroundService.MyBinder binder;
@@ -37,6 +42,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         handler = new MessageHandler();
 
+
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.settings_fragment);
 
@@ -46,38 +52,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public boolean onPreferenceClick(Preference preference) {
                 Intent intent = new Intent(getActivity().getApplicationContext(), BackgroundService.class);
 
-
                 if (!BackgroundService.isRunning()) {
-                    ListPreference prefs = (ListPreference) findPreference("interval_preference");
-
-                    String intervalChoice = prefs.getValue();
-
-                    switch (intervalChoice) {
-                        case "3 sec":
-                            mInterval = 3000;
-                            break;
-                        case "5 sec":
-                            mInterval = 5000;
-                            break;
-                        case "10 sec":
-                            mInterval = 10000;
-                            break;
-                        case "15 sec":
-                            mInterval = 15000;
-                            break;
-                        case "30 sec":
-                            mInterval = 30000;
-                            break;
-                        case "1 min":
-                            mInterval = 60000;
-                            break;
-
-                        default:
-                            mInterval = 3000;
-                            break;
-                    }
-
-                    intent.putExtra(BackgroundService.TIME_INTERVAL, mInterval);
                     getActivity().startService(intent);
 
                     //Bind to the service so we can send messages to it
@@ -105,40 +80,43 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
                     getActivity().stopService(intent);
                     connectionInitialized = false;
+
+
                 }
 
                 return false;
             }
         });
 
-//       ListPreference prefs = (ListPreference) findPreference("interval_preference");
-//
-//        String intervalChoice = prefs.getValue();
-//
-//        switch (intervalChoice) {
-//            case "3 sec":
-//                mInterval = 3000;
-//                break;
-//            case "5 sec":
-//                mInterval = 5000;
-//                break;
-//            case "10 sec":
-//                mInterval = 10000;
-//                break;
-//            case "15 sec":
-//                mInterval = 15000;
-//                break;
-//            case "30 sec":
-//                mInterval = 30000;
-//                break;
-//            case "1 min":
-//                mInterval = 60000;
-//                break;
-//
-//            default:
-//                mInterval = 3000;
-//                break;
-//        }
+       ListPreference prefs = (ListPreference) findPreference("interval_preference");
+
+        String intervalChoice = prefs.getValue();
+
+        switch (intervalChoice) {
+            case "3 sec":
+                mInterval = 3000;
+                break;
+            case "5 sec":
+                mInterval = 5000;
+                break;
+            case "10 sec":
+                mInterval = 10000;
+                break;
+            case "15 sec":
+                mInterval = 15000;
+                break;
+            case "30 sec":
+                mInterval = 30000;
+                break;
+            case "1 min":
+                mInterval = 60000;
+                break;
+
+            default:
+                mInterval = 3000;
+                break;
+        }
+
     }
 
     @Override
@@ -156,14 +134,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         binder = (BackgroundService.MyBinder) service;
         binder.setMessageHandler(handler);
 
-//
-//        binder.setInterval(mInterval);
 
-//        if (!connectionInitialized) {
-//            binder.stopRepeatService();
-//            binder.startRepeatService();
-//            connectionInitialized = true;
-//        }
+        binder.setInterval(mInterval);
+
+        if (!connectionInitialized) {
+            binder.stopRepeatService();
+            binder.startRepeatService();
+            connectionInitialized = true;
+        }
+
 
         binder.setShouldContinueBoolean(true);
     }
@@ -235,9 +214,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
 
             if (isBind && binder != null) {
-//                binder.setInterval(mInterval);
-//                binder.stopRepeatService();
-//                binder.startRepeatService();
+                binder.setInterval(mInterval);
+                binder.stopRepeatService();
+                binder.startRepeatService();
             }
         }
 

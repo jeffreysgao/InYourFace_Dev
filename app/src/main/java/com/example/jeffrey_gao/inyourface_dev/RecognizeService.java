@@ -26,6 +26,8 @@ import java.io.IOException;
 
 /**
  * Created by jeffreygao on 2/25/17.
+ *
+ * Analyze the picture uploaded, built on top of Kairos APIs.
  */
 
 public class RecognizeService extends Service {
@@ -110,6 +112,10 @@ public class RecognizeService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    /**
+     * Helper function to save and recognize the picture in Kairos.
+     * @param faceImage - string of the path of the image
+     */
     private void recognize(String faceImage) {
         try {
             FileInputStream fis = openFileInput(faceImage);
@@ -133,6 +139,11 @@ public class RecognizeService extends Service {
         }
     }
 
+    /**
+     * Bind the service.
+     * @param intent
+     * @return
+     */
     @Override
     public IBinder onBind(Intent intent) {
         return null;

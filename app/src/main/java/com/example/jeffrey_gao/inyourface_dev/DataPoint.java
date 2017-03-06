@@ -11,10 +11,11 @@ import java.util.Locale;
 
 /**
  * Created by Tong on 3/5/2017.
+ *
+ * This class stores the level of emotions for emotion analysis.
  */
 
 public class DataPoint {
-
 
     private long id;
     private String activity = "";
@@ -27,7 +28,6 @@ public class DataPoint {
     private float attention;
 
     private Context context;
-
 
 
     public DataPoint(Context context) {this.context = context;}
@@ -69,6 +69,5 @@ public class DataPoint {
     public void setAttention(float attention) {this.attention = attention;}
 
     public float getAttention() {return attention;}
-
 
 }

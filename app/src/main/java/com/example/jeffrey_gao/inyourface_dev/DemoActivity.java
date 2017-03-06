@@ -17,6 +17,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+
+/**
+ * This class is used to test & demo the photo analysis
+ */
 public class DemoActivity extends Activity implements Button.OnClickListener{
     /*
      * For testing/demoing analysis of photos - Jeff
