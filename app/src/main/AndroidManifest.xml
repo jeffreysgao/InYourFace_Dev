@@ -19,6 +19,7 @@
 
     <application
         android:allowBackup="true"
+        android:name="com.example.jeffrey_gao.inyourface_dev.CustomApplication"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -44,6 +45,26 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".CustomPinActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.CustomPinActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!--<activity-->
+            <!--android:name="org.wordpress.passcodelock.PasscodeUnlockActivity"-->
+            <!--android:theme="@style/AppTheme"-->
+            <!--android:windowSoftInputMode="stateHidden" >-->
+        <!--</activity>-->
+
+        <!--<activity-->
+            <!--android:name="org.wordpress.passcodelock.PasscodeManagePasswordActivity"-->
+            <!--android:theme="@style/AppTheme"-->
+            <!--android:windowSoftInputMode="stateHidden" >-->
+        <!--</activity>-->
 
         <service
             android:name=".RecognizeService"

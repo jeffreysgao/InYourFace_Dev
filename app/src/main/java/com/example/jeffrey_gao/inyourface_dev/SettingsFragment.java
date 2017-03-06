@@ -24,6 +24,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private boolean isBind = false;
     private BackgroundService.MyBinder binder;
     private MessageHandler handler;
+    private int mInterval = 10000;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -122,6 +123,32 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 Log.d("PREFERENCES", "attention tracking activated");
             } else {
                 Log.d("PREFERENCES", "attention tracking deactivated");
+            }
+        } else if (s.equals("interval_preference")) {
+            String intervalChoice = sharedPreferences.getString("interval_preference", "10 sec");
+            switch (intervalChoice) {
+                case "10 sec":
+                    mInterval = 10000;
+                    break;
+                case "30 sec":
+                    mInterval = 30000;
+                    break;
+                case "1 min":
+                    mInterval = 60000;
+                    break;
+                case "5 min":
+                    mInterval = 300000;
+                    break;
+                case "10 min":
+                    mInterval = 600000;
+                    break;
+                case "30 min":
+                    mInterval = 1800000;
+                    break;
+
+                default:
+                    mInterval = 100000;
+                    break;
             }
         }
     }

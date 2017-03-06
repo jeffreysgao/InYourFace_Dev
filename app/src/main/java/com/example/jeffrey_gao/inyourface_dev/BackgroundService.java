@@ -1,46 +1,24 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
-import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.TotalCaptureResult;
-import android.media.Image;
-import android.media.ImageReader;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.WindowManager;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -52,6 +30,8 @@ public class BackgroundService extends Service {
     private MyBinder myBinder;
     private Handler handler;
     private boolean isBind = false;
+
+
 
     private static SurfaceView mSurfaceView;
     private static SurfaceHolder mSurfaceHolder;
@@ -99,6 +79,7 @@ public class BackgroundService extends Service {
         });
 
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
     }
 
     @Override
@@ -340,9 +321,13 @@ public class BackgroundService extends Service {
                 new Timer().scheduleAtFixedRate(new TimerTask() {
                     @Override
                     public void run() {
-                        if (shouldContinueThread) {
-                            getForegroundActivityPackage();
-                        }
+                        Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
+                        PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+                        Calendar mCal = Calendar.getInstance();
+                        mCal.setTimeInMillis(System.currentTimeMillis());
+                        mCal.add(Calendar.SECOND, 10);
+                        alarmManager.setRepeating(AlarmManager.RTC, mCal.getTimeInMillis(), 10000, pendingIntent);
                     }
                 }, 0, 5000);
             }
