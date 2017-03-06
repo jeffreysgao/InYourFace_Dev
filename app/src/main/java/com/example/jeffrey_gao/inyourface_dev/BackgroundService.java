@@ -2,6 +2,7 @@ package com.example.jeffrey_gao.inyourface_dev;
 
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
@@ -11,12 +12,17 @@ import android.hardware.Camera;
 import android.hardware.Camera.Size;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.rvalerio.fgchecker.AppChecker;
+
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
@@ -32,6 +38,7 @@ public class BackgroundService extends Service {
     private MyBinder myBinder;
     private Handler handler;
     private boolean isBind = false;
+    private int interval;
 
 
 
@@ -39,8 +46,14 @@ public class BackgroundService extends Service {
     private static SurfaceHolder mSurfaceHolder;
     private Camera mCamera =  null;
     private Camera.Parameters params;
+    private String currentPackageName = "";
+
+    private boolean shouldContinueThread = false;
+    private boolean isTimerRunning = false;
 
     ActivityManager am;
+
+    TimerTask timerTask;
 
 
     //TODO: pass the photo to RecognizeService
@@ -160,7 +173,8 @@ public class BackgroundService extends Service {
     @Override
     public void onDestroy() {
         isRunning = false;
-        //shouldContinueThread = false;
+        shouldContinueThread = false;
+        isTimerRunning = false;
 
         Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
         super.onDestroy();
@@ -169,6 +183,18 @@ public class BackgroundService extends Service {
     public class MyBinder extends Binder {
 
         public void setMessageHandler(Handler messageHandler) {handler = messageHandler;}
+
+        public void setInterval(int inter_val) {interval = inter_val;}
+
+        public void setShouldContinueBoolean(boolean shouldContinue) {shouldContinueThread = shouldContinue;}
+
+        public void stopRepeatService() {
+            if (timerTask!= null) {
+                timerTask.cancel();
+                isTimerRunning = false;
+            }}
+
+        public void startRepeatService() {repeatService(); isTimerRunning = true;}
 
     }
 
@@ -188,6 +214,8 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+
 
         try {
             mCamera = Camera.open();
@@ -230,55 +258,61 @@ public class BackgroundService extends Service {
             e.printStackTrace();
         }
 
-//        repeatService();
-
-        //shouldContinueThread = true;
         //startThread();
 
         return super.onStartCommand(intent, flags, startId);
 
     }
 
-    //TODO: alarm manager for calling the service over time in settingsfrag with global alarm manager
 
     public void repeatService() {
         new Thread() {
+
+
             public void run() {
-                new Timer().scheduleAtFixedRate(new TimerTask() {
+                new Timer().scheduleAtFixedRate(timerTask = new TimerTask() {
                     @Override
                     public void run() {
-                        Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
-                        PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+                        if (shouldContinueThread) {
+
+                            //Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
+                            //PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
+
+
+                            getForegroundActivityPackage();
+
 //                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 //                        Calendar mCal = Calendar.getInstance();
 //                        mCal.setTimeInMillis(System.currentTimeMillis());
 //                        mCal.add(Calendar.SECOND, 10);
+                        }
                     }
-                }, 0, 5000);
+                }, 0, interval);
 
             }
         }.run();
+
     }
 
 
-    //TODO: get the activity running in the foreground
-    //Don't think this is possible
-    //THIS DOES NOT WORK
+    //THIS WORKS NOW
     public String getForegroundActivityPackage() {
         String packageName = "";
-        ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
+        AppChecker appChecker = new AppChecker();
+        packageName = appChecker.getForegroundApp(this);
 
-        packageName = foregroundTaskInfo.topActivity.getPackageName();
+        currentPackageName = packageName;
         Log.d("PACKAGE NAME", packageName);
         return packageName;
 
+
     }
 
 
-    /*
-    checks foreground app every five seconds, this is just here to test the package
-    get method, kill this once you get AlarmManager
-    public void startThread() {
+
+    //checks foreground app every five seconds, this is just here to test the package
+    //get method, kill this once you get AlarmManager
+    /*public void startThread() {
         new Thread() {
 
             public void run() {
@@ -297,7 +331,7 @@ public class BackgroundService extends Service {
             }
 
         }.run();
-    }
-    */
+    }*/
+
 
 }
