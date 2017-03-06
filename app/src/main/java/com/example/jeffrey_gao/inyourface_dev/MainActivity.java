@@ -75,12 +75,8 @@ public class MainActivity extends AppCompatActivity implements
             Intent intent = new Intent(MainActivity.this, CustomPinActivity.class);
             if (!isPincodeSet){
                 intent.putExtra(AppLock.EXTRA_TYPE, AppLock.ENABLE_PINLOCK);
-                sharedPreferences.edit().putBoolean("IS_PINCODE_SET", true).apply();
             }
             startActivityForResult(intent, REQUEST_CODE_ENABLE);
-
-
-
 
             isFirst = false;
         }
@@ -150,6 +146,12 @@ public class MainActivity extends AppCompatActivity implements
 
 
      }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        SharedPreferences sharedPreferences = this.getSharedPreferences("main", 0);
+        sharedPreferences.edit().putBoolean("IS_PINCODE_SET", true).apply();
+    }
 
     private void checkPermissions() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
