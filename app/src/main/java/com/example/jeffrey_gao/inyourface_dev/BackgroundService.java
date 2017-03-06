@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.ImageFormat;
@@ -69,81 +70,6 @@ public class BackgroundService extends Service {
     ActivityManager am;
 
     TimerTask timerTask;
-
-
-    //TODO: pass the photo to RecognizeService
-    //TODO: pass the photo to AnalyzeService
-    Camera.PictureCallback callbackForRaw = new Camera.PictureCallback() {
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            Log.d(TAG, "onPictureTaken accessed for RAW");
-
-            SharedPreferences settings = PreferenceManager
-                    .getDefaultSharedPreferences(getApplicationContext());
-
-            if (settings.getBoolean("auth_preference", false)) {
-                Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
-                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
-                recognizeIntent.putExtra(RecognizeService.IMAGE_DATA, data);
-                startService(recognizeIntent);
-            }
-
-            else {
-                if(settings.getBoolean("emotions_pref", false)) {
-
-                }
-
-                else if (settings.getBoolean("attention_pref", false)) {
-
-                }
-            }
-
-
-
-
-            camera.stopPreview();
-            camera.release();
-        }
-    };
-
-    Camera.PictureCallback callbackForJPG = new Camera.PictureCallback() {
-        @Override
-        public void onPictureTaken(byte[] data, Camera camera) {
-            Log.d(TAG, "onPictureTaken accessed for JPG");
-
-            mCamera.startPreview();
-
-            SharedPreferences settings = PreferenceManager
-                    .getDefaultSharedPreferences(getApplicationContext());
-
-            if (settings.getBoolean("auth_preference", false)) {
-                Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
-                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
-                recognizeIntent.putExtra(RecognizeService.IMAGE_DATA, data);
-                startService(recognizeIntent);
-            }
-
-            else {
-                if(settings.getBoolean("emotions_pref", true) || settings.getBoolean("attention_pref", true)) {
-                    Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
-                    analyzeIntent.putExtra(AnalyzeService.INPUT_TYPE, AnalyzeService.BYTE_DATA);
-                    analyzeIntent.putExtra(AnalyzeService.IMAGE_DATA, data);
-                    startService(analyzeIntent);
-                }
-
-            }
-
-//            camera.stopPreview();
-//            camera.release();
-        }
-    };
-
-    Camera.ShutterCallback callbackForShutter = new Camera.ShutterCallback() {
-        @Override
-        public void onShutter() {
-            Log.d(TAG, "onShutter accessed");
-        }
-    };
 
     public BackgroundService() {
     }
