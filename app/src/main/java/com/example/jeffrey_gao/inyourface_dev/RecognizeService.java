@@ -30,9 +30,6 @@ import java.io.IOException;
 
 public class RecognizeService extends Service {
     public static final String FACE_IMAGE = "face_image";
-    public static final String INPUT_TYPE = "input_type";
-    public static final int STRING_DATA = 0;
-    public static final int BYTE_DATA = 1;
     public static final String GALLERY_ID = "users";
     private Kairos myKairos;
     private KairosListener kairosListener;
@@ -107,14 +104,8 @@ public class RecognizeService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("jeff", "service started");
 
-        if (intent.getIntExtra(INPUT_TYPE, 0) == 0) {
-            String faceImage = intent.getStringExtra(FACE_IMAGE);
-            recognize(faceImage);
-        }
-        else if (intent.getIntExtra(INPUT_TYPE, 0) == 1) {
-            byte [] imageData = intent.getByteArrayExtra(FACE_IMAGE);
-            recognize(imageData);
-        }
+        String faceImage = intent.getStringExtra(FACE_IMAGE);
+        recognize(faceImage);
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -135,31 +126,6 @@ public class RecognizeService extends Service {
                     maxNumResults,
                     kairosListener);
             fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void recognize(byte[] byteImage) {
-        try {
-            if (byteImage != null) {
-                Bitmap image = BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length);
-                String selector = "FULL";
-                String threshold = "0.75";
-                String minHeadScale = null;
-                String maxNumResults = "25";
-                myKairos.recognize(image,
-                        GALLERY_ID,
-                        selector,
-                        threshold,
-                        minHeadScale,
-                        maxNumResults,
-                        kairosListener);
-            } else {
-                Log.d("RECOGNIZE", "empty byte array");
-            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

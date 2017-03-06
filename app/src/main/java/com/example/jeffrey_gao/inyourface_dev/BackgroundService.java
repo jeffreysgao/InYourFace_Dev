@@ -7,6 +7,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Size;
@@ -35,6 +37,7 @@ import android.view.WindowManager;
 
 import com.rvalerio.fgchecker.AppChecker;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Calendar;
@@ -47,14 +50,14 @@ import java.util.TimerTask;
 @SuppressWarnings("deprecation")
 public class BackgroundService extends Service {
 
+    public final String photoPath = "background_photo.png";
+    public static final String TIME_INTERVAL = "time_interval";
     private static final String TAG = "CAMERA";
     private static boolean isRunning = false;
     private MyBinder myBinder;
     private Handler handler;
     private boolean isBind = false;
     private int interval;
-
-
 
     private static SurfaceView mSurfaceView;
     private static SurfaceHolder mSurfaceHolder;
@@ -109,6 +112,7 @@ public class BackgroundService extends Service {
 
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
+
     }
 
     @Override
@@ -119,8 +123,6 @@ public class BackgroundService extends Service {
 
         Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
 
-
-
         super.onDestroy();
     }
 
@@ -128,7 +130,7 @@ public class BackgroundService extends Service {
 
         public void setMessageHandler(Handler messageHandler) {handler = messageHandler;}
 
-        public void setInterval(int inter_val) {interval = inter_val;}
+//        public void setInterval(int inter_val) {interval = inter_val;}
 
         public void setShouldContinueBoolean(boolean shouldContinue) {shouldContinueThread = shouldContinue;}
 
@@ -138,7 +140,7 @@ public class BackgroundService extends Service {
                 isTimerRunning = false;
             }}
 
-        public void startRepeatService() {repeatService(); isTimerRunning = true;}
+//        public void startRepeatService() {repeatService(); isTimerRunning = true;}
 
     }
 
@@ -158,15 +160,14 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        interval = intent.getIntExtra(TIME_INTERVAL, 10000);
+
+        repeatService();
+        isTimerRunning = true;
+
         takePhoto();
 
-//        repeatService();
-
-        //shouldContinueThread = true;
-        //startThread();
-
         return super.onStartCommand(intent, flags, startId);
-
     }
 
     // Sets up the camera and takes the photo, passing it to the services
@@ -188,14 +189,11 @@ public class BackgroundService extends Service {
                     @Override
                     public void run() {
                         if (shouldContinueThread) {
+                            // This code get's called every _ seconds
+                            Log.d("BACKGROUND SERVICE", "take photo");
                             getForegroundActivityPackage();
+//                            takePhoto();
                         }
-                        //Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
-                        //PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
-//                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-//                        Calendar mCal = Calendar.getInstance();
-//                        mCal.setTimeInMillis(System.currentTimeMillis());
-//                        mCal.add(Calendar.SECOND, 10);
                     }
                 }, 0, interval);
 
@@ -214,7 +212,6 @@ public class BackgroundService extends Service {
 
 
     }
-
 
     /*
      * Code for launching the camera in the background and taking a photo - Jeff
@@ -312,25 +309,30 @@ public class BackgroundService extends Service {
             Log.d("jeff", "image captured" + bytes.length);
 
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            savePic(bmp);
 
             if (settings.getBoolean("auth_preference", false)) {
                 Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
-                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
-                recognizeIntent.putExtra(RecognizeService.FACE_IMAGE, bytes);
+                recognizeIntent.putExtra(RecognizeService.FACE_IMAGE, photoPath);
 
                 startService(recognizeIntent);
             } else if (settings.getBoolean("emotions_pref", false)
                     || settings.getBoolean("attention_pref", false)) {
-                // TODO: Send byte array to analyze service
 
+                // TODO: Send byte array to analyze service
                 Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
-                analyzeIntent.putExtra(AnalyzeService.INPUT_TYPE, AnalyzeService.BYTE_DATA);
-                analyzeIntent.putExtra(AnalyzeService.IMAGE_DATA, bytes);
+                analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
 
                 startService(analyzeIntent);
             }
 
             image.close();
+
+            /*
+             * For testing: stop the service after it runs once
+             */
+            stopSelf();
         }
     };
 
@@ -365,33 +367,15 @@ public class BackgroundService extends Service {
         }
     };
 
-
-
-
-
-    //checks foreground app every five seconds, this is just here to test the package
-    //get method, kill this once you get AlarmManager
-    /*public void startThread() {
-        new Thread() {
-
-            public void run() {
-                new Timer().scheduleAtFixedRate(new TimerTask() {
-                    @Override
-                    public void run() {
-                        Intent myIntent = new Intent(MainActivity.mContext, BackgroundService.class);
-                        PendingIntent pendingIntent = PendingIntent.getService(MainActivity.mContext, 0, myIntent, 0);
-                        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-                        Calendar mCal = Calendar.getInstance();
-                        mCal.setTimeInMillis(System.currentTimeMillis());
-                        mCal.add(Calendar.SECOND, 10);
-                        alarmManager.setRepeating(AlarmManager.RTC, mCal.getTimeInMillis(), 10000, pendingIntent);
-                    }
-                }, 0, 5000);
-            }
-
-        }.run();
-    }*/
-
-
-
+    private void savePic(Bitmap image) {
+        try {
+            FileOutputStream f = openFileOutput(photoPath, MODE_PRIVATE);
+            image.compress(Bitmap.CompressFormat.PNG, 100, f);
+            f.flush();
+            f.close();
+            Log.d("jeff", "pic saved");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
