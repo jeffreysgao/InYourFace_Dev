@@ -200,7 +200,6 @@ public class BackgroundService extends Service {
         }.run();
     }
 
-    //THIS WORKS NOW
     public String getForegroundActivityPackage() {
         String packageName = "";
         AppChecker appChecker = new AppChecker();
@@ -310,15 +309,22 @@ public class BackgroundService extends Service {
             Log.d("jeff", "image captured" + bytes.length);
 
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            if (settings.getBoolean("auth_preference", false)) {
-                Intent intent = new Intent(getApplicationContext(), RecognizeService.class);
-                intent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
-                intent.putExtra(RecognizeService.FACE_IMAGE, bytes);
 
-                startService(intent);
+            if (settings.getBoolean("auth_preference", false)) {
+                Intent recognizeIntent = new Intent(getApplicationContext(), RecognizeService.class);
+                recognizeIntent.putExtra(RecognizeService.INPUT_TYPE, RecognizeService.BYTE_DATA);
+                recognizeIntent.putExtra(RecognizeService.FACE_IMAGE, bytes);
+
+                startService(recognizeIntent);
             } else if (settings.getBoolean("emotions_pref", false)
                     || settings.getBoolean("attention_pref", false)) {
                 // TODO: Send byte array to analyze service
+
+                Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
+                analyzeIntent.putExtra(AnalyzeService.INPUT_TYPE, AnalyzeService.BYTE_DATA);
+                analyzeIntent.putExtra(AnalyzeService.IMAGE_DATA, bytes);
+
+                startService(analyzeIntent);
             }
 
             image.close();
