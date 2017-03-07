@@ -341,7 +341,6 @@ public class BackgroundService extends Service {
                     || settings.getBoolean("attention_pref", false)) {
                 Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
                 analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
-                analyzeIntent.putExtra(PACKAGE_NAME, currentPackageName);
 
                 startService(analyzeIntent);
             }
