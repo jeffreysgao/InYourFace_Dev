@@ -103,7 +103,7 @@ public class DataSource {
         ArrayList<DataPoint> list = new ArrayList<DataPoint>();
 
         Cursor cursor = database.query(MySQLiteOpenHelper.TABLE_NAME, MySQLiteOpenHelper.ALL_COLUMNS,
-                MySQLiteOpenHelper.COLUMN_ACTIVITY + " = " + packageName, null, null, null, null);
+                MySQLiteOpenHelper.COLUMN_ACTIVITY + " LIKE " + "'%" + packageName + "%'", null, null, null, null);
 
         cursor.moveToFirst();
 

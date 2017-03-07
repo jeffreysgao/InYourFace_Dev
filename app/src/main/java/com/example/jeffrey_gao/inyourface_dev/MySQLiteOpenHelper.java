@@ -31,7 +31,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
     //create our table
     public static final String DATABASE_CREATE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " ("
             + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COLUMN_ACTIVITY + " TEXT, "
+            + COLUMN_ACTIVITY + " TEXT NOT NULL, "
             + COLUMN_ANGER + " FLOAT NOT NULL, "
             + COLUMN_FEAR + " FLOAT NOT NULL, "
             + COLUMN_DISGUST + " FLOAT NOT NULL, "
