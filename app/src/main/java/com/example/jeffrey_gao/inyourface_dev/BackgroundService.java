@@ -45,11 +45,9 @@ import java.util.TimerTask;
 
 import static java.lang.Thread.sleep;
 
-
-@SuppressWarnings("deprecation")
 public class BackgroundService extends Service {
 
-    public final String photoPath = "photo.png";
+    public final String photoPath = "background_photo.png";
     public static final String TIME_INTERVAL = "time_interval";
     private static final String TAG = "CAMERA";
     public static final String PACKAGE_NAME = "package_name";
@@ -58,11 +56,6 @@ public class BackgroundService extends Service {
     private Handler handler;
     private boolean isBind = false;
     private int interval;
-
-    private static SurfaceView mSurfaceView;
-    private static SurfaceHolder mSurfaceHolder;
-    private Camera mCamera =  null;
-    private Camera.Parameters params;
     private String currentPackageName = "No activity";
 
     private boolean shouldContinueThread = false;
@@ -90,27 +83,6 @@ public class BackgroundService extends Service {
         handler = null;
         myBinder = new MyBinder();
         am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-
-        mSurfaceView = new SurfaceView(this);
-        mSurfaceHolder = mSurfaceView.getHolder();
-        mSurfaceHolder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                Log.d(TAG, "Surface Created!");
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                Log.d(TAG, "Surface Changed!");
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                Log.d(TAG, "Surface Destroyed!");
-            }
-        });
-
-        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     @Override
@@ -158,14 +130,16 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        interval = intent.getIntExtra(TIME_INTERVAL, 10000);
+        Log.d("BACKGROUND SERVICE", "started");
+        if (intent != null)
+            interval = intent.getIntExtra(TIME_INTERVAL, 10000);
 
         repeatService();
         isTimerRunning = true;
 
-//        takePhoto();
+        super.onStartCommand(intent, flags, startId);
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     // Sets up the camera and takes the photo, passing it to the services
@@ -173,8 +147,6 @@ public class BackgroundService extends Service {
         setUpCamera();
 
         openCamera();
-
-        Log.d("jeff", "all calls made");
     }
 
     //TODO: alarm manager for calling the service over time in settingsfrag with global alarm manager

@@ -172,12 +172,14 @@ public class AnalyzeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("jeff", "service started");
+        Log.d("ANALYZE SERVICE", "service started");
 
-        String faceImage = intent.getStringExtra(FACE_IMAGE);
-        postMedia(faceImage);
+        if (intent != null) {
+            String faceImage = intent.getStringExtra(FACE_IMAGE);
+            postMedia(faceImage);
 
-        packageName = intent.getStringExtra(BackgroundService.PACKAGE_NAME);
+            packageName = intent.getStringExtra(BackgroundService.PACKAGE_NAME);
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }
