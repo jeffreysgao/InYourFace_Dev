@@ -266,6 +266,8 @@ public class BackgroundService extends Service {
         }
     }
 
+
+
     /*
      * Code for launching the camera in the background and taking a photo - Jeff
      * http://stackoverflow.com/questions/28003186/capture-picture-without-preview-using-camera2-api
