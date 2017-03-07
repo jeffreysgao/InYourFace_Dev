@@ -29,7 +29,7 @@ public class AnalyzeService extends Service {
     public static final String FACE_IMAGE = "face_image";
     private KairosListener kairosListener;
     private Context context;
-    String currentPackageName;
+    String currentPackageName = "No activity";
 
     @Override
     public void onCreate() {
@@ -137,7 +137,6 @@ public class AnalyzeService extends Service {
                         dataPoint.setSurprise(Float.parseFloat(surprise.toString()));
                         dataPoint.setAttention(Float.parseFloat(attention.toString()));
 
-                        currentPackageName = getForegroundActivityPackage();
                         String parsedPackageName = "No activity";
 
                         if (currentPackageName.equals("com.example.jeffrey_gao.inyourface_dev")) {
@@ -192,13 +191,14 @@ public class AnalyzeService extends Service {
 
         if (intent != null) {
             String faceImage = intent.getStringExtra(FACE_IMAGE);
+            currentPackageName = intent.getStringExtra(BackgroundService.PACKAGE_NAME);
             postMedia(faceImage);
         }
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public String getForegroundActivityPackage() {
+    /*public String getForegroundActivityPackage() {
         String packageName = "";
         AppChecker appChecker = new AppChecker();
         packageName = appChecker.getForegroundApp(this);
@@ -220,7 +220,7 @@ public class AnalyzeService extends Service {
         return packageName;
 
 
-    }
+    }*/
 
 
     private void postMedia(String faceImage) {

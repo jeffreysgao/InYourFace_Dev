@@ -190,9 +190,9 @@ public class BackgroundService extends Service {
                         if (shouldContinueThread) {
                             // This code get's called every _ seconds
                             Log.d("BACKGROUND SERVICE", "take photo");
-                            getForegroundActivityPackage();
                             backgroundHandler = new Handler(Looper.getMainLooper());
                             takePhoto();
+                            getForegroundActivityPackage();
                         }
                     }
                 }, 0, interval);
@@ -208,6 +208,7 @@ public class BackgroundService extends Service {
 
         currentPackageName = packageName;
         Log.d("PACKAGE NAME", packageName);
+
 
 
         Handler handler = new Handler(Looper.getMainLooper());
@@ -343,6 +344,8 @@ public class BackgroundService extends Service {
                     || settings.getBoolean("attention_pref", false)) {
                 Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
                 analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
+                analyzeIntent.putExtra(PACKAGE_NAME, currentPackageName);
+
 
                 startService(analyzeIntent);
             }
