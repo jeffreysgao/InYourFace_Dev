@@ -47,7 +47,8 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".CustomPinActivity">
+        <activity android:name=".CustomPinActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.CustomPinActivity" />
 
