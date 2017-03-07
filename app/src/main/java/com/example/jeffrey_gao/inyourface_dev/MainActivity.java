@@ -88,9 +88,6 @@ public class MainActivity extends AppCompatActivity implements
      * @param savedInstanceState
      */
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,8 +209,6 @@ public class MainActivity extends AppCompatActivity implements
 
             broughtFromForeground = false;
         }
-
-
 
 
         super.onResume();

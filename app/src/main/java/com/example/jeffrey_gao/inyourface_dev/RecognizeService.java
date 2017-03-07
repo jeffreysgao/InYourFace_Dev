@@ -37,6 +37,8 @@ public class RecognizeService extends Service {
     private KairosListener kairosListener;
 
 
+
+
     @Override
     public void onCreate() {
         super.onCreate();

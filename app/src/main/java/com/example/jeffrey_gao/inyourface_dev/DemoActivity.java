@@ -81,6 +81,8 @@ public class DemoActivity extends Activity implements Button.OnClickListener{
                 finish();
             }
         }
+
+        MainActivity.broughtFromForeground = false;
     }
 
     private void savePic(Bitmap image) {

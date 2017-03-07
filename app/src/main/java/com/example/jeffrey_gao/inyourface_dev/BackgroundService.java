@@ -52,6 +52,7 @@ public class BackgroundService extends Service {
     public final String photoPath = "photo.png";
     public static final String TIME_INTERVAL = "time_interval";
     private static final String TAG = "CAMERA";
+    public static final String PACKAGE_NAME = "package_name";
     private static boolean isRunning = false;
     private MyBinder myBinder;
     private Handler handler;
@@ -62,7 +63,7 @@ public class BackgroundService extends Service {
     private static SurfaceHolder mSurfaceHolder;
     private Camera mCamera =  null;
     private Camera.Parameters params;
-    private String currentPackageName = "";
+    private String currentPackageName = "No activity";
 
     private boolean shouldContinueThread = false;
     private boolean isTimerRunning = false;
@@ -340,6 +341,7 @@ public class BackgroundService extends Service {
                     || settings.getBoolean("attention_pref", false)) {
                 Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
                 analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
+                analyzeIntent.putExtra(PACKAGE_NAME, currentPackageName);
 
                 startService(analyzeIntent);
             }
