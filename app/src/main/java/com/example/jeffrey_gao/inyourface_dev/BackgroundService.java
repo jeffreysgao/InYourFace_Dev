@@ -1,8 +1,6 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
 import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -10,25 +8,23 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
-import android.net.Uri;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Surface;
@@ -42,17 +38,18 @@ import com.rvalerio.fgchecker.AppChecker;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static java.lang.Thread.sleep;
+
 
 @SuppressWarnings("deprecation")
 public class BackgroundService extends Service {
 
-    public final String photoPath = "background_photo.png";
+    public final String photoPath = "photo.png";
     public static final String TIME_INTERVAL = "time_interval";
     private static final String TAG = "CAMERA";
     private static boolean isRunning = false;
@@ -113,8 +110,6 @@ public class BackgroundService extends Service {
         });
 
         mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-
     }
 
     @Override
@@ -167,13 +162,12 @@ public class BackgroundService extends Service {
         repeatService();
         isTimerRunning = true;
 
-        takePhoto();
+//        takePhoto();
 
         return super.onStartCommand(intent, flags, startId);
     }
 
     // Sets up the camera and takes the photo, passing it to the services
-    // TODO: Handle the exception that gets thrown when camera has been opened before
     private void takePhoto() {
         setUpCamera();
 
@@ -194,7 +188,8 @@ public class BackgroundService extends Service {
                             // This code get's called every _ seconds
                             Log.d("BACKGROUND SERVICE", "take photo");
                             getForegroundActivityPackage();
-//                            takePhoto();
+                            backgroundHandler = new Handler(Looper.getMainLooper());
+                            takePhoto();
                         }
                     }
                 }, 0, interval);
@@ -238,7 +233,9 @@ public class BackgroundService extends Service {
     private Handler backgroundHandler;
     private HandlerThread backgroundThread;
     private CameraDevice cameraDevice;
-    private CameraCaptureSession cameraCaptureSession;
+    private CameraCaptureSession captureSession;
+    private SurfaceTexture mDummyPreview = new SurfaceTexture(1);
+    private Surface mDummySurface = new Surface(mDummyPreview);
 
     private void setUpCamera() {
         CameraManager cameraManager = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
@@ -255,7 +252,6 @@ public class BackgroundService extends Service {
 
                 imageReader = ImageReader.newInstance(100, 100, ImageFormat.JPEG, 1);
                 imageReader.setOnImageAvailableListener(onImageAvailableListener, backgroundHandler);
-
             }
         } catch (CameraAccessException | NullPointerException e) {
             e.printStackTrace();
@@ -277,6 +273,7 @@ public class BackgroundService extends Service {
         public void onOpened(CameraDevice device) {
             Log.d("jeff", "camera opened");
             cameraDevice = device;
+
             createCaptureSession();
         }
 
@@ -294,13 +291,21 @@ public class BackgroundService extends Service {
     private void createCaptureSession() {
         List<Surface> outputSurfaces = new LinkedList<>();
         outputSurfaces.add(imageReader.getSurface());
+        outputSurfaces.add(mDummySurface);
 
         try {
             cameraDevice.createCaptureSession(outputSurfaces,
                     new CameraCaptureSession.StateCallback() {
                         @Override
                         public void onConfigured(CameraCaptureSession session) {
-                            cameraCaptureSession = session;
+                            captureSession = session;
+                            createPreviewRequest();
+                            try {
+                                sleep(1000);
+                                captureSession.stopRepeating();
+                            } catch (InterruptedException | CameraAccessException e) {
+                                e.printStackTrace();
+                            }
                             createCaptureRequest();
                         }
 
@@ -333,8 +338,6 @@ public class BackgroundService extends Service {
                 startService(recognizeIntent);
             } else if (settings.getBoolean("emotions_pref", false)
                     || settings.getBoolean("attention_pref", false)) {
-
-                // TODO: Send byte array to analyze service
                 Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
                 analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
 
@@ -342,6 +345,8 @@ public class BackgroundService extends Service {
             }
 
             image.close();
+            captureSession.close();
+            cameraDevice.close();
 
             /*
              * For testing: stop the service after it runs once
@@ -366,8 +371,20 @@ public class BackgroundService extends Service {
             Log.d("jeff", "" + currentRotation);
             requestBuilder.set(CaptureRequest.JPEG_ORIENTATION, currentRotation * 90 + 90);
 
-            cameraCaptureSession.capture(requestBuilder.build(), cameraCallback, null);
+            captureSession.capture(requestBuilder.build(), cameraCallback, null);
 
+        } catch (CameraAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createPreviewRequest() {
+        try {
+            CaptureRequest.Builder requestBuilder = cameraDevice
+                    .createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+            requestBuilder.addTarget(mDummySurface);
+            requestBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            captureSession.setRepeatingRequest(requestBuilder.build(), null, backgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
