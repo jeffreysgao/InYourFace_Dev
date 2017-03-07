@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements
     public static Context mContext;
 
     public static boolean isFirst = true;
-    public static boolean k =  false;
+    public static boolean broughtFromForeground =  false;
 
     private static final int REQUEST_CODE_ENABLE = 11;
 
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onTrimMemory(final int level) {
             if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
-                k = true;
+                broughtFromForeground = true;
             }
 
         }
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements
         SharedPreferences sharedPreferences = this.getSharedPreferences("main", 0);
         boolean isPincodeSet = sharedPreferences.getBoolean("IS_PINCODE_SET", false);
 
-        if (k) {
+        if (broughtFromForeground) {
 
             Intent intent = new Intent(MainActivity.this, CustomPinActivity.class);
             if (!isPincodeSet){
@@ -210,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements
             }
             startActivityForResult(intent, REQUEST_CODE_ENABLE);
 
-            k = false;
+            broughtFromForeground = false;
         }
 
 
@@ -321,14 +321,14 @@ public class MainActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
         outState.putInt(NAV_ITEM_ID, navItemId);
         outState.putBoolean(IS_FIRST_ID, isFirst);
-        outState.putBoolean("k", k);
+        outState.putBoolean("brought_from_foreground", broughtFromForeground);
 
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         isFirst = savedInstanceState.getBoolean(IS_FIRST_ID);
-        k = savedInstanceState.getBoolean("k");
+        broughtFromForeground = savedInstanceState.getBoolean("brought_from_foreground");
     }
 
 }
