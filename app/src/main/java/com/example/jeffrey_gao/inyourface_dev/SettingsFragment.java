@@ -130,10 +130,8 @@ public class SettingsFragment extends PreferenceFragment
 
     @Override
     public void onServiceConnected(ComponentName componentName, IBinder service) {
-
         binder = (BackgroundService.MyBinder) service;
         binder.setMessageHandler(handler);
-
 
         binder.setInterval(mInterval);
 

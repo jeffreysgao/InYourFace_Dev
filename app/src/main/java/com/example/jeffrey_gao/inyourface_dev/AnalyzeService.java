@@ -182,7 +182,7 @@ public class AnalyzeService extends Service {
             String faceImage = intent.getStringExtra(FACE_IMAGE);
             postMedia(faceImage);
 
-            packageName = intent.getStringExtra(BackgroundService.PACKAGE_NAME);
+            currentPackageName = intent.getStringExtra(BackgroundService.PACKAGE_NAME);
         }
 
         return super.onStartCommand(intent, flags, startId);
@@ -197,19 +197,17 @@ public class AnalyzeService extends Service {
         Log.d("PACKAGE NAME", packageName);
 
 
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
-            }
-        });
+//        Handler handler = new Handler(Looper.getMainLooper());
+//
+//        handler.post(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
         return packageName;
-
-
     }
 
 

@@ -56,18 +56,6 @@
             </intent-filter>
         </activity>
 
-        <!--<activity-->
-            <!--android:name="org.wordpress.passcodelock.PasscodeUnlockActivity"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:windowSoftInputMode="stateHidden" >-->
-        <!--</activity>-->
-
-        <!--<activity-->
-            <!--android:name="org.wordpress.passcodelock.PasscodeManagePasswordActivity"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:windowSoftInputMode="stateHidden" >-->
-        <!--</activity>-->
-
         <service
             android:name=".RecognizeService"
             android:enabled="true"
@@ -98,7 +86,6 @@
         <service
             android:name=".BackgroundService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
     </application>
-
 </manifest>

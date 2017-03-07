@@ -1,6 +1,9 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
 import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -64,6 +67,7 @@ public class BackgroundService extends Service {
     private String mCameraId;
 
     ActivityManager am;
+    NotificationManager notificationManager;
 
     TimerTask timerTask;
 
@@ -91,6 +95,8 @@ public class BackgroundService extends Service {
         shouldContinueThread = false;
         isTimerRunning = false;
 
+        notificationManager.cancel(0);
+
         Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
 
         super.onDestroy();
@@ -117,6 +123,7 @@ public class BackgroundService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
+        setUpNotification();
         isBind = true;
         return myBinder;
     }
@@ -137,9 +144,9 @@ public class BackgroundService extends Service {
         repeatService();
         isTimerRunning = true;
 
-        super.onStartCommand(intent, flags, startId);
+//        return super.onStartCommand(intent, flags, startId);
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     // Sets up the camera and takes the photo, passing it to the services
@@ -160,7 +167,6 @@ public class BackgroundService extends Service {
                         if (shouldContinueThread) {
                             // This code get's called every _ seconds
                             Log.d("BACKGROUND SERVICE", "take photo");
-                            getForegroundActivityPackage();
                             backgroundHandler = new Handler(Looper.getMainLooper());
                             takePhoto();
                         }
@@ -169,30 +175,6 @@ public class BackgroundService extends Service {
 
             }
         }.run();
-    }
-
-    public String getForegroundActivityPackage() {
-        String packageName = "";
-        AppChecker appChecker = new AppChecker();
-        packageName = appChecker.getForegroundApp(this);
-
-        currentPackageName = packageName;
-        Log.d("PACKAGE NAME", packageName);
-
-
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        return packageName;
-
-
     }
 
     /*
@@ -381,5 +363,30 @@ public class BackgroundService extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setUpNotification() {
+        String title = "In Your Face!";
+        String text = "Recording your face now";
+
+        Intent intent = new Intent(this, MainActivity.class)
+                .setAction(Intent.ACTION_MAIN)
+                .addCategory(Intent.CATEGORY_LAUNCHER);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setSmallIcon(R.drawable.app_icon)
+                .setContentIntent(pendingIntent)
+                .build();
+
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        notificationManager =
+                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, notification);
     }
 }
