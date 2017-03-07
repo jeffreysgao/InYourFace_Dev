@@ -29,7 +29,7 @@ public class AnalyzeService extends Service {
     public static final String FACE_IMAGE = "face_image";
     private KairosListener kairosListener;
     private Context context;
-    String currentPackageName;
+    String currentPackageName = "No activity";
 
     @Override
     public void onCreate() {
@@ -137,9 +137,20 @@ public class AnalyzeService extends Service {
                         dataPoint.setSurprise(Float.parseFloat(surprise.toString()));
                         dataPoint.setAttention(Float.parseFloat(attention.toString()));
 
-                        currentPackageName = getForegroundActivityPackage();
+                        String parsedPackageName = "No activity";
 
-                        dataPoint.setActivity(currentPackageName);
+                        if (currentPackageName.equals("com.example.jeffrey_gao.inyourface_dev")) {
+                            Log.d("DSTORV", "DSTORV");
+                            parsedPackageName = "In Your Face";
+                        } else if (currentPackageName.equals("com.skype.raider")) {
+                            parsedPackageName = "Skype";
+                        } else if (currentPackageName.equals("com.facebook.katana")) {
+                            parsedPackageName = "Facebook";
+                        } else if (currentPackageName.equals("com.google.android.gm")) {
+                            parsedPackageName = "Gmail";
+                        }
+
+                        dataPoint.setActivity(parsedPackageName);
 
                         DataSource source = new DataSource(context);
                         source.open();
@@ -176,19 +187,18 @@ public class AnalyzeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("ANALYZE SERVICE", "service started");
+        Log.d("jeff", "service started");
 
         if (intent != null) {
             String faceImage = intent.getStringExtra(FACE_IMAGE);
-            postMedia(faceImage);
-
             currentPackageName = intent.getStringExtra(BackgroundService.PACKAGE_NAME);
+            postMedia(faceImage);
         }
 
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public String getForegroundActivityPackage() {
+    /*public String getForegroundActivityPackage() {
         String packageName = "";
         AppChecker appChecker = new AppChecker();
         packageName = appChecker.getForegroundApp(this);
@@ -208,6 +218,9 @@ public class AnalyzeService extends Service {
 //        });
 
         return packageName;
+
+
+    }*/
     }
 
 

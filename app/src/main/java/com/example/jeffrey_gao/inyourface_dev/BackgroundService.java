@@ -48,9 +48,11 @@ import java.util.TimerTask;
 
 import static java.lang.Thread.sleep;
 
+
+@SuppressWarnings("deprecation")
 public class BackgroundService extends Service {
 
-    public final String photoPath = "background_photo.png";
+    public final String photoPath = "photo.png";
     public static final String TIME_INTERVAL = "time_interval";
     private static final String TAG = "CAMERA";
     public static final String PACKAGE_NAME = "package_name";
@@ -59,6 +61,11 @@ public class BackgroundService extends Service {
     private Handler handler;
     private boolean isBind = false;
     private int interval;
+
+    private static SurfaceView mSurfaceView;
+    private static SurfaceHolder mSurfaceHolder;
+    private Camera mCamera =  null;
+    private Camera.Parameters params;
     private String currentPackageName = "No activity";
 
     private boolean shouldContinueThread = false;
@@ -87,6 +94,27 @@ public class BackgroundService extends Service {
         handler = null;
         myBinder = new MyBinder();
         am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
+
+        mSurfaceView = new SurfaceView(this);
+        mSurfaceHolder = mSurfaceView.getHolder();
+        mSurfaceHolder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                Log.d(TAG, "Surface Created!");
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                Log.d(TAG, "Surface Changed!");
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+                Log.d(TAG, "Surface Destroyed!");
+            }
+        });
+
+        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     @Override
@@ -137,13 +165,14 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("BACKGROUND SERVICE", "started");
-        if (intent != null)
+        if (intent != null) {
             interval = intent.getIntExtra(TIME_INTERVAL, 10000);
+        }
 
         repeatService();
         isTimerRunning = true;
 
+//        takePhoto();
 //        return super.onStartCommand(intent, flags, startId);
 
         return START_NOT_STICKY;
@@ -154,6 +183,8 @@ public class BackgroundService extends Service {
         setUpCamera();
 
         openCamera();
+
+        Log.d("jeff", "all calls made");
     }
 
     //TODO: alarm manager for calling the service over time in settingsfrag with global alarm manager
@@ -169,12 +200,38 @@ public class BackgroundService extends Service {
                             Log.d("BACKGROUND SERVICE", "take photo");
                             backgroundHandler = new Handler(Looper.getMainLooper());
                             takePhoto();
+                            getForegroundActivityPackage();
                         }
                     }
                 }, 0, interval);
 
             }
         }.run();
+    }
+
+    public String getForegroundActivityPackage() {
+        String packageName = "";
+        AppChecker appChecker = new AppChecker();
+        packageName = appChecker.getForegroundApp(this);
+
+        currentPackageName = packageName;
+        Log.d("PACKAGE NAME", packageName);
+
+
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return packageName;
+
+
     }
 
     /*
@@ -295,6 +352,8 @@ public class BackgroundService extends Service {
                     || settings.getBoolean("attention_pref", false)) {
                 Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
                 analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
+                analyzeIntent.putExtra(PACKAGE_NAME, currentPackageName);
+
 
                 startService(analyzeIntent);
             }

@@ -86,6 +86,7 @@
         <service
             android:name=".BackgroundService"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true">
+        </service>
     </application>
 </manifest>
