@@ -214,8 +214,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
 
-
-
         super.onResume();
     }
 

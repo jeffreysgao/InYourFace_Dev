@@ -133,6 +133,8 @@ public class PhotoActivity extends AppCompatActivity {
             registerIntent.putExtra(RegisterService.USER_FACE_IMAGE, getString(R.string.photo_name));
             startService(registerIntent);
         }
+
+        MainActivity.broughtFromForeground = false;
     }
 
     // --------------- Self Defined Functions -----------------

@@ -27,6 +27,7 @@ public class DataPoint {
     private float surprise;
     private float attention;
 
+
     private Context context;
 
 
@@ -69,5 +70,7 @@ public class DataPoint {
     public void setAttention(float attention) {this.attention = attention;}
 
     public float getAttention() {return attention;}
+
+
 
 }

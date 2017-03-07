@@ -28,6 +28,7 @@ public class AnalyzeService extends Service {
     public static final String FACE_IMAGE = "face_image";
     private KairosListener kairosListener;
     private Context context;
+    String packageName;
 
     @Override
     public void onCreate() {
@@ -134,6 +135,7 @@ public class AnalyzeService extends Service {
                         dataPoint.setSadness(Float.parseFloat(sadness.toString()));
                         dataPoint.setSurprise(Float.parseFloat(surprise.toString()));
                         dataPoint.setAttention(Float.parseFloat(attention.toString()));
+                        dataPoint.setActivity(packageName);
 
                         DataSource source = new DataSource(context);
                         source.open();
@@ -174,6 +176,8 @@ public class AnalyzeService extends Service {
 
         String faceImage = intent.getStringExtra(FACE_IMAGE);
         postMedia(faceImage);
+
+        packageName = intent.getStringExtra(BackgroundService.PACKAGE_NAME);
 
         return super.onStartCommand(intent, flags, startId);
     }
