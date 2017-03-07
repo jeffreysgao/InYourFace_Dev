@@ -13,6 +13,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.kairos.KairosListener;
+import com.rvalerio.fgchecker.AppChecker;
 
 import org.json.JSONException;
 
@@ -28,7 +29,7 @@ public class AnalyzeService extends Service {
     public static final String FACE_IMAGE = "face_image";
     private KairosListener kairosListener;
     private Context context;
-    String packageName;
+    String currentPackageName;
 
     @Override
     public void onCreate() {
@@ -135,7 +136,10 @@ public class AnalyzeService extends Service {
                         dataPoint.setSadness(Float.parseFloat(sadness.toString()));
                         dataPoint.setSurprise(Float.parseFloat(surprise.toString()));
                         dataPoint.setAttention(Float.parseFloat(attention.toString()));
-                        dataPoint.setActivity(packageName);
+
+                        currentPackageName = getForegroundActivityPackage();
+
+                        dataPoint.setActivity(currentPackageName);
 
                         DataSource source = new DataSource(context);
                         source.open();
@@ -182,6 +186,30 @@ public class AnalyzeService extends Service {
         }
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    public String getForegroundActivityPackage() {
+        String packageName = "";
+        AppChecker appChecker = new AppChecker();
+        packageName = appChecker.getForegroundApp(this);
+
+        currentPackageName = packageName;
+        Log.d("PACKAGE NAME", packageName);
+
+
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.post(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        return packageName;
+
+
     }
 
 

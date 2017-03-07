@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.RadarChart;
@@ -31,11 +33,12 @@ import java.util.List;
  * on the setting page.
  */
 
-public class EmotionsFragment extends Fragment
+public class EmotionsFragment extends Fragment implements AdapterView.OnItemSelectedListener
 {
     public static LineChart lineChart;
     public static RadarChart radarChart;
     public static Context context;
+    public static Spinner spinner;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -43,11 +46,17 @@ public class EmotionsFragment extends Fragment
     {
         View view = inflater.inflate(R.layout.emotions_fragment, container, false);
 
-        context = (Activity) view.getContext();
+        context = view.getContext();
 
         lineChart = (LineChart) view.findViewById(R.id.line_chart);
 
         radarChart = (RadarChart) view.findViewById(R.id.radar_chart);
+
+        spinner = (Spinner) view.findViewById(R.id.activity_spinner);
+
+
+        spinner.setOnItemSelectedListener(this);
+
 
         //we get a chartData object from the database
 
@@ -82,6 +91,17 @@ public class EmotionsFragment extends Fragment
         return view;
     }
 
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        refresh();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // Another interface callback
+    }
+
 
     /**
      * Generate the line charts.
@@ -93,7 +113,14 @@ public class EmotionsFragment extends Fragment
 
         DataSource source = new DataSource(context);
         source.open();
-        List<DataPoint> points = source.getAllDataPoints();
+
+
+        //List<DataPoint> points = source.getAllDataPoints();
+
+        String selected = context.getResources().getStringArray(R.array.app_list)[(int) spinner.getSelectedItemId()];
+
+        List<DataPoint> points = source.getSelectedActivityDataPoints(selected);
+
         source.close();
 
         ArrayList<String> labels = new ArrayList<String>();
@@ -176,7 +203,11 @@ public class EmotionsFragment extends Fragment
 
         DataSource source = new DataSource(context);
         source.open();
-        List<DataPoint> points = source.getAllDataPoints();
+        //List<DataPoint> points = source.getAllDataPoints();
+
+        String selected = context.getResources().getStringArray(R.array.app_list)[(int) spinner.getSelectedItemId()];
+
+        List<DataPoint> points = source.getSelectedActivityDataPoints(selected);
         source.close();
 
         int size = points.size();
@@ -346,4 +377,6 @@ public class EmotionsFragment extends Fragment
         }
 
     }
+
+
 }
