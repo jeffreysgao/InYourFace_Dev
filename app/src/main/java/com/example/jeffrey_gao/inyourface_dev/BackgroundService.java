@@ -23,6 +23,7 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.media.Image;
 import android.media.ImageReader;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -52,7 +53,7 @@ import static java.lang.Thread.sleep;
 @SuppressWarnings("deprecation")
 public class BackgroundService extends Service {
 
-    public final String photoPath = "photo.png";
+    public final String photoPath = "background_photo.png";
     public static final String TIME_INTERVAL = "time_interval";
     private static final String TAG = "CAMERA";
     public static final String PACKAGE_NAME = "package_name";
@@ -62,13 +63,9 @@ public class BackgroundService extends Service {
     private boolean isBind = false;
     private int interval;
 
-    private static SurfaceView mSurfaceView;
-    private static SurfaceHolder mSurfaceHolder;
-    private Camera mCamera =  null;
-    private Camera.Parameters params;
     private String currentPackageName = "No activity";
 
-    private boolean shouldContinueThread = false;
+    private boolean shouldContinueThread = true;
     private boolean isTimerRunning = false;
 
     private String mCameraId;
@@ -76,6 +73,7 @@ public class BackgroundService extends Service {
     ActivityManager am;
     NotificationManager notificationManager;
 
+    StartTimerTask startTimerTask;
     TimerTask timerTask;
 
     public BackgroundService() {
@@ -88,33 +86,12 @@ public class BackgroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("SERVICE CREATED", "SERVICE CREATED");
+        Log.d("BACKGROUND SERVICE", "SERVICE CREATED");
 
         isRunning = true;
         handler = null;
         myBinder = new MyBinder();
         am = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-
-        mSurfaceView = new SurfaceView(this);
-        mSurfaceHolder = mSurfaceView.getHolder();
-        mSurfaceHolder.addCallback(new SurfaceHolder.Callback() {
-            @Override
-            public void surfaceCreated(SurfaceHolder holder) {
-                Log.d(TAG, "Surface Created!");
-            }
-
-            @Override
-            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-                Log.d(TAG, "Surface Changed!");
-            }
-
-            @Override
-            public void surfaceDestroyed(SurfaceHolder holder) {
-                Log.d(TAG, "Surface Destroyed!");
-            }
-        });
-
-        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
     }
 
     @Override
@@ -139,13 +116,15 @@ public class BackgroundService extends Service {
         public void setShouldContinueBoolean(boolean shouldContinue) {shouldContinueThread = shouldContinue;}
 
         public void stopRepeatService() {
-            if (timerTask!= null) {
-                timerTask.cancel();
+            if (startTimerTask != null && !startTimerTask.isCancelled()) {
+                shouldContinueThread = false;
                 isTimerRunning = false;
             }}
 
-        public void startRepeatService() {repeatService(); isTimerRunning = true;}
-
+        public void startRepeatService() {
+            repeatService();
+            isTimerRunning = true;
+        }
     }
 
     @Override
@@ -171,11 +150,7 @@ public class BackgroundService extends Service {
 
         repeatService();
         isTimerRunning = true;
-
-//        takePhoto();
-//        return super.onStartCommand(intent, flags, startId);
-
-        return START_NOT_STICKY;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     // Sets up the camera and takes the photo, passing it to the services
@@ -190,23 +165,9 @@ public class BackgroundService extends Service {
     //TODO: alarm manager for calling the service over time in settingsfrag with global alarm manager
 
     public void repeatService() {
-        new Thread() {
-            public void run() {
-                new Timer().scheduleAtFixedRate(timerTask = new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (shouldContinueThread) {
-                            // This code get's called every _ seconds
-                            Log.d("BACKGROUND SERVICE", "take photo");
-                            backgroundHandler = new Handler(Looper.getMainLooper());
-                            takePhoto();
-                            getForegroundActivityPackage();
-                        }
-                    }
-                }, 0, interval);
-
-            }
-        }.run();
+        shouldContinueThread = true;
+        startTimerTask = new StartTimerTask();
+        startTimerTask.execute();
     }
 
     public String getForegroundActivityPackage() {
@@ -217,21 +178,92 @@ public class BackgroundService extends Service {
         currentPackageName = packageName;
         Log.d("PACKAGE NAME", packageName);
 
-
-
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        handler.post(new Runnable() {
-
-            @Override
-            public void run() {
-                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
-            }
-        });
-
         return packageName;
+    }
 
 
+    public void setUpNotification() {
+        String title = "In Your Face!";
+        String text = "Recording your face now";
+
+        Intent intent = new Intent(this, MainActivity.class)
+                .setAction(Intent.ACTION_MAIN)
+                .addCategory(Intent.CATEGORY_LAUNCHER);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+
+        Notification notification = new Notification.Builder(this)
+                .setContentTitle(title)
+                .setContentText(text)
+                .setSmallIcon(R.drawable.app_icon)
+                .setContentIntent(pendingIntent)
+                .build();
+
+        notification.flags |= Notification.FLAG_ONGOING_EVENT;
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+        notificationManager =
+                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, notification);
+    }
+
+    private class StartTimerTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            if (interval == 0) {
+                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                String intervalChoice = settings.getString("interval_preference", "10 sec");
+                switch (intervalChoice) {
+                    case "3 sec":
+                        interval = 3000;
+                        break;
+                    case "5 sec":
+                        interval = 5000;
+
+                        break;
+                    case "10 sec":
+                        interval = 10000;
+                        break;
+                    case "15 sec":
+                        interval = 15000;
+                        break;
+                    case "30 sec":
+                        interval = 30000;
+                        break;
+                    case "1 min":
+                        interval = 60000;
+                        break;
+                    default:
+                        interval = 3000;
+                        break;
+                }
+            }
+
+            Log.d("BACKGROUND SERVICE", "interval " + interval);
+            if (shouldContinueThread)
+                Log.d("BACKGROUND SERVICE", "should continue thread");
+
+            new Timer().scheduleAtFixedRate(timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    if (shouldContinueThread) {
+                        // This code get's called every _interval_ seconds
+                        Log.d("BACKGROUND SERVICE", "take photo");
+                        backgroundHandler = new Handler(Looper.getMainLooper());
+                        takePhoto();
+                        getForegroundActivityPackage();
+                    }
+                }
+            }, 0, interval);
+
+            while (shouldContinueThread) {
+
+            }
+            timerTask.cancel();
+            Log.d("BACKGROUND SERVICE", "closing camera task");
+
+            return null;
+        }
     }
 
     /*
@@ -358,14 +390,10 @@ public class BackgroundService extends Service {
                 startService(analyzeIntent);
             }
 
+            Log.d("CAMERA TASK", "closing");
             image.close();
             captureSession.close();
             cameraDevice.close();
-
-            /*
-             * For testing: stop the service after it runs once
-             */
-//            stopSelf();
         }
     };
 
@@ -424,28 +452,4 @@ public class BackgroundService extends Service {
         }
     }
 
-    public void setUpNotification() {
-        String title = "In Your Face!";
-        String text = "Recording your face now";
-
-        Intent intent = new Intent(this, MainActivity.class)
-                .setAction(Intent.ACTION_MAIN)
-                .addCategory(Intent.CATEGORY_LAUNCHER);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        Notification notification = new Notification.Builder(this)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setSmallIcon(R.drawable.app_icon)
-                .setContentIntent(pendingIntent)
-                .build();
-
-        notification.flags |= Notification.FLAG_ONGOING_EVENT;
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-
-        notificationManager =
-                (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0, notification);
-    }
 }

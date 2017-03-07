@@ -198,32 +198,6 @@ public class AnalyzeService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    /*public String getForegroundActivityPackage() {
-        String packageName = "";
-        AppChecker appChecker = new AppChecker();
-        packageName = appChecker.getForegroundApp(this);
-
-        currentPackageName = packageName;
-        Log.d("PACKAGE NAME", packageName);
-
-
-//        Handler handler = new Handler(Looper.getMainLooper());
-//
-//        handler.post(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-        return packageName;
-
-
-    }*/
-    }
-
-
     private void postMedia(String faceImage) {
         try {
             KairosHelper.postMedia(getApplicationContext(), faceImage, kairosListener);
