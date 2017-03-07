@@ -11,6 +11,7 @@ import com.loopj.android.http.Base64;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,8 +45,12 @@ public class KairosHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                callback.onFail(responseString);
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("post media failed");
+                }
             }
 
             public void onRetry(int retryNo) {
@@ -83,8 +88,12 @@ public class KairosHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                callback.onFail(responseString);
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("get media failed");
+                }
             }
 
             public void onRetry(int retryNo) {
@@ -94,6 +103,58 @@ public class KairosHelper {
         client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
         client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
         client.get(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
+    }
+
+    /*
+     * Checks if user matches registered user
+     */
+    public static void recognize(Context context, Bitmap image, String galleryId, String selector, String threshold, String minHeadScale, String maxNumResults, final KairosListener callback)
+            throws JSONException, UnsupportedEncodingException {
+        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            public void onStart() {
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                callback.onSuccess(responseString);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("Recognize failed");
+                }
+            }
+
+            public void onRetry(int retryNo) {
+            }
+        };
+        JSONObject jsonParams = new JSONObject();
+        jsonParams.put("image", base64FromBitmap(image));
+        jsonParams.put("gallery_name", galleryId);
+        if(selector != null) {
+            jsonParams.put("selector", selector);
+        }
+
+        if(minHeadScale != null) {
+            jsonParams.put("minHeadScale", minHeadScale);
+        }
+
+        if(threshold != null) {
+            jsonParams.put("threshold", threshold);
+        }
+
+        if(maxNumResults != null) {
+            jsonParams.put("max_num_results", maxNumResults);
+        }
+
+        StringEntity entity = new StringEntity(jsonParams.toString());
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        client.post(context, "http://api.kairos.com/recognize", entity, "application/json", responseHandler);
     }
 
     /**
@@ -112,8 +173,12 @@ public class KairosHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                callback.onFail(responseString);
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("delete failed");
+                }
             }
 
             public void onRetry(int retryNo) {
@@ -141,8 +206,12 @@ public class KairosHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                callback.onFail(responseString);
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("analytics failed");
+                }
             }
 
             public void onRetry(int retryNo) {

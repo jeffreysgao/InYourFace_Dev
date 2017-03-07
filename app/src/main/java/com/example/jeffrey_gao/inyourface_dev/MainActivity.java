@@ -210,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements
             broughtFromForeground = false;
         }
 
-
         super.onResume();
     }
 

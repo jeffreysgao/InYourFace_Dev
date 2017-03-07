@@ -99,7 +99,7 @@ public class RegisterService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("jeff", "service started");
+        Log.d("REGISTER SERVICE", "service started");
 
         String action = intent.getStringExtra(ACTION);
         if (action.equals("register")) {

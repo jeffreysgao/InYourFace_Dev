@@ -36,9 +36,6 @@ public class RecognizeService extends Service {
     private Kairos myKairos;
     private KairosListener kairosListener;
 
-
-
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -106,10 +103,12 @@ public class RecognizeService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("jeff", "service started");
+        Log.d("RECOGNIZE SERVICE", "service started");
 
-        String faceImage = intent.getStringExtra(FACE_IMAGE);
-        recognize(faceImage);
+        if (intent != null) {
+            String faceImage = intent.getStringExtra(FACE_IMAGE);
+            recognize(faceImage);
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -126,7 +125,8 @@ public class RecognizeService extends Service {
             String threshold = "0.75";
             String minHeadScale = null;
             String maxNumResults = "25";
-            myKairos.recognize(image,
+            KairosHelper.recognize(getApplicationContext(),
+                    image,
                     GALLERY_ID,
                     selector,
                     threshold,
