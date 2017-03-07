@@ -28,7 +28,7 @@ public class DemoActivity extends Activity implements Button.OnClickListener{
     public int photoType;
     public static final int RECOGNIZE_PHOTO = 0;
     public static final int ANALYZE_PHOTO = 1;
-    public final String photoPath = "photo.png";
+    public final String photoPath = "demo_photo.png";
     /*
      * End of test code - Jeff
      */
