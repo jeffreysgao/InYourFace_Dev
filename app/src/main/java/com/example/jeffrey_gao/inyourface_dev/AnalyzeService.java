@@ -138,8 +138,20 @@ public class AnalyzeService extends Service {
                         dataPoint.setAttention(Float.parseFloat(attention.toString()));
 
                         currentPackageName = getForegroundActivityPackage();
+                        String parsedPackageName = "No activity";
 
-                        dataPoint.setActivity(currentPackageName);
+                        if (currentPackageName.equals("com.example.jeffrey_gao.inyourface_dev")) {
+                            Log.d("DSTORV", "DSTORV");
+                            parsedPackageName = "In Your Face";
+                        } else if (currentPackageName.equals("com.skype.raider")) {
+                            parsedPackageName = "Skype";
+                        } else if (currentPackageName.equals("com.facebook.katana")) {
+                            parsedPackageName = "Facebook";
+                        } else if (currentPackageName.equals("com.google.android.gm")) {
+                            parsedPackageName = "Gmail";
+                        }
+
+                        dataPoint.setActivity(parsedPackageName);
 
                         DataSource source = new DataSource(context);
                         source.open();
@@ -178,8 +190,10 @@ public class AnalyzeService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("jeff", "service started");
 
-        String faceImage = intent.getStringExtra(FACE_IMAGE);
-        postMedia(faceImage);
+        if (intent != null) {
+            String faceImage = intent.getStringExtra(FACE_IMAGE);
+            postMedia(faceImage);
+        }
 
         return super.onStartCommand(intent, flags, startId);
     }

@@ -158,14 +158,16 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        interval = intent.getIntExtra(TIME_INTERVAL, 10000);
+        if (intent != null) {
+            interval = intent.getIntExtra(TIME_INTERVAL, 10000);
+        }
 
         repeatService();
         isTimerRunning = true;
 
 //        takePhoto();
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
     // Sets up the camera and takes the photo, passing it to the services

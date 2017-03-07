@@ -248,9 +248,6 @@ public class SettingsFragment extends PreferenceFragment
 
     @Override
     public void onDestroy() {
-        if (getActivity().isFinishing()) {
-
-        }
 
         super.onDestroy();
     }
