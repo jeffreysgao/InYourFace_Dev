@@ -18,7 +18,7 @@
     <string name="webpage_title">Webpage</string>
     <string name="webpage_address">http://iyfandroidapp.weebly.com/</string>
 
-    <string name="profile_pic">Upload Your Picture</string>
+    <string name="photo_prompt_text">Upload Your Picture</string>
     <string name="change_pic_button">Change</string>
 
     <string name="photo_name">photo.png</string>
@@ -52,7 +52,7 @@
     <string name="activity_dialog_content">Tap \'OK\' to log out, when you log back in you\'ll be able to create a new Pincode.\n\nIf you remember your Pincode, tap \'Cancel\' to go back.</string>
     <string name="activity_appcompat_message">I am a PinCompatActivity!</string>
 
-    <!--<string name=""></string>-->
+    <string name="clear_all_button">Clear All</string>
 
     <!--<string name=""></string>-->
     <!--<string name=""></string>-->
