@@ -117,9 +117,7 @@ public class EmotionsFragment extends Fragment implements AdapterView.OnItemSele
 
         //List<DataPoint> points = source.getAllDataPoints();
 
-        String selected = context.getResources().getStringArray(R.array.app_list)[(int) spinner.getSelectedItemId()];
-
-        List<DataPoint> points = source.getSelectedActivityDataPoints(selected);
+        List<DataPoint> points = source.getAllDataPoints();
 
         source.close();
 
@@ -129,7 +127,7 @@ public class EmotionsFragment extends Fragment implements AdapterView.OnItemSele
         int i = 0;
 
         while (i < size) {
-            Entry entry = new Entry(points.get(i).getJoy(), i);
+            Entry entry = new Entry(points.get(i).getAttention(), i);
             values.add(entry);
 
             labels.add(Integer.toString(i + 1));
@@ -178,7 +176,7 @@ public class EmotionsFragment extends Fragment implements AdapterView.OnItemSele
         }*/
 
         //create a line object from the point objects
-        LineDataSet lineDataSet = new LineDataSet(values, "Joy");
+        LineDataSet lineDataSet = new LineDataSet(values, "ATTENTION");
         lineDataSet.setColor(Color.GREEN);
         lineDataSet.setDrawFilled(true);
         lineDataSet.setLineWidth(4);
