@@ -3,7 +3,9 @@ package com.example.jeffrey_gao.inyourface_dev;
 import java.util.*;
 
 import android.Manifest;
+import android.app.Application;
 import android.app.admin.DevicePolicyManager;
+import android.content.ComponentCallbacks2;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -55,17 +57,49 @@ public class MainActivity extends AppCompatActivity implements
     public static Context mContext;
 
     public static boolean isFirst = true;
+    public static boolean k =  false;
 
     private static final int REQUEST_CODE_ENABLE = 11;
+
+    //code from here: http://stackoverflow.com/questions/4414171/how-to-detect-when-an-android-app-goes-to-the-background-and-come-back-to-the-fo
+
+    public class MemoryBoss implements ComponentCallbacks2 {
+        @Override
+        public void onConfigurationChanged(final Configuration newConfig) {
+        }
+
+        @Override
+        public void onLowMemory() {
+        }
+
+        @Override
+        public void onTrimMemory(final int level) {
+            if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
+                k = true;
+            }
+
+        }
+    }
+
+    MemoryBoss memoryBoss;
 
     /**
      * When main activity is created, the main function
      * @param savedInstanceState
      */
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        memoryBoss = new MemoryBoss();
+        registerComponentCallbacks(memoryBoss);
+
+
 
         // ask to set a PIN to lock the app
         SharedPreferences sharedPreferences = this.getSharedPreferences("main", 0);
@@ -81,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements
 
             isFirst = false;
         }
-
 
 //        LockManager<CustomPinActivity> lockManager = LockManager.getInstance();
 //        lockManager.enableAppLock(this, CustomPinActivity.class);
@@ -146,7 +179,8 @@ public class MainActivity extends AppCompatActivity implements
 //        KairosTest.testAnalyze(this);
 
 
-     }
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -160,6 +194,36 @@ public class MainActivity extends AppCompatActivity implements
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
                     Manifest.permission.CAMERA}, 0);
         }
+    }
+
+    @Override
+    public void onResume() {
+
+        SharedPreferences sharedPreferences = this.getSharedPreferences("main", 0);
+        boolean isPincodeSet = sharedPreferences.getBoolean("IS_PINCODE_SET", false);
+
+        if (k) {
+
+            Intent intent = new Intent(MainActivity.this, CustomPinActivity.class);
+            if (!isPincodeSet){
+                intent.putExtra(AppLock.EXTRA_TYPE, AppLock.ENABLE_PINLOCK);
+            }
+            startActivityForResult(intent, REQUEST_CODE_ENABLE);
+
+            k = false;
+        }
+
+
+
+
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+
+
+        super.onPause();
     }
 
     private void requestUsageStatsPermission() {
@@ -257,11 +321,14 @@ public class MainActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
         outState.putInt(NAV_ITEM_ID, navItemId);
         outState.putBoolean(IS_FIRST_ID, isFirst);
+        outState.putBoolean("k", k);
+
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         isFirst = savedInstanceState.getBoolean(IS_FIRST_ID);
+        k = savedInstanceState.getBoolean("k");
     }
 
 }
