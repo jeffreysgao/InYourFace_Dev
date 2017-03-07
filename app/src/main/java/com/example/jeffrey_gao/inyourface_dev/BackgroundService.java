@@ -5,8 +5,10 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -72,6 +74,7 @@ public class BackgroundService extends Service {
 
     ActivityManager am;
     NotificationManager notificationManager;
+    ScreenLockReceiver screenLockReceiver;
 
     StartTimerTask startTimerTask;
     TimerTask timerTask;
@@ -88,6 +91,8 @@ public class BackgroundService extends Service {
         super.onCreate();
         Log.d("BACKGROUND SERVICE", "SERVICE CREATED");
 
+        screenLockReceiver = new ScreenLockReceiver();
+
         isRunning = true;
         handler = null;
         myBinder = new MyBinder();
@@ -101,6 +106,8 @@ public class BackgroundService extends Service {
         isTimerRunning = false;
 
         notificationManager.cancel(0);
+
+        unregisterReceiver(screenLockReceiver);
 
         Log.d("SERVICE DESTROYED", "SERVICE DESTROYED");
 
@@ -144,6 +151,11 @@ public class BackgroundService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+        intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(screenLockReceiver, intentFilter);
+
         if (intent != null) {
             interval = intent.getIntExtra(TIME_INTERVAL, 10000);
         }
@@ -180,7 +192,6 @@ public class BackgroundService extends Service {
 
         return packageName;
     }
-
 
     public void setUpNotification() {
         String title = "In Your Face!";
@@ -266,7 +277,21 @@ public class BackgroundService extends Service {
         }
     }
 
+    public class ScreenLockReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null)
+                return;
 
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                Log.d("BACKGROUND SERVICE", "phone locked");
+                shouldContinueThread = false;
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                Log.d("BACKGROUND SERVICE", "phone unlocked");
+                repeatService();
+            }
+        }
+    }
 
     /*
      * Code for launching the camera in the background and taking a photo - Jeff
