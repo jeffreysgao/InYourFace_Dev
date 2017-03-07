@@ -97,17 +97,4 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/misc_pref">
-
-    <PreferenceScreen
-            android:title="@string/webpage_title"
-            android:summary="@string/webpage_address">
-
-            <intent android:action="android.intent.action.VIEW"
-                android:data="http://iyfandroidapp.weebly.com/" />
-        </PreferenceScreen>
-
-    </PreferenceCategory>
-
 </PreferenceScreen>
