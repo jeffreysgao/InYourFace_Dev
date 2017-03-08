@@ -10,11 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,34 +31,53 @@ public class PhotoActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_TAKE_FROM_CAMERA = 0;
     private static final int REQUEST_CODE_SELECT_GALLERY = 1;
     // an integer to identify the activity in onActivityResult() as it returns
-    private static final String SAVED_URI = "saved_uri";        // prefix of unsaved URI
+    private static final String SAVED_URI_1 = "saved_uri_1";        // prefix of unsaved URI
+    private static final String SAVED_URI_2 = "saved_uri_2";
+    private static final String SAVED_URI_3 = "saved_uri_3";
 
     // ------------ GLOBAL VARIABLES ----------------
     private Uri myImageCaptureUri;      // global image URI
-    private ImageView mImageView;       // global image view
-    private Uri imgUriAfterCropped;     // if user updated the URI, then save it as
+    private ImageView mImageView1;       // global image view
+    private ImageView mImageView2;
+    private ImageView mImageView3;
+//    private Uri imgUriAfterCropped1;     // if user updated the URI, then save it as
     // the new destination so that loadImage() will
     // pull out the correct image (after cropped)
+
+    private Uri imgUriAfterCropped1;     // if user updated the URI, then save it as
+    private Uri imgUriAfterCropped2;
+    private Uri imgUriAfterCropped3;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
 
-        mImageView = (ImageView)findViewById(R.id.photoTaken);
+        mImageView1 = (ImageView)findViewById(R.id.photoTaken1);
+//        mImageView2 = (ImageView)findViewById(R.id.photoTaken2);
+//        mImageView3 = (ImageView)findViewById(R.id.photoTaken3);
+
 
         // if the instance created is not empty
         if (savedInstanceState != null)
         {
-            imgUriAfterCropped = savedInstanceState.getParcelable(SAVED_URI);
+            imgUriAfterCropped1 = savedInstanceState.getParcelable(SAVED_URI_1);
+            imgUriAfterCropped2 = savedInstanceState.getParcelable(SAVED_URI_2);
+            imgUriAfterCropped3 = savedInstanceState.getParcelable(SAVED_URI_3);
 
-            if (imgUriAfterCropped == null)
-            loadPicture();
+            if (imgUriAfterCropped1 == null)
+                loadPicture(mImageView1);
             else
-                mImageView.setImageURI(imgUriAfterCropped);
+            {
+                mImageView1.setImageURI(imgUriAfterCropped1);
+            }
+
         }
-        else {
-            loadPicture();
+        else
+        {
+            loadPicture(mImageView1);
         }
     }
 
@@ -69,7 +86,7 @@ public class PhotoActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        outState.putParcelable(SAVED_URI, imgUriAfterCropped);
+        outState.putParcelable(SAVED_URI_1, imgUriAfterCropped1);
     }
 
     /*
@@ -99,7 +116,7 @@ public class PhotoActivity extends AppCompatActivity {
         }
     }
 
-    public void clickChangeButton(View view)
+    public void clickChangeButton1(View view)
     {
         cameraIntent(view);
     }
@@ -115,7 +132,7 @@ public class PhotoActivity extends AppCompatActivity {
 
         if(requestCode == REQUEST_CODE_TAKE_FROM_CAMERA)
         { // go crop the image
-            mImageView.setImageURI(myImageCaptureUri);
+            mImageView1.setImageURI(myImageCaptureUri);
             savePicture();
 
             //delete galleries before registering new user
@@ -137,24 +154,29 @@ public class PhotoActivity extends AppCompatActivity {
         MainActivity.broughtFromForeground = false;
     }
 
-    // --------------- Self Defined Functions -----------------
+    // ----------- Helper Functions ---------------
     /*
      * Load the picture from where it is stored.
      */
-    private void loadPicture()
+    private void loadPicture(ImageView imageView)
     {
         try
         {
             FileInputStream fis = openFileInput(getString(R.string.photo_name));
             Bitmap bmap = BitmapFactory.decodeStream(fis);
 
-            mImageView.setImageBitmap(bmap);
+            imageView.setImageBitmap(bmap);
+
+//            mImageView1.setImageBitmap(bmap);
+//            mImageView2.setImageBitmap(bmap);;
+
             fis.close();
         }
         catch (IOException e)   // if there is no pictures saved
         {
             // use default pictures
-            mImageView.setImageResource(R.drawable.profile_photo);
+//            mImageView1.setImageResource(R.drawable.profile_photo);
+            imageView.setImageResource(R.drawable.profile_photo);
         }
     }
 
@@ -163,8 +185,8 @@ public class PhotoActivity extends AppCompatActivity {
      */
     private void savePicture()
     {
-        mImageView.buildDrawingCache();
-        Bitmap bmap = mImageView.getDrawingCache();
+        mImageView1.buildDrawingCache();
+        Bitmap bmap = mImageView1.getDrawingCache();
 
         try
         {

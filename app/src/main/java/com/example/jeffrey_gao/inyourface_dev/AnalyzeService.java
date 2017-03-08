@@ -221,7 +221,6 @@ public class AnalyzeService extends Service {
 
 
     }*/
-    }
 
 
     private void postMedia(String faceImage) {
