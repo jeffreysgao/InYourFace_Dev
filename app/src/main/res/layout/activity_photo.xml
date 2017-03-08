@@ -47,14 +47,26 @@
                 android:id="@+id/photoTaken1" />
 
             <Button
-                android:id="@+id/btn_start_b"
+                android:id="@+id/btn_start"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center"
                 android:layout_margin="5dp"
                 android:onClick="clickChangeButton1"
-                android:text="@string/change_pic_button" />
+                android:text="Add" />
+
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:onClick="clickDeleteButton"
+                android:text="Delete All" />
+
+
 
             </LinearLayout>
 

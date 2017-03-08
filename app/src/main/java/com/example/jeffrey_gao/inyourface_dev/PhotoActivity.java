@@ -92,7 +92,7 @@ public class PhotoActivity extends AppCompatActivity {
     /*
      * When the "Change" button gets clicked
      */
-    public void cameraIntent(View v, int button)
+    public void cameraIntent(View v)
     {
         // ask to take a picture, and pass that as the intent
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -119,7 +119,19 @@ public class PhotoActivity extends AppCompatActivity {
 
     public void clickChangeButton1(View view)
     {
-        cameraIntent(view, 1);
+        cameraIntent(view);
+    }
+
+    public void clickDeleteButton(View view)
+    {
+        Intent clearIntent = new Intent(this, RegisterService.class);
+            clearIntent.putExtra(RegisterService.ACTION, "clear");
+            startService(clearIntent);
+        mImageView1.setImageResource(0);
+        mImageView1.invalidate();
+
+        //TODO: NEED TO DELETE THE SAVED PHOTO FILE
+
     }
 
 
