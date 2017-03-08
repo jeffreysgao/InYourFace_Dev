@@ -190,6 +190,73 @@ public class KairosHelper {
         client.delete(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
     }
 
+    public static void enroll(Context context, Bitmap image, String subjectId, String galleryId, String selector, String multipleFaces, String minHeadScale, final KairosListener callback) throws JSONException, UnsupportedEncodingException {
+        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            public void onStart() {
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                callback.onSuccess(responseString);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                callback.onFail(responseString);
+            }
+
+            public void onRetry(int retryNo) {
+            }
+        };
+        JSONObject jsonParams = new JSONObject();
+        jsonParams.put("image", base64FromBitmap(image));
+        jsonParams.put("subject_id", subjectId);
+        jsonParams.put("gallery_name", galleryId);
+        if(selector != null) {
+            jsonParams.put("selector", selector);
+        }
+
+        if(minHeadScale != null) {
+            jsonParams.put("minHeadScale", minHeadScale);
+        }
+
+        if(multipleFaces != null) {
+            jsonParams.put("multiple_faces", multipleFaces);
+        }
+
+        StringEntity entity = new StringEntity(jsonParams.toString());
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        client.post(context, "http://api.kairos.com/enroll", entity, "application/json", responseHandler);
+    }
+
+    public static void listGalleries(Context context, final KairosListener callback) throws JSONException, UnsupportedEncodingException {
+        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            public void onStart() {
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                callback.onSuccess(responseString);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                callback.onFail(responseString);
+            }
+
+            public void onRetry(int retryNo) {
+            }
+        };
+        JSONObject jsonParams = new JSONObject();
+        StringEntity entity = new StringEntity(jsonParams.toString());
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        client.post(context, "http://api.kairos.com/gallery/list_all", entity, "application/json", responseHandler);
+    }
+
     /*
      * Retrieves summary data on an uploaded image
      */

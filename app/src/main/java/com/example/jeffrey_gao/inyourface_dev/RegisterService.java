@@ -129,13 +129,21 @@ public class RegisterService extends Service {
             String galleryId = RecognizeService.GALLERY_ID;
             String selector = "FULL";
             String multipleFaces = "false";
-            myKairos.enroll(image,
+            KairosHelper.enroll(getApplicationContext(),
+                    image,
                     subjectId,
                     galleryId,
                     selector,
                     multipleFaces,
                     null,
                     kairosListener);
+//            myKairos.enroll(image,
+//                    subjectId,
+//                    galleryId,
+//                    selector,
+//                    multipleFaces,
+//                    null,
+//                    kairosListener);
             fis.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -149,7 +157,8 @@ public class RegisterService extends Service {
      */
     private void listGalleries() {
         try {
-            myKairos.listGalleries(kairosListener);
+            KairosHelper.listGalleries(getApplicationContext(), kairosListener);
+//            myKairos.listGalleries(kairosListener);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
