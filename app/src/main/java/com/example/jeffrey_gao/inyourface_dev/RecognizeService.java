@@ -57,26 +57,24 @@ public class RecognizeService extends Service {
                         JsonArray images = null;
 
                         if (element != null)
-
                         {
                             images = element.getAsJsonArray();
                         } else
 
                         {
+                            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                            if (settings.getBoolean("toast_pref", false)) {
+                                Toast.makeText(getApplicationContext(), "No faces identified",
+                                        Toast.LENGTH_SHORT).show();
+                            }
 
-                            Toast.makeText(getApplicationContext(), "No faces identified",
-                                    Toast.LENGTH_SHORT).show();
                             Log.d("KAIROS RECOGNIZE", "no faces");
-                            SharedPreferences settings = PreferenceManager
-                                    .getDefaultSharedPreferences(getApplicationContext());
                             if (settings.getBoolean("lock_preference", false)
                                     && MainActivity.dpm.isAdminActive(MainActivity.compName)) {
                                 MainActivity.dpm.lockNow();
                             }
                         }
-
                         if (images != null && images.size() > 0)
-
                         {
                             JsonObject transaction = images
                                     .get(0)
@@ -88,16 +86,22 @@ public class RecognizeService extends Service {
                                 JsonElement status = transaction.get("status");
 
                                 if (status != null && status.getAsString().equals("success")) {
-                                    Toast.makeText(getApplicationContext(), "Valid user identified",
-                                            Toast.LENGTH_SHORT).show();
+                                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                    if (settings.getBoolean("toast_pref", false)) {
+                                        Toast.makeText(getApplicationContext(), "Valid user identified",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+
                                     Log.d("KAIROS RECOGNIZE", "success");
 
                                 } else if (status != null && status.getAsString().equals("failure")) {
-                                    Toast.makeText(getApplicationContext(), "Invalid user identified!",
-                                            Toast.LENGTH_SHORT).show();
+                                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                    if (settings.getBoolean("toast_pref", false)) {
+                                        Toast.makeText(getApplicationContext(), "Invalid user identified!",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+
                                     Log.d("KAIROS RECOGNIZE", "failure");
-                                    SharedPreferences settings = PreferenceManager
-                                            .getDefaultSharedPreferences(getApplicationContext());
                                     if (settings.getBoolean("lock_preference", false)
                                             && MainActivity.dpm.isAdminActive(MainActivity.compName)) {
                                         MainActivity.dpm.lockNow();

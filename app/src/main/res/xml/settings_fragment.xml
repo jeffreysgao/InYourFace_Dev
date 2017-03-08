@@ -95,6 +95,12 @@
             <intent android:action="android.intent.action.DemoActivity"/>
         </PreferenceScreen>
 
+        <SwitchPreference
+            android:key="toast_pref"
+            android:title="Show Toasts"
+            android:defaultValue="false"
+            android:summary="Display toasts from the background service for testing"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

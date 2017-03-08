@@ -3,9 +3,11 @@ package com.example.jeffrey_gao.inyourface_dev;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -46,9 +48,6 @@ public class AnalyzeService extends Service {
 
                 new Thread() {
                     public void run() {
-
-
-
                         if (response.getAsJsonObject().get("frames") != null
                                 && response.getAsJsonObject().get("frames").getAsJsonArray().size() > 0
                                 && response.getAsJsonObject().get("frames").getAsJsonArray().get(0).getAsJsonObject() != null
@@ -61,7 +60,10 @@ public class AnalyzeService extends Service {
 
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "No faces identified", Toast.LENGTH_SHORT).show();
+                                    SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                    if (settings.getBoolean("toast_pref", false)) {
+                                        Toast.makeText(getApplicationContext(), "No faces identified", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             });
                         }
@@ -113,7 +115,11 @@ public class AnalyzeService extends Service {
                                         + sadness.toString() + "," + surprise.toString() + "\n";
 
                                 Log.d("EMOTIONS", displayString);
-                                Toast.makeText(getApplicationContext(), displayString, Toast.LENGTH_SHORT).show();
+
+                                SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                if (settings.getBoolean("toast_pref", false)) {
+                                    Toast.makeText(getApplicationContext(), displayString, Toast.LENGTH_SHORT).show();
+                                }
 
                                 if (response.get("id") != null) {
                                     // Delete the uploaded photo
@@ -145,19 +151,21 @@ public class AnalyzeService extends Service {
 
                                 String parsedPackageName = "No activity";
 
-                                if (currentPackageName.equals("com.example.jeffrey_gao.inyourface_dev")) {
-                                    Log.d("DSTORV", "DSTORV");
-                                    parsedPackageName = "In Your Face";
-                                } else if (currentPackageName.equals("com.skype.raider")) {
-                                    parsedPackageName = "Skype";
-                                } else if (currentPackageName.equals("com.facebook.katana")) {
-                                    parsedPackageName = "Facebook";
-                                } else if (currentPackageName.equals("com.google.android.gm")) {
-                                    parsedPackageName = "Gmail";
-                                } else if (currentPackageName.equals("com.android.chrome")) {
-                                    parsedPackageName = "Chrome";
-                                } else if (currentPackageName.equals("com.google.android.youtube")) {
-                                    parsedPackageName = "YouTube";
+                                if (currentPackageName != null) {
+                                    if (currentPackageName.equals("com.example.jeffrey_gao.inyourface_dev")) {
+                                        Log.d("DSTORV", "DSTORV");
+                                        parsedPackageName = "In Your Face";
+                                    } else if (currentPackageName.equals("com.skype.raider")) {
+                                        parsedPackageName = "Skype";
+                                    } else if (currentPackageName.equals("com.facebook.katana")) {
+                                        parsedPackageName = "Facebook";
+                                    } else if (currentPackageName.equals("com.google.android.gm")) {
+                                        parsedPackageName = "Gmail";
+                                    } else if (currentPackageName.equals("com.android.chrome")) {
+                                        parsedPackageName = "Chrome";
+                                    } else if (currentPackageName.equals("com.google.android.youtube")) {
+                                        parsedPackageName = "YouTube";
+                                    }
                                 }
 
                                 dataPoint.setActivity(parsedPackageName);
@@ -211,31 +219,6 @@ public class AnalyzeService extends Service {
 
         return super.onStartCommand(intent, flags, startId);
     }
-
-    /*public String getForegroundActivityPackage() {
-        String packageName = "";
-        AppChecker appChecker = new AppChecker();
-        packageName = appChecker.getForegroundApp(this);
-
-        currentPackageName = packageName;
-        Log.d("PACKAGE NAME", packageName);
-
-
-//        Handler handler = new Handler(Looper.getMainLooper());
-//
-//        handler.post(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                Toast.makeText(getApplicationContext(), currentPackageName, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-        return packageName;
-
-
-    }*/
-
 
     private void postMedia(final String faceImage) {
         new Thread() {
