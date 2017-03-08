@@ -150,6 +150,8 @@ public class AnalyzeService extends Service {
                             parsedPackageName = "Gmail";
                         } else if (currentPackageName.equals("com.android.chrome")) {
                             parsedPackageName = "Chrome";
+                        } else if (currentPackageName.equals("com.google.android.youtube")) {
+                            parsedPackageName = "YouTube";
                         }
 
                         dataPoint.setActivity(parsedPackageName);
