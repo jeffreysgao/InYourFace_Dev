@@ -72,11 +72,11 @@ public class RegisterService extends Service {
 
                             Toast.makeText(getApplicationContext(),
                                     name + " registered in " + gallery + ".",
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_SHORT).show();
                             Log.d("KAIROS RECOGNIZE", name + " registered in " + gallery + ".");
                         } else {
                             Toast.makeText(getApplicationContext(), "Unable to register." ,
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_SHORT).show();
                             Log.d("KAIROS RECOGNIZE", "Unable to register.");
                         }
                     }

@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements
     private static final String IS_FIRST_ID = "isFirst";
 
     private SettingsFragment settingsFragment = new SettingsFragment();
-    // private AttentionFragment attentionFragment = new AttentionFragment();
     private EmotionsFragment emotionsFragment = new EmotionsFragment();
     private final Handler drawerActionHandler = new Handler();
     private DrawerLayout drawerLayout;

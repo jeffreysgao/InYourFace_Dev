@@ -2,6 +2,7 @@ package com.example.jeffrey_gao.inyourface_dev;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -132,6 +134,13 @@ public class PhotoActivity extends AppCompatActivity {
 
         //TODO: NEED TO DELETE THE SAVED PHOTO FILE
 
+
+        File f = new File(getFilesDir() + "/" + "photo.png");
+        if (f.exists()) {
+            f.delete();
+        }
+
+
     }
 
 
@@ -152,7 +161,6 @@ public class PhotoActivity extends AppCompatActivity {
 
             //delete galleries before registering new user
             //Note: can remove this later when we allow for multiple users/photos per user
-
 
             /*Intent clearIntent = new Intent(this, RegisterService.class);
             clearIntent.putExtra(RegisterService.ACTION, "clear");
