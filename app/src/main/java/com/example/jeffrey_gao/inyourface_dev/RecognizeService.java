@@ -67,6 +67,12 @@ public class RecognizeService extends Service {
                             Toast.makeText(getApplicationContext(), "No faces identified",
                                     Toast.LENGTH_LONG).show();
                             Log.d("KAIROS RECOGNIZE", "no faces");
+                            SharedPreferences settings = PreferenceManager
+                                    .getDefaultSharedPreferences(getApplicationContext());
+                            if (settings.getBoolean("lock_preference", false)
+                                    && MainActivity.dpm.isAdminActive(MainActivity.compName)) {
+                                MainActivity.dpm.lockNow();
+                            }
                         }
 
                         if (images != null && images.size() > 0)
@@ -131,28 +137,45 @@ public class RecognizeService extends Service {
      * Helper function to save and recognize the picture in Kairos.
      * @param faceImage - string of the path of the image
      */
-    private void recognize(String faceImage) {
-        try {
-            FileInputStream fis = openFileInput(faceImage);
-            Bitmap image = BitmapFactory.decodeStream(fis);
-            String selector = "FULL";
-            String threshold = "0.75";
-            String minHeadScale = null;
-            String maxNumResults = "25";
-            KairosHelper.recognize(getApplicationContext(),
-                    image,
-                    GALLERY_ID,
-                    selector,
-                    threshold,
-                    minHeadScale,
-                    maxNumResults,
-                    kairosListener);
-            fis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void recognize(final String faceImage) {
+
+        new Thread() {
+
+            public void run() {
+                try
+
+                {
+
+                    FileInputStream fis = openFileInput(faceImage);
+                    Bitmap image = BitmapFactory.decodeStream(fis);
+                    String selector = "FULL";
+                    String threshold = "0.75";
+                    String minHeadScale = null;
+                    String maxNumResults = "25";
+                    KairosHelper.recognize(getApplicationContext(),
+                            image,
+                            GALLERY_ID,
+                            selector,
+                            threshold,
+                            minHeadScale,
+                            maxNumResults,
+                            kairosListener);
+                    fis.close();
+                } catch (
+                        IOException e
+                        )
+
+                {
+                    e.printStackTrace();
+                } catch (
+                        JSONException e
+                        )
+
+                {
+                    e.printStackTrace();
+                }
+            }
+        }.run();
     }
 
     /**

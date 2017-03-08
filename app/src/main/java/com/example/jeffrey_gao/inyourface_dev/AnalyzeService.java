@@ -113,7 +113,7 @@ public class AnalyzeService extends Service {
                                         + sadness.toString() + "," + surprise.toString() + "\n";
 
                                 Log.d("EMOTIONS", displayString);
-                                Toast.makeText(getApplicationContext(), displayString, Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), displayString, Toast.LENGTH_SHORT).show();
 
                                 if (response.get("id") != null) {
                                     // Delete the uploaded photo
@@ -237,34 +237,79 @@ public class AnalyzeService extends Service {
     }*/
 
 
-    private void postMedia(String faceImage) {
-        try {
-            KairosHelper.postMedia(getApplicationContext(), faceImage, kairosListener);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void postMedia(final String faceImage) {
+        new Thread() {
+
+            public void run() {
+                try
+
+                {
+                    KairosHelper.postMedia(getApplicationContext(), faceImage, kairosListener);
+                } catch (
+                        IOException e
+                        )
+
+                {
+                    e.printStackTrace();
+                } catch (
+                        JSONException e
+                        )
+
+                {
+                    e.printStackTrace();
+                }
+            }
+        }.run();
     }
 
-    private void getMedia(String id) {
-        try {
-            KairosHelper.getMedia(getApplicationContext(), id, kairosListener);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void getMedia(final String id) {
+        new Thread() {
+
+            public void run() {
+                try
+
+                {
+                    KairosHelper.getMedia(getApplicationContext(), id, kairosListener);
+                } catch (
+                        IOException e
+                        )
+
+                {
+                    e.printStackTrace();
+                } catch (
+                        JSONException e
+                        )
+
+                {
+                    e.printStackTrace();
+                }
+            }
+        }.run();
     }
 
-    private void deleteMedia(String id) {
-        try {
-            KairosHelper.deleteMedia(getApplicationContext(), id, kairosListener);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void deleteMedia(final String id) {
+
+        new Thread() {
+            public void run() {
+                try
+
+                {
+                    KairosHelper.deleteMedia(getApplicationContext(), id, kairosListener);
+                } catch (
+                        IOException e
+                        )
+
+                {
+                    e.printStackTrace();
+                } catch (
+                        JSONException e
+                        )
+
+                {
+                    e.printStackTrace();
+                }
+            }
+        }.run();
     }
 
     @Override
