@@ -65,7 +65,7 @@ public class RecognizeService extends Service {
                         {
 
                             Toast.makeText(getApplicationContext(), "No faces identified",
-                                    Toast.LENGTH_LONG).show();
+                                    Toast.LENGTH_SHORT).show();
                             Log.d("KAIROS RECOGNIZE", "no faces");
                             SharedPreferences settings = PreferenceManager
                                     .getDefaultSharedPreferences(getApplicationContext());
@@ -89,12 +89,12 @@ public class RecognizeService extends Service {
 
                                 if (status != null && status.getAsString().equals("success")) {
                                     Toast.makeText(getApplicationContext(), "Valid user identified",
-                                            Toast.LENGTH_LONG).show();
+                                            Toast.LENGTH_SHORT).show();
                                     Log.d("KAIROS RECOGNIZE", "success");
 
                                 } else if (status != null && status.getAsString().equals("failure")) {
                                     Toast.makeText(getApplicationContext(), "Invalid user identified!",
-                                            Toast.LENGTH_LONG).show();
+                                            Toast.LENGTH_SHORT).show();
                                     Log.d("KAIROS RECOGNIZE", "failure");
                                     SharedPreferences settings = PreferenceManager
                                             .getDefaultSharedPreferences(getApplicationContext());

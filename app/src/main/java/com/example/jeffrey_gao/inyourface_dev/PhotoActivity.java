@@ -92,7 +92,7 @@ public class PhotoActivity extends AppCompatActivity {
     /*
      * When the "Change" button gets clicked
      */
-    public void cameraIntent(View v)
+    public void cameraIntent(View v, int button)
     {
         // ask to take a picture, and pass that as the intent
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -105,6 +105,7 @@ public class PhotoActivity extends AppCompatActivity {
 
         intent.putExtra(MediaStore.EXTRA_OUTPUT, myImageCaptureUri);
         intent.putExtra("return-data", true);
+
         try
         {
             // getting a result from the activity: taking the picture
@@ -118,8 +119,9 @@ public class PhotoActivity extends AppCompatActivity {
 
     public void clickChangeButton1(View view)
     {
-        cameraIntent(view);
+        cameraIntent(view, 1);
     }
+
 
     /*
      * Upon camera activity finish
@@ -135,11 +137,15 @@ public class PhotoActivity extends AppCompatActivity {
             mImageView1.setImageURI(myImageCaptureUri);
             savePicture();
 
+
             //delete galleries before registering new user
             //Note: can remove this later when we allow for multiple users/photos per user
-            Intent clearIntent = new Intent(this, RegisterService.class);
+
+
+            /*Intent clearIntent = new Intent(this, RegisterService.class);
             clearIntent.putExtra(RegisterService.ACTION, "clear");
-            startService(clearIntent);
+            startService(clearIntent);*/
+
 
             //register user
             Intent registerIntent = new Intent(this, RegisterService.class);
