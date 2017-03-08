@@ -48,48 +48,62 @@ public class RecognizeService extends Service {
             @Override
             public void onSuccess(String s) {
                 Log.d("KAIROS RECOGNIZE", s);
-                JsonObject response = new JsonParser().parse(s).getAsJsonObject();
-                JsonElement element = response.getAsJsonObject().get("images");
-                JsonArray images = null;
+                final JsonObject response = new JsonParser().parse(s).getAsJsonObject();
 
-                if (element != null) {
-                    images = element.getAsJsonArray();
-                } else {
+                new Thread() {
 
-                    Toast.makeText(getApplicationContext(), "No faces identified",
-                            Toast.LENGTH_LONG).show();
-                    Log.d("KAIROS RECOGNIZE", "no faces");
-                }
+                    public void run() {
+                        JsonElement element = response.getAsJsonObject().get("images");
+                        JsonArray images = null;
 
-                if (images != null && images.size() > 0) {
-                    JsonObject transaction = images
-                            .get(0)
-                            .getAsJsonObject()
-                            .get("transaction")
-                            .getAsJsonObject();
+                        if (element != null)
 
-                    if (transaction != null) {
-                        JsonElement status = transaction.get("status");
+                        {
+                            images = element.getAsJsonArray();
+                        } else
 
-                        if (status != null && status.getAsString().equals("success")) {
-                            Toast.makeText(getApplicationContext(), "Valid user identified",
+                        {
+
+                            Toast.makeText(getApplicationContext(), "No faces identified",
                                     Toast.LENGTH_LONG).show();
-                            Log.d("KAIROS RECOGNIZE", "success");
+                            Log.d("KAIROS RECOGNIZE", "no faces");
+                        }
 
-                        } else if (status != null && status.getAsString().equals("failure")) {
-                            Toast.makeText(getApplicationContext(), "Invalid user identified!",
-                                    Toast.LENGTH_LONG).show();
-                            Log.d("KAIROS RECOGNIZE", "failure");
-                            SharedPreferences settings = PreferenceManager
-                                    .getDefaultSharedPreferences(getApplicationContext());
-                            if (settings.getBoolean("lock_preference", false)
-                                    && MainActivity.dpm.isAdminActive(MainActivity.compName)) {
-                                MainActivity.dpm.lockNow();
+                        if (images != null && images.size() > 0)
+
+                        {
+                            JsonObject transaction = images
+                                    .get(0)
+                                    .getAsJsonObject()
+                                    .get("transaction")
+                                    .getAsJsonObject();
+
+                            if (transaction != null) {
+                                JsonElement status = transaction.get("status");
+
+                                if (status != null && status.getAsString().equals("success")) {
+                                    Toast.makeText(getApplicationContext(), "Valid user identified",
+                                            Toast.LENGTH_LONG).show();
+                                    Log.d("KAIROS RECOGNIZE", "success");
+
+                                } else if (status != null && status.getAsString().equals("failure")) {
+                                    Toast.makeText(getApplicationContext(), "Invalid user identified!",
+                                            Toast.LENGTH_LONG).show();
+                                    Log.d("KAIROS RECOGNIZE", "failure");
+                                    SharedPreferences settings = PreferenceManager
+                                            .getDefaultSharedPreferences(getApplicationContext());
+                                    if (settings.getBoolean("lock_preference", false)
+                                            && MainActivity.dpm.isAdminActive(MainActivity.compName)) {
+                                        MainActivity.dpm.lockNow();
+                                    }
+                                }
                             }
                         }
+
+                        stopSelf();
                     }
-                }
-                stopSelf();
+                }.run();
+
             }
 
             @Override
