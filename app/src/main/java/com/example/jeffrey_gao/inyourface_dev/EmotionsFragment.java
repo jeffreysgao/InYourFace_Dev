@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.RadarChart;
@@ -39,6 +40,7 @@ public class EmotionsFragment extends Fragment implements AdapterView.OnItemSele
     public static RadarChart radarChart;
     public static Context context;
     public static Spinner spinner;
+    public static TextView attentionView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,6 +55,8 @@ public class EmotionsFragment extends Fragment implements AdapterView.OnItemSele
         radarChart = (RadarChart) view.findViewById(R.id.radar_chart);
 
         spinner = (Spinner) view.findViewById(R.id.activity_spinner);
+
+        attentionView = (TextView) view.findViewById(R.id.attention_average);
 
 
         spinner.setOnItemSelectedListener(this);
@@ -249,7 +253,6 @@ public class EmotionsFragment extends Fragment implements AdapterView.OnItemSele
         values.add(new Entry(joyAvg, 3));
         values.add(new Entry(sadnessAvg, 4));
         values.add(new Entry(surpriseAvg, 5));
-        values.add(new Entry(attentionAvg, 6));
 
         /*try {
             //read from the csv file
@@ -331,10 +334,12 @@ public class EmotionsFragment extends Fragment implements AdapterView.OnItemSele
         labels.add("Joy");
         labels.add("Sadness");
         labels.add("Surprise");
-        labels.add("Attention");
 
 
         RadarData radarData = new RadarData(labels, radarDataSet);
+
+        attentionView.setText(Float.toString(attentionAvg));
+
 
         return radarData;
     }
