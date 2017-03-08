@@ -212,6 +212,7 @@ public class SettingsFragment extends PreferenceFragment
             }
 
             if (isBind && binder != null) {
+                Log.d("SETTINGS FRAGMENT", "restarting the service");
                 binder.setInterval(mInterval);
                 binder.stopRepeatService();
                 binder.startRepeatService();
