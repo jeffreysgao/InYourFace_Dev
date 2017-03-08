@@ -33,6 +33,9 @@ import java.io.IOException;
 public class RecognizeService extends Service {
     public static final String FACE_IMAGE = "face_image";
     public static final String GALLERY_ID = "users";
+    public static final String PACKAGE_NAME = "package_name";
+    public String faceImage;
+    public String currentPackageName;
     private Kairos myKairos;
     private KairosListener kairosListener;
 
@@ -94,6 +97,21 @@ public class RecognizeService extends Service {
 
                                     Log.d("KAIROS RECOGNIZE", "success");
 
+                                    /*
+                                     * Start the analyze if the user is successfully recognized
+                                     */
+                                    if (settings.getBoolean("emotions_pref", false)
+                                            || settings.getBoolean("attention_pref", false)) {
+                                        Log.d("KAIROS RECOGNIZE", "authentication success - starting " + currentPackageName);
+                                        if (currentPackageName != null) {
+                                            Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
+                                            analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, faceImage);
+                                            analyzeIntent.putExtra(BackgroundService.PACKAGE_NAME, currentPackageName);
+
+                                            startService(analyzeIntent);
+                                        }
+                                    }
+
                                 } else if (status != null && status.getAsString().equals("failure")) {
                                     SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                                     if (settings.getBoolean("toast_pref", false)) {
@@ -130,8 +148,14 @@ public class RecognizeService extends Service {
         Log.d("RECOGNIZE SERVICE", "service started");
 
         if (intent != null) {
-            String faceImage = intent.getStringExtra(FACE_IMAGE);
+            faceImage = intent.getStringExtra(FACE_IMAGE);
             recognize(faceImage);
+
+            SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            if (settings.getBoolean("emotions_pref", false)
+                    || settings.getBoolean("attention_pref", false)) {
+                currentPackageName = intent.getStringExtra(PACKAGE_NAME);
+            }
         }
 
         return super.onStartCommand(intent, flags, startId);
