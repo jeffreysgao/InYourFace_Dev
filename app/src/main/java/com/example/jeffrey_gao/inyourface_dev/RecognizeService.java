@@ -36,16 +36,16 @@ public class RecognizeService extends Service {
     public static final String PACKAGE_NAME = "package_name";
     public String faceImage;
     public String currentPackageName;
-    private Kairos myKairos;
+//    private Kairos myKairos;
     private KairosListener kairosListener;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        myKairos = new Kairos();
-        String appId = getResources().getString(R.string.kairos_app_id);
-        String appKey = getResources().getString(R.string.kairos_app_key);
-        myKairos.setAuthentication(this, appId, appKey);
+//        myKairos = new Kairos();
+//        String appId = getResources().getString(R.string.kairos_app_id);
+//        String appKey = getResources().getString(R.string.kairos_app_key);
+//        myKairos.setAuthentication(this, appId, appKey);
 
         kairosListener = new KairosListener() {
             @Override

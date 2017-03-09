@@ -23,8 +23,18 @@
 
     <string name="photo_name">photo.png</string>
 
-    <string name="kairos_app_id">32cb0e82</string>
-    <string name="kairos_app_key">108aa772951775d1b79022941ea4b394</string>
+    <!-- We implement a feature for swapping app keys for each grader/tester in order to address the issue
+     of limited requests to Kairos for our demo account access (60 requests/min, 1 million requests/month) -->
+    <string name="kairos_app_id1">32cb0e82</string>
+    <string name="kairos_app_key1">108aa772951775d1b79022941ea4b394</string>
+    <string name="kairos_app_id2">7a3306a0</string>
+    <string name="kairos_app_key2">60116fe97f24c0a6d0bee6b469009d80</string>
+    <string name="kairos_app_id3">5382f598</string>
+    <string name="kairos_app_key3">4ed0ab726d10be7e4bcaa85a7eddbce0</string>
+    <string name="kairos_app_id4">776f38a8</string>
+    <string name="kairos_app_key4">44e9f4856dee3eb3e8da618de37de177</string>
+    <string name="kairos_app_id5">8943fc0a</string>
+    <string name="kairos_app_key5">ba39975262e791c273d36b197f646029</string>
 
     <string name="DeviceAdmin">Device Admin</string>
     <string name="b">b</string>

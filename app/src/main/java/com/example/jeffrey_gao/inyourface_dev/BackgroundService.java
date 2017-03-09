@@ -415,7 +415,6 @@ public class BackgroundService extends Service {
                 analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
                 analyzeIntent.putExtra(PACKAGE_NAME, currentPackageName);
 
-
                 startService(analyzeIntent);
             }
 

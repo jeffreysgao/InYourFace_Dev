@@ -290,6 +290,36 @@ public class KairosHelper {
         client.get(context, "http://api.kairos.com/v2/analytics/" + id, responseHandler);
     }
 
+    /*
+     * Deletes a specific gallery
+     */
+    public static void deleteGallery(Context context, String galleryId, final KairosListener callback) throws JSONException, UnsupportedEncodingException {
+        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpResponseHandler responseHandler = new AsyncHttpResponseHandler() {
+            public void onStart() {
+            }
+
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                String responseString = new String(response);
+                callback.onSuccess(responseString);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                String responseString = new String(errorResponse);
+                callback.onFail(responseString);
+            }
+
+            public void onRetry(int retryNo) {
+            }
+        };
+        JSONObject jsonParams = new JSONObject();
+        jsonParams.put("gallery_name", galleryId);
+        StringEntity entity = new StringEntity(jsonParams.toString());
+        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
+        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        client.post(context, "http://api.kairos.com/gallery/remove", entity, "application/json", responseHandler);
+    }
+
     protected static String base64FromBitmap(Bitmap image) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);

@@ -30,7 +30,7 @@ public class RegisterService extends Service {
     public static final String USER_FACE_IMAGE = "user_face_image";
     public static final String USER_NAME = "user_name";
     public static final String ACTION = "action";
-    private Kairos myKairos;
+//    private Kairos myKairos;
     private KairosListener kairosListener;
 
     public RegisterService() {
@@ -39,10 +39,10 @@ public class RegisterService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        myKairos = new Kairos();
-        String appId = getResources().getString(R.string.kairos_app_id);
-        String appKey = getResources().getString(R.string.kairos_app_key);
-        myKairos.setAuthentication(this, appId, appKey);
+//        myKairos = new Kairos();
+//        String appId = getResources().getString(R.string.kairos_app_id);
+//        String appKey = getResources().getString(R.string.kairos_app_key);
+//        myKairos.setAuthentication(this, appId, appKey);
 
         kairosListener = new KairosListener() {
             @Override
@@ -137,13 +137,6 @@ public class RegisterService extends Service {
                     multipleFaces,
                     null,
                     kairosListener);
-//            myKairos.enroll(image,
-//                    subjectId,
-//                    galleryId,
-//                    selector,
-//                    multipleFaces,
-//                    null,
-//                    kairosListener);
             fis.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -158,7 +151,6 @@ public class RegisterService extends Service {
     private void listGalleries() {
         try {
             KairosHelper.listGalleries(getApplicationContext(), kairosListener);
-//            myKairos.listGalleries(kairosListener);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
@@ -172,7 +164,7 @@ public class RegisterService extends Service {
      */
     private void deleteGallery(String name) {
         try {
-            myKairos.deleteGallery(name, kairosListener);
+            KairosHelper.deleteGallery(getApplicationContext(), name, kairosListener);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
