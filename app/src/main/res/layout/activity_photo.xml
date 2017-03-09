@@ -17,11 +17,21 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/username_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Username"
-            android:paddingTop="@dimen/large_margin"/>
+            android:text="@string/username_prompt_text"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/font_medium"
+            android:gravity="center"
+            android:paddingTop="@dimen/large_margin"
+            android:paddingBottom="@dimen/large_margin"/>
+
+        <Spinner
+            android:id="@+id/userNameSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/grader_usernames"
+            android:layout_gravity="center_horizontal"></Spinner>
 
         <TextView
             android:layout_width="match_parent"

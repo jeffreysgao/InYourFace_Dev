@@ -77,11 +77,6 @@
             android:defaultValue="true"
             android:summary="@string/emotions_pref_details"/>
 
-        <SwitchPreference
-            android:key="attention_pref"
-            android:title="@string/attention_pref"
-            android:defaultValue="true"
-            android:summary="@string/attention_pref_details"/>
     </PreferenceCategory>
 
     <PreferenceCategory

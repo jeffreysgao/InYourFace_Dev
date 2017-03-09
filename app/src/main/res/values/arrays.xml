@@ -10,4 +10,11 @@
         <item>1 min</item>
     </string-array>
 
+    <string-array name="grader_usernames">
+        <item>XD</item>
+        <item>Reshmi Suresh</item>
+        <item>Varun Mishra</item>
+        <item>Emma Oberstein</item>
+        <item>Virginia Cook</item>
+    </string-array>
 </resources>

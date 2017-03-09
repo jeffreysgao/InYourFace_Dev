@@ -1,8 +1,10 @@
 package com.example.jeffrey_gao.inyourface_dev;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.widget.Spinner;
 
 import com.kairos.KairosListener;
 import com.loopj.android.http.AsyncHttpClient;
@@ -66,8 +68,38 @@ public class KairosHelper {
             e.printStackTrace();
         }
 
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         Log.d("jeff", "posting");
         client.post(context, "http://api.kairos.com/v2/media", requestParams, responseHandler);
     }
@@ -100,8 +132,38 @@ public class KairosHelper {
             }
         };
 
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         client.get(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
     }
 
@@ -152,8 +214,38 @@ public class KairosHelper {
         }
 
         StringEntity entity = new StringEntity(jsonParams.toString());
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         client.post(context, "http://api.kairos.com/recognize", entity, "application/json", responseHandler);
     }
 
@@ -185,8 +277,38 @@ public class KairosHelper {
             }
         };
 
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         client.delete(context, "http://api.kairos.com/v2/media/" + id, responseHandler);
     }
 
@@ -202,8 +324,12 @@ public class KairosHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                callback.onFail(responseString);
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("enroll failed");
+                }
             }
 
             public void onRetry(int retryNo) {
@@ -226,8 +352,38 @@ public class KairosHelper {
         }
 
         StringEntity entity = new StringEntity(jsonParams.toString());
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         client.post(context, "http://api.kairos.com/enroll", entity, "application/json", responseHandler);
     }
 
@@ -243,8 +399,12 @@ public class KairosHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                callback.onFail(responseString);
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("list galleries failed");
+                }
             }
 
             public void onRetry(int retryNo) {
@@ -252,8 +412,40 @@ public class KairosHelper {
         };
         JSONObject jsonParams = new JSONObject();
         StringEntity entity = new StringEntity(jsonParams.toString());
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        Log.d("KAIROS HELPER", "using " + app_id + " and " + app_key);
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         client.post(context, "http://api.kairos.com/gallery/list_all", entity, "application/json", responseHandler);
     }
 
@@ -285,8 +477,38 @@ public class KairosHelper {
             }
         };
 
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         client.get(context, "http://api.kairos.com/v2/analytics/" + id, responseHandler);
     }
 
@@ -305,8 +527,12 @@ public class KairosHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                String responseString = new String(errorResponse);
-                callback.onFail(responseString);
+                if (errorResponse != null) {
+                    String responseString = new String(errorResponse);
+                    callback.onFail(responseString);
+                } else {
+                    callback.onFail("delete gallery failed");
+                }
             }
 
             public void onRetry(int retryNo) {
@@ -315,8 +541,38 @@ public class KairosHelper {
         JSONObject jsonParams = new JSONObject();
         jsonParams.put("gallery_name", galleryId);
         StringEntity entity = new StringEntity(jsonParams.toString());
-        client.addHeader("app_id", context.getResources().getString(R.string.kairos_app_id));
-        client.addHeader("app_key", context.getResources().getString(R.string.kairos_app_key));
+        String mKey = context.getString(R.string.shared_preference);
+        SharedPreferences mPrefs = context.getSharedPreferences(mKey, context.MODE_PRIVATE);
+        String userName = mPrefs.getString(context.getResources().getString(R.string.user_name), "XD");
+
+        String app_id = context.getResources().getString(R.string.kairos_app_id);
+        String app_key = context.getResources().getString(R.string.kairos_app_key);
+
+        switch (userName) {
+            case "XD":
+                break;
+            case "Reshmi Suresh":
+                app_id = context.getResources().getString(R.string.kairos_app_id2);
+                app_key = context.getResources().getString(R.string.kairos_app_key2);
+                break;
+            case "Varun Mishra":
+                app_id = context.getResources().getString(R.string.kairos_app_id3);
+                app_key = context.getResources().getString(R.string.kairos_app_key3);
+                break;
+            case "Emma Oberstein":
+                app_id = context.getResources().getString(R.string.kairos_app_id4);
+                app_key = context.getResources().getString(R.string.kairos_app_key4);
+                break;
+            case "Virginia Cook":
+                app_id = context.getResources().getString(R.string.kairos_app_id5);
+                app_key = context.getResources().getString(R.string.kairos_app_key5);
+                break;
+            default:
+                break;
+        }
+
+        client.addHeader("app_id", app_id);
+        client.addHeader("app_key", app_key);
         client.post(context, "http://api.kairos.com/gallery/remove", entity, "application/json", responseHandler);
     }
 

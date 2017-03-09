@@ -11,8 +11,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,8 +43,7 @@ public class PhotoActivity extends AppCompatActivity {
     // ------------ GLOBAL VARIABLES ----------------
     private Uri myImageCaptureUri;      // global image URI
     private ImageView mImageView1;       // global image view
-    private ImageView mImageView2;
-    private ImageView mImageView3;
+
 //    private Uri imgUriAfterCropped1;     // if user updated the URI, then save it as
     // the new destination so that loadImage() will
     // pull out the correct image (after cropped)
@@ -58,9 +60,40 @@ public class PhotoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_photo);
 
         mImageView1 = (ImageView)findViewById(R.id.photoTaken1);
-//        mImageView2 = (ImageView)findViewById(R.id.photoTaken2);
-//        mImageView3 = (ImageView)findViewById(R.id.photoTaken3);
 
+        loadUserName();
+
+        Spinner userNameSpinner = (Spinner)findViewById(R.id.userNameSpinner);
+        userNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                Log.d("PHOTO ACTIVITY", "item " + i + " selected");
+                switch (i) {
+                    case 0:
+                        saveUserName(getResources().getStringArray(R.array.grader_usernames)[0]);
+                        break;
+                    case 1:
+                        saveUserName(getResources().getStringArray(R.array.grader_usernames)[1]);
+                        break;
+                    case 2:
+                        saveUserName(getResources().getStringArray(R.array.grader_usernames)[2]);
+                        break;
+                    case 3:
+                        saveUserName(getResources().getStringArray(R.array.grader_usernames)[3]);
+                        break;
+                    case 4:
+                        saveUserName(getResources().getStringArray(R.array.grader_usernames)[4]);
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         // if the instance created is not empty
         if (savedInstanceState != null)
@@ -132,15 +165,10 @@ public class PhotoActivity extends AppCompatActivity {
         mImageView1.setImageResource(0);
         mImageView1.invalidate();
 
-        //TODO: NEED TO DELETE THE SAVED PHOTO FILE
-
-
         File f = new File(getFilesDir() + "/" + "photo.png");
         if (f.exists()) {
             f.delete();
         }
-
-
     }
 
 
@@ -157,15 +185,6 @@ public class PhotoActivity extends AppCompatActivity {
         { // go crop the image
             mImageView1.setImageURI(myImageCaptureUri);
             savePicture();
-
-
-            //delete galleries before registering new user
-            //Note: can remove this later when we allow for multiple users/photos per user
-
-            /*Intent clearIntent = new Intent(this, RegisterService.class);
-            clearIntent.putExtra(RegisterService.ACTION, "clear");
-            startService(clearIntent);*/
-
 
             //register user
             Intent registerIntent = new Intent(this, RegisterService.class);
@@ -184,24 +203,18 @@ public class PhotoActivity extends AppCompatActivity {
     /*
      * Load the picture from where it is stored.
      */
-    private void loadPicture(ImageView imageView)
-    {
+    private void loadPicture(ImageView imageView) {
         try
         {
             FileInputStream fis = openFileInput(getString(R.string.photo_name));
             Bitmap bmap = BitmapFactory.decodeStream(fis);
 
             imageView.setImageBitmap(bmap);
-
-//            mImageView1.setImageBitmap(bmap);
-//            mImageView2.setImageBitmap(bmap);;
-
             fis.close();
         }
         catch (IOException e)   // if there is no pictures saved
         {
             // use default pictures
-//            mImageView1.setImageResource(R.drawable.profile_photo);
             imageView.setImageResource(R.drawable.profile_photo);
         }
     }
@@ -209,8 +222,7 @@ public class PhotoActivity extends AppCompatActivity {
     /*
      * Saved the picture to local cache.
      */
-    private void savePicture()
-    {
+    private void savePicture() {
         mImageView1.buildDrawingCache();
         Bitmap bmap = mImageView1.getDrawingCache();
 
@@ -224,6 +236,52 @@ public class PhotoActivity extends AppCompatActivity {
         catch (IOException ioe)
         {
             ioe.printStackTrace();
+        }
+    }
+
+    /*
+     * Save the username to shared preferences
+     */
+    private void saveUserName(String userName) {
+        String mKey = getString(R.string.shared_preference);
+        SharedPreferences mPrefs = getSharedPreferences(mKey, MODE_PRIVATE);
+
+        SharedPreferences.Editor mEditor = mPrefs.edit();
+        mEditor.clear();
+
+        mEditor.putString(getResources().getString(R.string.user_name), userName);
+
+        mEditor.commit();
+    }
+
+    /*
+     * Load the username from shared preference
+     */
+    private void loadUserName() {
+        String mKey = getString(R.string.shared_preference);
+        SharedPreferences mPrefs = getSharedPreferences(mKey, MODE_PRIVATE);
+        String userName = mPrefs.getString(getResources().getString(R.string.user_name), "XD");
+        Spinner userNameSpinner = (Spinner)findViewById(R.id.userNameSpinner);
+
+        switch (userName) {
+            case "XD":
+                userNameSpinner.setSelection(0);
+                break;
+            case "Reshmi Suresh":
+                userNameSpinner.setSelection(1);
+                break;
+            case "Varun Mishra":
+                userNameSpinner.setSelection(2);
+                break;
+            case "Emma Oberstein":
+                userNameSpinner.setSelection(3);
+                break;
+            case "Virginia Cook":
+                userNameSpinner.setSelection(4);
+                break;
+            default:
+                userNameSpinner.setSelection(0);
+                break;
         }
     }
 }
