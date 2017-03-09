@@ -15,11 +15,8 @@ When the background service is triggered, a background camera will fire, take a 
 Recognition - 
 If the taken picture matches with any of the enrolled photos (as determined by Kairos's machine learning), a toast will be displayed (if option is on) showing that a valid user identified. If the taken picture does not match (and is distinctively a face), "Invalid user identified" will be displayed. Or if no faces can be identified in the taken picture, "No faces identified" will be displayed.
 
-
-
-
-
-
+Analysis -
+The taken picture can also be sent to Kairos for emotional/attention analysis. Kairos will return a JSON string containing an informational snapshot about the user's fear, joy, sadness, disgust, anger, and surprise, as well as about the user's attentiveness, as numbers rated between 0 and 100. These will be inserted into a local database and visualized in another fragment "Analysis" - which contains a line chart plotting attention over time, and an application-specific radar chart plotting the average of each of the six emotional values. We have a foreground app checker for several popular apps (like Facebook, Chrome, and YouTube). As the background service runs, it also detects what application is running in the foreground - a different radar chart is created for each of the apps - so we can get emotional profiles for various apps (and see which apps you should probably spend less time on).
 
 
 
