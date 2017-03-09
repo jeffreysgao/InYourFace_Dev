@@ -6,9 +6,13 @@ For each tester, please copy one of the following API ID and key pairs into the 
 Application ID: 154cb3ee
 
 Application Key: 77a92ff10a211d46e72ed89dcaef4dfe
+
 Application Key: bc428f65fbb014845d6b10bf8faae92d
+
 Application Key: 9f8902322ca0c35a811cf37fe7c01a16
+
 Application Key: 6410abb08dfdc6c2563d9fea28dcf76b
+
 Application Key: 95ed078d7978e22920a9ef93ff742394
 
 
