@@ -3,7 +3,6 @@ Important note:
 
 When you open "Enroll User", please select the username in the spinner corresponding to your name (prevents sharing Kairos data between each other).
 
-Since our app only uses one Kairos App Id, all of the installed apps will be sharing the same uploaded data. For example, if one user enrolls himself/herself, and another user himself/herself, then both of their faces will be recognized as legitimate by Kairos. In addition, if one user deletes the gallery from his/her phone, any other users' galleries (their enrolled photos) will also be deleted. So this app is designed for only one person to use at a time. (The paid version of Kairos will fix this issue; unfortunately we're broke college students)
 
 ----------------------------------------------------------------------------------------------------------------
 
