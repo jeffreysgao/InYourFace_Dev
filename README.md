@@ -16,6 +16,8 @@ Application Key: 6410abb08dfdc6c2563d9fea28dcf76b
 Application Key: 95ed078d7978e22920a9ef93ff742394
 
 
+
+
 This app utilizes the Kairos API (a facial recognition API) to perform facial emotion/attention analysis and authentication. 
 
 This app requires device administrator (since it locks the phone programmatically) and usage stats access (it needs to be able to get the package name of whichever application is in the foreground at the the moment, and with Google's recent efforts to increase security, various direct methods to do so have been deprecated/disabled; in Android 7.0 the only way to do this is indirectly - by querying recent usage stats and getting the last application opened). 
