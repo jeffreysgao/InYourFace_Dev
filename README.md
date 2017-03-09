@@ -1,7 +1,7 @@
 # InYourFace_Dev
 Important note:
 
-For each tester, please copy the following Application ID and and one of the Keys into the "kairos_app_id" and "kairos_app_key" strings in strings.xml:
+For each tester, please copy the following Application ID and and one of the Keys into the "kairos_app_id" and "kairos_app_key" strings in strings.xml (each tester should have a different Key):
 
 Application ID: 154cb3ee
 
