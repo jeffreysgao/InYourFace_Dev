@@ -225,13 +225,6 @@ public class BackgroundService extends Service {
                 SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 String intervalChoice = settings.getString("interval_preference", "10 sec");
                 switch (intervalChoice) {
-                    case "3 sec":
-                        interval = 3000;
-                        break;
-                    case "5 sec":
-                        interval = 5000;
-
-                        break;
                     case "10 sec":
                         interval = 10000;
                         break;
@@ -245,7 +238,7 @@ public class BackgroundService extends Service {
                         interval = 60000;
                         break;
                     default:
-                        interval = 3000;
+                        interval = 10000;
                         break;
                 }
             }

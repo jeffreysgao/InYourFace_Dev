@@ -30,7 +30,7 @@ public class SettingsFragment extends PreferenceFragment
     private boolean isBind = false;
     private BackgroundService.MyBinder binder;
     private MessageHandler handler;
-    private int mInterval = 3000;
+    private int mInterval = 10000;
 
     private static boolean connectionInitialized = false;
 
@@ -93,12 +93,6 @@ public class SettingsFragment extends PreferenceFragment
         String intervalChoice = prefs.getValue();
 
         switch (intervalChoice) {
-            case "3 sec":
-                mInterval = 3000;
-                break;
-            case "5 sec":
-                mInterval = 5000;
-                break;
             case "10 sec":
                 mInterval = 10000;
                 break;
@@ -111,9 +105,8 @@ public class SettingsFragment extends PreferenceFragment
             case "1 min":
                 mInterval = 60000;
                 break;
-
             default:
-                mInterval = 3000;
+                mInterval = 10000;
                 break;
         }
 
@@ -186,14 +179,6 @@ public class SettingsFragment extends PreferenceFragment
             Log.d("PREFERENCES", "interval preference changed");
             String intervalChoice = sharedPreferences.getString("interval_preference", "10 sec");
             switch (intervalChoice) {
-                case "3 sec":
-                    mInterval = 3000;
-
-                    break;
-                case "5 sec":
-                    mInterval = 5000;
-
-                    break;
                 case "10 sec":
                     mInterval = 10000;
                     break;
@@ -208,7 +193,7 @@ public class SettingsFragment extends PreferenceFragment
                     break;
 
                 default:
-                    mInterval = 3000;
+                    mInterval = 10000;
                     break;
             }
 
