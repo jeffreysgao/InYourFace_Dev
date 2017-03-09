@@ -15,7 +15,7 @@ Application Key: 6410abb08dfdc6c2563d9fea28dcf76b
 
 Application Key: 95ed078d7978e22920a9ef93ff742394
 
-
+----------------------------------------------------------------------------------------------------------------
 
 
 This app utilizes the Kairos API (a facial recognition API) to perform facial emotion/attention analysis and authentication. 
