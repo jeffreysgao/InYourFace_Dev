@@ -6,7 +6,31 @@ This app requires device administrator (since it locks the phone programmaticall
 
 On first launch of the app, the user will be asked to create, confirm, and enter a password (we want a password because one main purpose of the app is security - locking the phone when the facial recognition recognizes an invalid user - and we don't want intruders to have access to the settings fragment). 
 
-Then the user will be presented with a settings fragment. The user can toggle 
+Then the user will be presented with a settings fragment. First thing to do is to enroll yourself under "Enroll User". There will be two buttons "Add" and "Delete All". "Add" will open the camera and ask the user for a photo, which on result will be enrolled into a gallery on the Kairos database (basically "the cloud", not our local database). Multiple enroll is recommended for increased recognition accuracy. The enrolled photos serve as a "baseline" with which all later photos taken in the background service will be compared against. "Delete All" will delete all photos from the Kairos database. 
+
+The user can then toggle settings to disable/enable facial recognition, device lock (on incorrect recognition), and facial analysis. Any of the features that are toggled on will be run in the background service - which can be triggered by clicking "Start Running!" at the very top of the settings fragment. There is also an option to choose the interval at which the background service can be run. 
+
+When the background service is triggered, a background camera will fire, take a front-face picture of the user, send it to Kairos, and perform the chosen transactions (recognition/analysis). There is another preference at the bottom of the settings fragment - "Show Toasts" - which will activate/deactivate toasts displaying returned data from Kairos. 
+
+Recognition - 
+If the taken picture matches with any of the enrolled photos (as determined by Kairos's machine learning), a toast will be displayed (if option is on) showing that a valid user identified. If the taken picture does not match (and is distinctively a face), "Invalid user identified" will be displayed. Or if no faces can be identified in the taken picture, "No faces identified" will be displayed.
+
+
+
+
+
+
+
+
+
+Limitations of the app:
+
+1. Since our app only uses one Kairos App Id, all of the installed apps will be sharing the same uploaded data. For example, if one user enrolls himself/herself, and another user himself/herself, then both of their faces will be recognized as legitimate by Kairos. In addition, if one user deletes the gallery from his/her phone, any other users' galleries (their enrolled photos) will also be deleted. So this app is designed for only one person to use at a time. (The paid version of Kairos will fix this issue; unfortunately we're broke college students)
+
+2. Since we're posting data to Kairos for recognition and analysis, there will be a two or three-second delay between sending the photo and Kairos returning the data. Therefore the interval preference might not entirely correspond to the rate at which the data is returned and loaded into the database.
+
+
+
 
 
 
