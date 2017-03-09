@@ -139,6 +139,7 @@ public class AnalyzeService extends Service {
                             i.printStackTrace();
                         }*/
 
+
                                 DataPoint dataPoint = new DataPoint(context);
                                 dataPoint.setActivity("");
                                 dataPoint.setAnger(Float.parseFloat(anger.toString()));

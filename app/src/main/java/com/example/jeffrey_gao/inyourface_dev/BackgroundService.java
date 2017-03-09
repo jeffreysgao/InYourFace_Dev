@@ -410,8 +410,7 @@ public class BackgroundService extends Service {
                     recognizeIntent.putExtra(RecognizeService.PACKAGE_NAME, currentPackageName);
                 }
                 startService(recognizeIntent);
-            } else if (settings.getBoolean("emotions_pref", false)
-                    || settings.getBoolean("attention_pref", false)) {
+            } else if (settings.getBoolean("emotions_pref", false)) {
                 Intent analyzeIntent = new Intent(getApplicationContext(), AnalyzeService.class);
                 analyzeIntent.putExtra(AnalyzeService.FACE_IMAGE, photoPath);
                 analyzeIntent.putExtra(PACKAGE_NAME, currentPackageName);

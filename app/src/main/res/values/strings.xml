@@ -35,11 +35,8 @@
     <string name="close">close navigation drawer</string>
 
     <string name="analysis_pref">Analysis</string>
-    <string name="emotions_pref">Emotions Tracking</string>
-    <string name="emotions_pref_details">Toggle to activate your emotions level analysis</string>
-
-    <string name="attention_pref">Attention Tracking</string>
-    <string name="attention_pref_details">Toggle to activate tracking level of attention</string>
+    <string name="emotions_pref">Emotions/Attention Tracking</string>
+    <string name="emotions_pref_details">Toggle to activate emotions/attention level analysis</string>
 
     <string name="analysis_app_prompt">Choose an app:</string>
 

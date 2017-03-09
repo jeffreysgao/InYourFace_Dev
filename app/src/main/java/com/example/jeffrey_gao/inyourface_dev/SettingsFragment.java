@@ -183,6 +183,7 @@ public class SettingsFragment extends PreferenceFragment
                 Log.d("PREFERENCES", "attention tracking deactivated");
             }
         } else if (s.equals("interval_preference")) {
+            Log.d("PREFERENCES", "interval preference changed");
             String intervalChoice = sharedPreferences.getString("interval_preference", "10 sec");
             switch (intervalChoice) {
                 case "3 sec":
